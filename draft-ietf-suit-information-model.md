@@ -40,15 +40,9 @@ author:
        organization: Fraunhofer SIT
        email: henk.birkholz@sit.fraunhofer.de
 
- -
-       ins: J. Jimenez
-       name: Jaime Jimenez
-       organization: Ericsson
-       email: jaime.jimenez@ericsson.com
-
 normative:
   RFC2119:
-  I-D.ietf-suit-architecture: 
+  I-D.ietf-suit-architecture:
 informative:
   STRIDE:
     target:  https://msdn.microsoft.com/en-us/library/ee823878(v=cs.20).aspx
@@ -123,7 +117,7 @@ An attacker sends a valid firmware image, for the wrong type of device, signed b
 
 Mitigated by: MFSR2
 
-Example: 
+Example:
 
 Suppose that two vendors, Vendor A and Vendor B, adopt the same trade name in different geographic regions, and they both make products with the same names, or product name matching is not used. This causes firmware from Vendor A to match devices from Vendor B.
 
@@ -147,7 +141,7 @@ If a device misinterprets the type of the firmware image, it may cause a device 
 
 Threat Escalation: An attacker that can cause a device to misinterpret the received firmware image may gain elevation of privilege and potentially expand this to all types of threat.
 
-Mitigated by: MFSR4
+Mitigated by: MFSR4a
 
 ### Threat MFT5: The target device installs the payload to the wrong location
 
@@ -157,7 +151,7 @@ If a device installs a firmware image to the wrong location on the device, then 
 
 Threat Escalation: An attacker that can cause a device to misinterpret the received code may gain elevation of privilege and potentially expand this to all types of threat.
 
-Mitigated by: MFSR4
+Mitigated by: MFSR4b
 
 ### Threat MFT6: Redirection
 
@@ -165,7 +159,7 @@ Classification: Denial of Service
 
 If a device does not know where to obtain the payload for an update, it may be redirected to an attacker's server. This would allow an attacker to provide broken payloads to devices.
 
-Mitigated by: MFSR4
+Mitigated by: MFSR4c
 
 ### Threat MFT7: Payload Verification on Boot
 
@@ -176,7 +170,7 @@ An attacker replaces a newly downloaded firmware after a device finishes verifyi
 Threat Escalation: If the attacker is able to exploit a known
 vulnerability, or if the attacker can supply their own firmware, then this threat can be escalated to ALL TYPES.
 
-Mitigated by: MFSR4
+Mitigated by: MFSR4d
 
 ### Threat MFT8: Unauthenticated Updates
 
@@ -197,7 +191,7 @@ An attacker sends a valid, current manifest to a device that has an unexpected p
 
 Threat Escalation: An attacker that can cause a device to install a payload against the wrong precursor image could gain elevation of privilege and potentially expand this to all types of threat.
 
-Mitigated by: MFSR4
+Mitigated by: MFSR4e
 
 ### Threat MFT10: Unqualified Firmware
 
@@ -211,7 +205,7 @@ Mitigated by: MFSR6, MFSR8
 
 #### Example 1: Multiple Operators with a Single OEM
 
-In this example let us assume that OEMs expect the rights to create firmware but that Operators expect the rights to qualify firmware as fit-for-purpose on their networks. Additionally assume that an OEM sells devices that operate on any network, including Network A and B in our example. 
+In this example let us assume that OEMs expect the rights to create firmware but that Operators expect the rights to qualify firmware as fit-for-purpose on their networks. Additionally assume that an OEM sells devices that operate on any network, including Network A and B in our example.
 
 An attacker may obtain a manifest for a device on Network A. Then, this attacker sends that manifest to a device on Network B. Because Network A and Network B are under control of different Operators, and the firmware for a device on Network A has not been qualified to be deployed on Network B, the target device on Network B is now in violation of the Operator B's policy and may get disabled by this unqualified, but signed firmware.
 
@@ -269,30 +263,69 @@ Mitigates: Threat MFT3
 
 Implemented by: Manifest Element: Best-Before timestamp condition
 
-### Security Requirement MFSR4: Signed Payload Descriptor
-
-All descriptive information about the payload MUST be signed. This MUST include:
-
-* The type of payload (which may be independent of format)
-* The location to store the payload
-* The payload digest, in each state of installation (encrypted, plaintext, installed, etc.)
-* The payload size
-* The payload format
-* Where to obtain the payload
-* All instructions or parameters for applying the payload
-* Any rules that identify whether or not the payload can be used on this device
-
-Mitigates: Threats MFT4, MFT5, MFT6, MFT7, MFT9
-
-Implemented by: Manifest Elements: Vendor ID Condition, Class ID Condition, Precursor Image Digest Condition, Payload Format, Processing Steps, Storage Location, URIs, Digests, Size
-
 ### Security Requirement MFSR5: Cryptographic Authenticity
 
-The authenticity of an update must be demonstrable. Typically, this means that updates must be digitally signed. Because the manifest contains information about how to install the update, the manifest's authenticity must also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature, the authenticity of the firmware image is tied to the manifest by the use of a fingerprint of the firmware image.
+The authenticity of an update must be demonstrable. Typically, this means that updates must be digitally authenticated. Because the manifest contains information about how to install the update, the manifest's authenticity must also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code, the authenticity of the firmware image is tied to the manifest by the use of a digest of the firmware image.
 
 Mitigates: Threat MFT8
 
-Implemented by: Signature
+Implemented by: Signature, Payload Digest
+
+### Security Requirement MFSR4a: Authenticated Payload Type
+
+The type of payload (which may be independent of format) MUST be authenticated. For example, the target must know whether the payload is XIP firmware, a loadable module, or serialized configuration data.
+
+Mitigates: MFT4
+
+Implemented by: Manifest Elements: Payload Format, Storage Location
+
+### Security Requirement MFSR4b: Authenticated Storage Location
+
+The location on the target where the payload is to be stored MUST be authenticated.
+
+Mitigates: MFT5
+
+Implemented by: Manifest Elements: Storage Location
+
+### Security Requirement MFSR4c: Authenticated Remote Resource Location
+
+The location where a target should find a payload MUST be authenticated.
+
+Mitigates: MFT6
+
+Implemented by: Manifest Elements: URIs
+
+### Security Requirement MFSR4d: Secure Boot
+
+The target SHOULD verify firmware at time of boot. This requires authenticated payload size, and digest.
+
+Mitigates: MFT7
+
+Implemnted by: Manifest Elements: Payload Digest, Size
+
+### Security Requirement MFSR4e: Authenticated precursor images
+
+If an update uses a differential compression method, it MUST specify the digest of the precursor image and that digest MUST be authenticated.
+
+Mitigates: MFT9
+
+Implemented by: Manifest Elements: Precursor Image Digest Condition
+
+### Security Requirement MFSR4f: Authenticated Vendor and Class IDs
+
+The identifiers that specify firmware compatibility MUST be authenticated to ensure that only compatible firmware is installed on a target device.
+
+Mitigates: MFT2
+
+Implemented By: Manifest Elements: Vendor ID Condition, Class ID Condition
+
+### Security Requirement MFSR4f: Authenticated Vendor and Class IDs
+
+The identifiers that specify firmware compatibility MUST be authenticated to ensure that only compatible firmware is installed on a target device.
+
+Mitigates: MFT2
+
+Implemented By: Manifest Elements: Vendor ID Condition, Class ID Condition
 
 ### Security Requirement MFSR6: Rights Require Authenticity
 
@@ -306,7 +339,7 @@ Implemented by: Signature
 
 ### Security Requirement MFSR7: Firmware encryption
 
-Firmware images must support encryption. Encryption helps to prevent third parties, including attackers, from reading the content of the firmware image and to reverse engineer the code.
+The manifest information model must enable encrypted payloads. Encryption helps to prevent third parties, including attackers, from reading the content of the firmware image. This can protect against confidential information disclosures and discovery of vulnerabilities through reverse engineering. Therefore the manifest must convey the information required to allow an intended recipient to decrypt an encrypted payload.
 
 Mitigates: MFT11
 
@@ -349,9 +382,8 @@ Some examples of potentially overridable information:
 
 * URIs: this allows the Network Operator to direct devices to their own infrastructure in order to reduce network load.
 * Conditions: this allows the Network Operator to pose additional constraints on the installation of the manifest.
-* Installation instructions: this allows the Network Operator to add more instructions such as time of installation.
-
-As a Network Operator, I would like to tell my devices to look at my own infrastructure for payloads so that I can manage the traffic generated by firmware updates on my network and my peers' networks.
+* Directives: this allows the Network Operator to add more instructions such as time of installation.
+* Processing Steps: If an intermediary performs an action on behalf of a device, it may need to override the processing steps. It is still possible for a device to verify the final content and the result of any processing step that specifies a digest. Some processing steps should be non-overridable.
 
 Satisfied by: MFUR2, MFUR3
 
@@ -375,7 +407,7 @@ Satisfied by: MFUR5
 
 ### Use Case MFUS6: Prevent Confidential Information Disclosures
 
-As an OEM or developer, I want to prevent confidential information from being disclosed during firmware updates.
+As an OEM or developer, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security is adequate to protect the manifest itself against information disclosure.
 
 Satisfied by: MFSR7
 
@@ -383,7 +415,11 @@ Satisfied by: MFSR7
 
 As an Operator, I want devices to determine whether they can process a payload prior to downloading it.
 
-Satisfied by: MFUR6
+In some cases, it may be desirable for a third party to perform some processing on behalf of a target. For this to occur, the third party MUST indicate what processing occurred and how to verify it against the Firmware Authority's intent.
+
+This amounts to overriding Processing Steps and URIs.
+
+Satisfied by: MFUR6, MFUR2
 
 ### Use Case MFUS8: Specify Version Numbers of Target Firmware
 
@@ -402,9 +438,8 @@ Satisfied by: MFUR8
 The following usability requirements satisfy the user stories listed above.
 
 ### Usability Requirement MFUR1
-It must be possible to provide all information necessary for the processing of a manifest into the manifest.
 
-* Distinguish between manifest instructions and payload instructions
+It must be possible to provide all information necessary for the processing of a manifest into the manifest.
 
 Satisfies: User story MFUS1
 
@@ -459,7 +494,7 @@ The manifest format MUST accommodate any payload format that an operator or OEM 
 * Differential
 * Compressed
 * Packed configuration
-* Intel HEX 
+* Intel HEX
 * S-Record
 
 Satisfies: User story MFUS5
@@ -514,7 +549,7 @@ Vendor IDs MUST be unique. This is to prevent similarly, or identically named en
 
 This ID is OPTIONAL but RECOMMENDED and helps to distinguish between identically named products from different vendors.
 
-Implements: Security Requirement MFSR2, MFSR4.
+Implements: Security Requirement MFSR2, MFSR4f.
 
 ### Example: Domain Name-based UUIDs
 
@@ -532,7 +567,7 @@ Note Well: Class ID is not a human-readable element. It is intended for match/mi
 
 This ID is OPTIONAL but RECOMMENDED and allows devices to determine applicability of a firmware in an unambiguous way.
 
-Implements: Security Requirement MFSR2, MFSR4.
+Implements: Security Requirement MFSR2, MFSR4f.
 
 ### Example 1: Different Classes
 
@@ -545,7 +580,7 @@ Vendor A creates product Z and product Y. The firmware images of products Z and 
 This ensures that Vendor A's Product Z cannot install firmware for Product Y and Product Y cannot install firmware for Product Z.
 
 ### Example 2: Upgrading Class ID
- 
+
 Vendor A creates product X. Later, Vendor A adds a new feature to product X, creating product X v2. Product X requires a firmware update to work with firmware intended for product X v2.
 
 Vendor A creates UUIDs as follows:
@@ -573,7 +608,7 @@ When a precursor image is required by the payload format, a precursor image dige
 
 This element is MANDATORY for differential updates. Otherwise, it is not needed.
 
-Implements: Security Requirement MFSR4
+Implements: Security Requirement MFSR4e
 
 ## Manifest Element: Required Image Version List
 
@@ -581,7 +616,7 @@ When a payload applies to multiple versions of a firmware, the required image ve
 
 Where an update can only be applied over specific predecessor versions, that version MUST be specified by the Required Image Version List.
 
-This element is OPTIONAL. 
+This element is OPTIONAL.
 
 Implements: MFUR7
 
@@ -599,13 +634,13 @@ The format of the payload must be indicated to devices is in an unambiguous way.
 
 This element is MANDATORY and MUST be present to enable devices to decode payloads correctly.
 
-Implements: Security Requirement MFSR4, Usability Requirement MFUR5
+Implements: Security Requirement MFSR4a, Usability Requirement MFUR5
 
 ## Manifest Element: Processing Steps
 
-A list of all payload processors necessary to process a nested format and any parameters needed by those payload processors. Each Processing Step SHOULD indicate the expected digest of the payload after the processing is complete.
+A list of all payload processors necessary to process a nested format and any parameters needed by those payload processors. Each Processing Step SHOULD indicate the expected digest of the payload after the processing is complete. Processing steps are distinct from Directives in that Directives apply to the manifest as a whole, whereas Processing Steps apply to an individual payload and provide instructions on how to unpack it.
 
-Implements: Security Requirement MFSR4, Usability Requirement MFUR6
+Implements: Usability Requirement MFUR6
 
 ## Manifest Element: Storage Location
 
@@ -613,7 +648,7 @@ This element tells the device which component is being updated. The device can u
 
 This element is MANDATORY and MUST be present to enable devices to store payloads to the correct location.
 
-Implements: Security Requirement MFSR4
+Implements: Security Requirement MFSR4b
 
 ### Example 1: Two Storage Locations
 
@@ -646,15 +681,15 @@ This element is OPTIONAL and only needed when the target device does not intrins
 
 Note: Devices will typically require URIs.
 
-Implements: Security Requirement MFSR4
+Implements: Security Requirement MFSR4c
 
 ## Manifest Element: Payload Digest
 
-This element contains the digest of the payload. This allows the target device to ensure authenticity of the payload. It must be possible to specify more than one payload digest, indexed by Manifest Element: XIP Address.
+This element contains the digest of the payload. This allows the target device to ensure authenticity of the payload. It MUST be possible to specify more than one payload digest, indexed by Manifest Element: XIP Address.
 
 This element is MANDATORY and fundamentally necessary to ensure the authenticity and integrity of the payload.
 
-Implements: Security Requirement MFSR4, Usability Requirement MFUR8
+Implements: Security Requirement MFSR4d, Usability Requirement MFUR8
 
 ## Manifest Element: Size
 
@@ -662,7 +697,7 @@ The size of the payload in bytes.
 
 This element is MANDATORY and informs the target device how big of a payload to expect. Without it, devices are exposed to some classes of denial of service attack.
 
-Implements: Security Requirement MFSR4
+Implements: Security Requirement MFSR4d
 
 ## Manifest Element: Signature
 
@@ -674,7 +709,7 @@ Implements: Security Requirement MFSR5, MFSR6, MFUR4
 
 ## Manifest Element: Directives
 
-A list of instructions that the device should execute, in order, when installing the payload.
+A list of instructions that the device should execute, in order, when processing the manifest. This information is distinct from the information necessary to process a payload (Processing Steps) and applies to the whole manifest including all payloads that it references. Directives include information such as update timing (For example, install only on Sunday, at 0200), procedural considerations (for example, shut down the equipment under control before executing the update), pre and post-installation steps (for example, run a script).
 
 This element is OPTIONAL and enables some use cases.
 
@@ -724,7 +759,7 @@ This document does not require any actions by IANA.
 
 We would like to thank our working group chairs, Dave Thaler, Russ Housley and David Waltermire, for their review comments and their support.
 
-We would like to thank the participants of the 2018 Berlin SUIT Hackathon for their discussion input. 
+We would like to thank the participants of the 2018 Berlin SUIT Hackathon and the June 2018 virtual design team meetings for their discussion input.
 
 --- back
 
