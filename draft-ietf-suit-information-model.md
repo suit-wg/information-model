@@ -1,7 +1,7 @@
 ---
 title: Firmware Updates for Internet of Things Devices - An Information Model for Manifests
 abbrev: A Firmware Manifest Information Model
-docname: draft-ietf-suit-information-model-00
+docname: draft-ietf-suit-information-model-01
 category: std
 
 ipr: pre5378Trust200902
@@ -75,6 +75,8 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 document are to be interpreted as described in RFC 2119 {{RFC2119}}.
 
 This document uses terms defined in {{I-D.ietf-suit-architecture}}.
+The term 'Operator' refers to both, Device and Network Operator. 
+
 
 # Motivation for Manifest Fields {#design-motivation}
 The following sub-sections describe the threat model, user stories, security requirements, and usability requirements.
@@ -203,17 +205,17 @@ Threat Escalation: If the firmware expects configuration that is present in devi
 
 Mitigated by: MFSR6, MFSR8
 
-#### Example 1: Multiple Operators with a Single OEM
+#### Example 1: Multiple Network Operators with a Single Device Operator
 
-In this example let us assume that OEMs expect the rights to create firmware but that Operators expect the rights to qualify firmware as fit-for-purpose on their networks. Additionally assume that an OEM sells devices that operate on any network, including Network A and B in our example.
+In this example let us assume that Device Operators expect the rights to create firmware but that Network Operators expect the rights to qualify firmware as fit-for-purpose on their networks. Additionally assume that an Device Operators manage devices that can be deployed on any network, including Network A and B in our example.
 
 An attacker may obtain a manifest for a device on Network A. Then, this attacker sends that manifest to a device on Network B. Because Network A and Network B are under control of different Operators, and the firmware for a device on Network A has not been qualified to be deployed on Network B, the target device on Network B is now in violation of the Operator B's policy and may get disabled by this unqualified, but signed firmware.
 
 This is a denial of service because it can render devices inoperable. This is an elevation of privilege because it allows the attacker to make installation decisions that should be made by the Operator.
 
-#### Example 2: Single Operator with Multiple OEMs
+#### Example 2: Single Network Operator with Multiple Device Operators
 
-Multiple devices that interoperate are used on the same network and communicate with each other. Some devices are manufactured by OEM A and other devices by OEM B. A new firmware is released by OEM A that breaks compatibility with OEM B devices. An attacker sends the new firmware to the OEM A devices without approval of the Operator. This breaks the behaviour of the larger system causing denial of service and possibly other threats. Where the network is a distributed SCADA system, this could cause misbehaviour of the process that is under control.
+Multiple devices that interoperate are used on the same network and communicate with each other. Some devices are manufactured and managed by Device Operator A and other devices by Device Operator B. A new firmware is released by Device Operator A that breaks compatibility with devices from Device Operator B. An attacker sends the new firmware to the devices managed by Device Operator A without approval of the Network Operator. This breaks the behaviour of the larger system causing denial of service and possibly other threats. Where the network is a distributed SCADA system, this could cause misbehaviour of the process that is under control.
 
 ### Threat MFT11: Reverse Engineering Of Firmware Image for Vulnerability Analysis
 
@@ -239,9 +241,9 @@ The security requirements here are a set of policies that mitigate the threats d
 
 ### Security Requirement MFSR1: Monotonic Sequence Numbers
 
-Only an actor with firmware installation authority is permitted to decide when device firmware can be installed. To enforce this rule, Manifests MUST contain monotonically increasing sequence numbers. Manifests MAY use UTC epoch timestamps to coordinate monotonically increasing sequence numbers across many actors in many locations. If UTC epoch timestamps are used, they MUST NOT be treated as times, they MUST be treated only as sequence numbers. Devices MUST reject manifests with sequence numbers smaller than any onboard sequence number.
+Only an actor with firmware installation authority is permitted to decide when device firmware can be installed. To enforce this rule, manifests MUST contain monotonically increasing sequence numbers. Manifests MAY use UTC epoch timestamps to coordinate monotonically increasing sequence numbers across many actors in many locations. If UTC epoch timestamps are used, they MUST NOT be treated as times, they MUST be treated only as sequence numbers. Devices MUST reject manifests with sequence numbers smaller than any onboard sequence number.
 
-N.B. This is not a firmware version. It is a manifest sequence number. A firmware version may be rolled back by creating a new manifest for the old firmware version with a later sequence number.
+Note: This is not a firmware version. It is a manifest sequence number. A firmware version may be rolled back by creating a new manifest for the old firmware version with a later sequence number.
 
 Mitigates: Threat MFT1
 
@@ -301,7 +303,7 @@ The target SHOULD verify firmware at time of boot. This requires authenticated p
 
 Mitigates: MFT7
 
-Implemnted by: Manifest Elements: Payload Digest, Size
+Implemented by: Manifest Elements: Payload Digest, Size
 
 ### Security Requirement MFSR4e: Authenticated precursor images
 
@@ -331,7 +333,7 @@ Implemented By: Manifest Elements: Vendor ID Condition, Class ID Condition
 
 If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in MFSR5 are acceptable but need to follow the end-to-end security model.
 
-For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as an OEM and an Operator, respectively, then the firmware cannot be installed without proof of rights from both the OEM and the Operator.
+For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device and the Network Operator.
 
 Mitigates: MFT10
 
@@ -350,7 +352,7 @@ Implemented by: Manifest Element: Content Key Distribution Method
 If a device grants different rights to different actors, then an exercise of those rights must be validated against a list of rights for the actor. This typically takes the form of an Access Control List (ACL). ACLs are applied to two scenarios:
 
 1. An ACL decides which elements of the manifest may be overridden and by which actors.
-1. An ACL decides which component identifier/storage identifier pairs can be written by which actors.
+2. An ACL decides which component identifier/storage identifier pairs can be written by which actors.
 
 Mitigates: MFT12, MFT10
 
@@ -362,7 +364,7 @@ User stories provide expected use cases. These are used to feed into usability r
 
 ### Use Case MFUS1: Installation Instructions
 
-As an OEM for IoT devices, I want to provide my devices with additional installation instructions so that I can keep process details out of my payload data.
+As an Device Operator, I want to provide my devices with additional installation instructions so that I can keep process details out of my payload data.
 
 Some installation instructions might be:
 
@@ -376,7 +378,7 @@ Satisfied by: MFUR1
 
 ### Use Case MFUS2: Override Non-Critical Manifest Elements
 
-As a Network Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. This assumes that the OEM holds more rights on a device than the Network Operator.
+As a Network Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. This assumes that the Device Operator delegated rights about the device to the Network Operator.
 
 Some examples of potentially overridable information:
 
@@ -395,27 +397,27 @@ Satisfied by: MFUR3
 
 ### Use Case MFUS4: Multiple Authorisations
 
-As an Operator, I want to ensure the quality of a firmware update before installing it, so that I can ensure a high standard of reliability on my network. The OEM may restrict my ability to create firmware, so I cannot be the only authority on the device.
+As a Device Operator, I want to ensure the quality of a firmware update before installing it, so that I can ensure interoperability of all devices in my product family. I want to restrict the ability to make changes to my firmware to certain operations only.
 
 Satisfied by: MFUR4, MFSR8
 
 ### Use Case MFUS5: Multiple Payload Formats
 
-As a Operator, I want to be able to send multiple payload formats to suit the needs of my update, so that I can optimise the bandwidth used by my devices.
+As an Operator, I want to be able to send multiple payload formats to suit the needs of my update, so that I can optimise the bandwidth used by my devices.
 
 Satisfied by: MFUR5
 
 ### Use Case MFUS6: Prevent Confidential Information Disclosures
 
-As an OEM or developer, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security is adequate to protect the manifest itself against information disclosure.
+As an firmware author, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security is adequate to protect the manifest itself against information disclosure.
 
 Satisfied by: MFSR7
 
 ### Use Case MFUS7: Prevent Devices from Unpacking Unknown Formats
 
-As an Operator, I want devices to determine whether they can process a payload prior to downloading it.
+As a Device Operator, I want devices to determine whether they can process a payload prior to downloading it.
 
-In some cases, it may be desirable for a third party to perform some processing on behalf of a target. For this to occur, the third party MUST indicate what processing occurred and how to verify it against the Firmware Authority's intent.
+In some cases, it may be desirable for a third party to perform some processing on behalf of a target. For this to occur, the third party MUST indicate what processing occurred and how to verify it against the Trust Provisioning Authority's intent.
 
 This amounts to overriding Processing Steps and URIs.
 
@@ -423,7 +425,7 @@ Satisfied by: MFUR6, MFUR2
 
 ### Use Case MFUS8: Specify Version Numbers of Target Firmware
 
-As an Operator, I want to be able to target devices for updates based on their current firmware version, so that I can control which versions are replaced with a single manifest.
+As a Device Operator, I want to be able to target devices for updates based on their current firmware version, so that I can control which versions are replaced with a single manifest.
 
 Satisfied by: MFUR7
 
@@ -447,7 +449,7 @@ Implemented by: Manifest Element: Directives
 
 ### Usability Requirement MFUR2
 
-It must be possible to redirect payload fetches. This applies where two manifests are used in conjunction. For example, an OEM manifest specifies a payload and signs it, and provides a URI for that payload. An Operator creates a second manifest, with a dependency on the first. They use this second manifest to override the URIs provided by the OEM, directing them into their own infrastructure instead. Some devices may provide this capability, while others may only look at canonical sources of firmware. For this to be possible, the device must fetch the payload, whereas a device that accpets payload pushes will ignore this feature.
+It must be possible to redirect payload fetches. This applies where two manifests are used in conjunction. For example, a Device Operator creates a manifest specifying a payload and signs it, and provides a URI for that payload. A Network Operator creates a second manifest, with a dependency on the first. They use this second manifest to override the URIs provided by the Device Operator, directing them into their own infrastructure instead. Some devices may provide this capability, while others may only look at canonical sources of firmware. For this to be possible, the device must fetch the payload, whereas a device that accpets payload pushes will ignore this feature.
 
 Satisfies: User story MFUS2
 
@@ -467,11 +469,11 @@ An IoT device with multiple microcontrollers in the same physical device (HeSA) 
 
 #### Example 2: Code and Configuration
 
-An IoT device firmware can be divided into two payloads: code and configuration. These payloads may require authority from different actors in order to install (see MFSR6 and MFSR8). This structure means that multiple manifests may be required, with a dependency structure between them.
+A firmware image can be divided into two payloads: code and configuration. These payloads may require authorizations from different actors in order to install (see MFSR6 and MFSR8). This structure means that multiple manifests may be required, with a dependency structure between them.
 
 #### Example 3: Multiple Chunks
 
-An IoT device firmware can be divided into multiple functional blocks for separate testing and distribution. This means that code would need to be distributed in multiple payloads. For example, this might be desirable in order to ensure that common code between devices is identical in order to reduce distribution bandwidth.
+A firmware image can be divided into multiple functional blocks for separate testing and distribution. This means that code would need to be distributed in multiple payloads. For example, this might be desirable in order to ensure that common code between devices is identical in order to reduce distribution bandwidth.
 
 Satisfies: User story MFUS2, MFUS3
 
@@ -487,7 +489,7 @@ Implemented by: COSE Signature (or similar)
 
 ### Usability Requirement MFUR5
 
-The manifest format MUST accommodate any payload format that an operator or OEM wishes to use. Some examples of payload format would be:
+The manifest format MUST accommodate any payload format that an Operator wishes to use. Some examples of payload format would be:
 
 * Binary
 * Elf
@@ -545,7 +547,7 @@ Implements: Security Requirement MFSR1.
 
 ## Manifest Element: Vendor ID Condition
 
-Vendor IDs MUST be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer’s infrastructure. Recommended practice is to use type 5 UUIDs with the vendor’s domain name and the UUID DNS prefix. Other options include type 1 and type 4 UUIDs.
+Vendor IDs MUST be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer's infrastructure. Recommended practice is to use type 5 UUIDs with the vendor's domain name and the UUID DNS prefix. Other options include type 1 and type 4 UUIDs.
 
 This ID is OPTIONAL but RECOMMENDED and helps to distinguish between identically named products from different vendors.
 
@@ -760,6 +762,7 @@ This document does not require any actions by IANA.
 We would like to thank our working group chairs, Dave Thaler, Russ Housley and David Waltermire, for their review comments and their support.
 
 We would like to thank the participants of the 2018 Berlin SUIT Hackathon and the June 2018 virtual design team meetings for their discussion input.
+In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten Bormann, David Brown, Markus Gueller, Frank Audun Kvamtro, Oyvind Ronningstad, Michael Richardson, Jan-Frederik Rieckers Francisco Acosta, Anton Gerasimov, Matthias Waehlisch, Max Groening, Daniel Petry, Gaetan Harter, Ralph Hamm, Steve Patrick, Fabio Utzig, Paul Lambert, Benjamin Kaduk, Said Gharout, and Milen Stoychev.  
 
 --- back
 
