@@ -397,7 +397,7 @@ Satisfied by: MFUR3
 
 ### Use Case MFUS4: Multiple Authorisations
 
-As a Device Operator, I want to ensure the quality of a firmware update before installing it, so that I can ensure interoperability of all devices in my product family. I want to restrict the ability to make changes to my firmware to certain operations only.
+As a Device Operator, I want to ensure the quality of a firmware update before installing it, so that I can ensure interoperability of all devices in my product family. I want to restrict the ability to make changes to my devices to require my express approval.
 
 Satisfied by: MFUR4, MFSR8
 
