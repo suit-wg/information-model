@@ -1,7 +1,7 @@
 ---
 title: Firmware Updates for Internet of Things Devices - An Information Model for Manifests
 abbrev: A Firmware Manifest Information Model
-docname: draft-ietf-suit-information-model-02
+docname: draft-ietf-suit-information-model-03
 category: std
 
 ipr: pre5378Trust200902
@@ -42,6 +42,9 @@ author:
 
 normative:
   RFC2119:
+  RFC4122:
+  RFC5652:
+  RFC8152:
   I-D.ietf-suit-architecture:
 informative:
   STRIDE:
@@ -52,7 +55,6 @@ informative:
     date: May 2018
     format:
       HTML:  https://msdn.microsoft.com/en-us/library/ee823878(v=cs.20).aspx
-  RFC4122:
 
 --- abstract
 
@@ -72,37 +74,40 @@ Because the information model covers a wide range of user stories and a wide ran
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in RFC 2119 {{RFC2119}}.
+document are to be interpreted as described in {{RFC2119}}.
 
 This document uses terms defined in {{I-D.ietf-suit-architecture}}.
 The term 'Operator' refers to both, Device and Network Operator.
 
+This document treats devices with a homogeneous storage architecture as devices with a heterogeneous storage architecture, but with a single storage subsystem.
 
 # Manifest Information Elements
 
 Each manifest element is anchored in a security requirement or a usability requirement. The manifest elements are described below and justified by their requirements.
 
-## Manifest Element: version identifier of the manifest structure
+## Manifest Element: version identifier of the manifest structure {#element-version-id}
 
 An identifier that describes which iteration of the manifest format is contained in the structure.
 
-This element is MANDATORY and must be present in order to allow devices to identify the version of the manifest data model that is in use.
+This element is MANDATORY and MUST be present in order to allow devices to identify the version of the manifest data model that is in use.
 
-## Manifest Element: Monotonic Sequence Number
+## Manifest Element: Monotonic Sequence Number {#element-sequence-number}
 
-A monotonically increasing sequence number. For convenience, the monotonic sequence number MAY be a UTC timestamp. This allows global synchronisation of sequence numbers without any additional management.
+A monotonically increasing sequence number. For convenience, the monotonic sequence number MAY be a UTC timestamp. This allows global synchronisation of sequence numbers without any additional management. This number MUST be easily accessible so that code choosing one out of several manifests can choose which is the latest.
 
 This element is MANDATORY and is necessary to prevent malicious actors from reverting a firmware update against the wishes of the relevant authority.
 
-Implements: Security Requirement MFSR1.
+Implements: [REQ.SEC.SEQUENCE](#req-sec-sequence)
 
-## Manifest Element: Vendor ID Condition
+## Manifest Element: Vendor ID Condition {#element-vendor-id}
 
-Vendor IDs MUST be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer's infrastructure. Recommended practice is to use type 5 UUIDs with the vendor's domain name and the UUID DNS prefix. Other options include type 1 and type 4 UUIDs.
+Vendor IDs MUST be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer's infrastructure. Recommended practice is to use {{RFC4122}} version 5 UUIDs with the vendor's domain name and the UUID DNS prefix. Other options include type 1 and type 4 UUIDs.
+
+Note Well: Vendor ID is not a human-readable element. It is intended for match/mismatch use only.
 
 This ID is RECOMMENDED and helps to distinguish between identically named products from different vendors.
 
-Implements: Security Requirement MFSR2, MFSR4f.
+Implements: [REQ.SEC.COMPATIBLE](#req-sec-compatible), [REQ.SEC.AUTH.COMPATIBILITY](#req-sec-authentic-compatibility).
 
 ### Example: Domain Name-based UUIDs
 
@@ -112,15 +117,28 @@ vendorId = UUID5(DNS, "vendor-a.com")
 
 Because the DNS infrastructure prevents multiple registrations of the same domain name, this UUID is guaranteed to be unique. Because the domain name is known, this UUID is reproducible. Type 1 and type 4 UUIDs produce similar guarantees of uniqueness, but not reproducibility.
 
-## Manifest Element: Class ID Condition
+## Manifest Element: Class ID Condition {#element-class-id}
 
-A device "Class" is defined as any device that can accept the same firmware update without modification. Class Identifiers MUST be unique within a Vendor ID. This is to prevent similarly, or identically named devices colliding in their customer's infrastructure. Recommended practice is to use type 5 UUIDs with the model, hardware revision, etc. and use the Vendor ID as the UUID prefix. Other options include type 1 and type 4 UUIDs. Classes MAY be implemented in a more granular way. Classes MUST NOT be implemented in a less granular way. Class ID can encompass model name, hardware revision, software revision. Devices MAY have multiple Class IDs.
+A device "Class" is defined as any device that can accept the same firmware update without modification. Class Identifiers MUST be unique within a Vendor ID. This is to prevent similarly, or identically named devices colliding in their customer's infrastructure.
+
+Recommended practice is to use {{RFC4122}} version 5 UUIDs with as much information as necessary to define firmware compatibility. Possible information used to derive the class UUID includes:
+
+* model name or number
+* hardware revision
+* runtime library version
+* bootloader version
+* ROM revision
+* silicon batch number
+
+The Class Identifier UUID SHOULD use the Vendor ID as the UUID prefix. Other options include version 1 and 4 UUIDs. Classes MAY be more granular than is required to identify firmware compatibility. Classes MUST NOT be less granular than is required to identify firmware compatibility. Devices MAY have multiple Class IDs.
 
 Note Well: Class ID is not a human-readable element. It is intended for match/mismatch use only.
 
-This ID is RECOMMENDED and allows devices to determine applicability of a firmware in an unambiguous way.
+Class ID is RECOMMENDED and allows devices to determine applicability of a firmware in an unambiguous way.
 
-Implements: Security Requirement MFSR2, MFSR4f.
+If Class ID is not implemented, then each logical device class MUST use a unique Root of Trust for authorisation.
+
+Implements: Security Requirement [REQ.SEC.COMPATIBLE](#req-sec-compatible), [REQ.SEC.AUTH.COMPATIBILITY](#req-sec-authentic-compatibility).
 
 ### Example 1: Different Classes
 
@@ -155,15 +173,17 @@ Vendor A produces two products, product X and product Y. These components share 
 
 Product X matches against both XclassId and CommonClassId. Product Y matches against both YclassId and CommonClassId.
 
-## Manifest Element: Precursor Image Digest Condition
+## Manifest Element: Precursor Image Digest Condition {#element-precursor-digest}
 
 When a precursor image is required by the payload format, a precursor image digest condition MUST be present in the conditions list. The precursor image may be installed or stored as a candidate.
 
-This element is MANDATORY for differential updates. Otherwise, it is not needed.
+This element is OPTIONAL to implement.
 
-Implements: Security Requirement MFSR4e
+Enables feature: differential updates.
 
-## Manifest Element: Required Image Version List
+Implements: [REQ.SEC.AUTH.PRECURSOR](#req-sec-authentic-precursor)
+
+## Manifest Element: Required Image Version List {#element-required-version}
 
 When a payload applies to multiple versions of a firmware, the required image version list specifies which versions must be present for the update to be applied. This allows the update author to target specific versions of firmware for an update, while excluding those to which it should not be applied.
 
@@ -171,37 +191,43 @@ Where an update can only be applied over specific predecessor versions, that ver
 
 This element is OPTIONAL.
 
-Implements: MFUR7
+Implements: [REQ.USE.IMG.VERSIONS](#req-use-img-versions)
 
-## Manifest Element: Best-Before timestamp condition
+## Manifest Element: Expiration Time {#manifest-element-expiration}
 
-This element tells a device the last application time. This is only usable in conjunction with a secure clock.
+This element tells a device the time at which the manifest expires and should no longer be used. This is only usable in conjunction with a secure clock.
 
-This element is OPTIONAL and MAY enable use cases where a secure clock is provided and firmware is intended to expire regularly.
+This element is OPTIONAL and MAY enable use cases where a secure clock is provided and firmware is intended to expire predictably.
 
-Implements: Security Requirement MFSR3
+Implements: [REQ.SEC.EXP](#req-sec-exp)
 
-## Manifest Element: Payload Format
+## Manifest Element: Payload Format {#manifest-element-format}
 
-The format of the payload must be indicated to devices is in an unambiguous way. This element provides a mechanism to describe the payload format, within the signed metadata.
+The format of the payload MUST be indicated to devices is in an unambiguous way. This element provides a mechanism to describe the payload format, within the signed metadata.
 
 This element is MANDATORY and MUST be present to enable devices to decode payloads correctly.
 
-Implements: Security Requirement MFSR4a, Usability Requirement MFUR5
+Implements: [REQ.SEC.AUTH.IMG_TYPE](#req-sec-authentic-image-type), [REQ.USE.IMG.FORMAT](#req-use-img-format)
 
-## Manifest Element: Processing Steps
+## Manifest Element: Processing Steps {#manifest-element-processing-steps}
 
-A list of all payload processors necessary to process a nested format and any parameters needed by those payload processors. Each Processing Step SHOULD indicate the expected digest of the payload after the processing is complete. Processing steps are distinct from Directives in that Directives apply to the manifest as a whole, whereas Processing Steps apply to an individual payload and provide instructions on how to unpack it.
+A representation of the Processing Steps required to decode a payload. The representation MUST describe which algorithm(s) is used and any additional parameters required by the algorithm(s). The representation MAY group Processing Steps together in predefined combinations.
 
-Implements: Usability Requirement MFUR6
+A Processing Step MAY indicate the expected digest of the payload after the processing is complete.
 
-## Manifest Element: Storage Location
+Processing steps are RECOMMENDED to implement.
 
-This element tells the device which component is being updated. The device can use this to establish which permissions are necessary and the physical location to use.
+Enables feature: Encrypted, compressed, packed formats
+
+Implements: [REQ.USE.IMG.NESTED](#req-use-img-nested)
+
+## Manifest Element: Storage Location {#maniest-element-storage-location}
+
+This element tells the device where to store a payload within a given component. The device can use this to establish which permissions are necessary and the physical storage location to use.
 
 This element is MANDATORY and MUST be present to enable devices to store payloads to the correct location.
 
-Implements: Security Requirement MFSR4b
+Implements: [REQ.SEC.AUTH.IMG_LOC](#req-sec-authentic-image-location)
 
 ### Example 1: Two Storage Locations
 
@@ -218,92 +244,122 @@ A device supports a full filesystem. The firmware authority chooses to make the 
 
 A device supports flash memory. The firmware authority chooses to make the storage identifier the offset where the image should be written.
 
-## Manifest Element: Component Identifier
+## Manifest Element: Component Identifier {#manifest-element-component-identifier}
 
 In a heterogeneous storage architecture, a storage identifier is insufficient to identify where and how to store a payload. To resolve this, a component identifier indicates which part of the storage architecture is targeted by the payload. In a homogeneous storage architecture, this element is unnecessary.
 
 This element is OPTIONAL and only necessary in heterogeneous storage architecture devices.
 
-Implements: MFUR3
+N.B. A serialisation MAY choose to combine Component Identifier and [Storage Location](#maniest-element-storage-location)
 
-## Manifest Element: URIs
+Implements: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
-This element is a list of weighted URIs that the device uses to select where to obtain a payload.
+## Manifest Element: Resource Indicator {#manifest-element-resource-indicator}
+
+This element provides the information required for the device to acquire the resource. This can be encoded in several ways:
+
+* One URI
+* A list of URIs
+* A prioritised list or URIs
+* A list of signed URIs
 
 This element is OPTIONAL and only needed when the target device does not intrinsically know where to find the payload.
 
-Note: Devices will typically require URIs.
+N.B. Devices will typically require URIs.
 
-Implements: Security Requirement MFSR4c
+Implements: [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-resource)
 
-## Manifest Element: Payload Digest
+## Manifest Element: Payload Digests {#manifest-element-payload-digest}
 
-This element contains the digest of the payload. This allows the target device to ensure authenticity of the payload. It MUST be possible to specify more than one payload digest, indexed by Manifest Element: XIP Address.
+This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A serialisation MUST provide a mechanism to select one payload from a list based on system parameters, such as XIP address.
 
-This element is MANDATORY and fundamentally necessary to ensure the authenticity and integrity of the payload.
+This element is MANDATORY to implement and fundamentally necessary to ensure the authenticity and integrity of the payload. Support for more than one digest is OPTIONAL to implement in a recipient device.
 
-Implements: Security Requirement MFSR4d, Usability Requirement MFUR8
+Implements: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.USE.IMG.SELECT](#req-use-img-select)
 
-## Manifest Element: Size
+## Manifest Element: Size {#manifest-element-size}
 
 The size of the payload in bytes.
 
+Variable-size storage locations MUST be set to exactly the size listed in this element.
+
 This element is MANDATORY and informs the target device how big of a payload to expect. Without it, devices are exposed to some classes of denial of service attack.
 
-Implements: Security Requirement MFSR4d
+Implements: [REQ.SEC.AUTH.EXEC](#req-sec-authentic-execution)
 
-## Manifest Element: Signature
+## Manifest Element: Signature {#manifest-element-signature}
 
-This is not strictly a manifest element. Instead, the manifest is wrapped by a standardised authentication container, such as a COSE or CMS signature object. The authentication container MUST support multiple actors and multiple authentications.
+This is not strictly a manifest element. Instead, the manifest is wrapped by a standardised authentication container, such as a COSE ({{RFC8152}}) or CMS ({{RFC5652}}) signature object. The authentication container MUST support multiple actors and multiple authentication methods.
 
-This element is MANDATORY and represents the foundation of all security properties of the manifest.
+This element is MANDATORY and represents the foundation of all security properties of the manifest. There are two exceptions to this requirement: 1) if the manifest is authenticated by a second manifest as a dependency and 2) if the manifest is authenticated by channel security and contains only channel information (such as URIs).
 
-Implements: Security Requirement MFSR5, MFSR6, MFUR4
 
-## Manifest Element: Directives
+Implements: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.RIGHTS](#req-sec-rights), [REQ.USE.MFST.MULTI_AUTH](#req-use-mfst-multi-auth)
 
-A list of instructions that the device should execute, in order, when processing the manifest. This information is distinct from the information necessary to process a payload (Processing Steps) and applies to the whole manifest including all payloads that it references. Directives include information such as update timing (For example, install only on Sunday, at 0200), procedural considerations (for example, shut down the equipment under control before executing the update), pre and post-installation steps (for example, run a script).
+## Manifest Element: Additional installation instructions {#manifest-element-additional-install-info}
+
+Instructions that the device should execute when processing the manifest. This information is distinct from the information necessary to process a payload. Additional installation instructions include information such as update timing (For example, install only on Sunday, at 0200), procedural considerations (for example, shut down the equipment under control before executing the update), pre and post-installation steps (for example, run a script).
+
+This element is OPTIONAL.
+
+Implements: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
+
+## Manifest Element: Aliases {#manifest-element-aliases}
+
+A mechanism for a manifest to augment or replace URIs or URI lists defined by one or more of its dependencies.
 
 This element is OPTIONAL and enables some use cases.
 
-Implements: Usability Requirement MFUR1
+Implements: [REQ.USE.MFST.OVERRIDE_REMOTE](#req-use-mfst-override)
 
-## Manifest Element: Aliases
+## Manifest Element: Dependencies {#manifest-element-dependencies}
 
-A list of Digest/URI pairs. A device should build an alias table while paring a manifest tree and treat any aliases as top-ranked URIs for the corresponding digest.
-
-This element is OPTIONAL and enables some use cases.
-
-Implements: Usability Requirement MFUR2
-
-## Manifest Element: Dependencies
-
-A list of Digest/URI pairs that refer to other manifests by digest. The manifests that are linked in this way must be acquired and installed simultaneously in order to form a complete update.
+A list of other manifests that are required by the current manifest. Manifests are identified an an unambiguous way, such as a digest.
 
 This element is MANDATORY to use in deployments that include both multiple authorities and multiple payloads.
 
-Implements: Usability Requirement MFUR3
+Implements: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
-## Manifest Element: Content Key Distribution Method
+## Manifest Element: Encryption Wrapper {#manifest-element-encryption-wrapper}
 
-Encrypting firmware images requires symmetric content encryption keys. Since there are several methods to protect or distribute the symmetric content encryption keys, the manifest contains a element for the Content Key Distribution Method. One examples for such a Content Key Distribution Method is the usage of Key Tables, pointing to content encryption keys, which themselves are encrypted using the public keys of devices. This MAY be included in a decryption step contained in Processing Steps.
+Encrypting firmware images requires symmetric content encryption keys. The encryption wrapper provides the information needed for a device to obtain or locate a key that it uses to decrypt the firmware. Typical choices for an encryption wrapper include CMS ({{RFC5652}}) or COSE ({{RFC8152}}). This MAY be included in a decryption step contained in [Processing Steps](#manifest-element-processing-steps).
 
 This element is MANDATORY to use for encrypted payloads,
 
-Implements: Security Requirement MFSR7.
+Implements: [REQ.SEC.IMG.CONFIDENTIALITY](#req-sec-image-confidentiality)
 
-## Manifest Element: XIP Address
+## Manifest Element: XIP Address {#manifest-element-xip-address}
 
 In order to support XIP systems with multiple possible base addresses, it is necessary to specify which address the payload is linked for.
 
 For example a microcontroller may have a simple bootloader that chooses one of two images to boot. That microcontroller then needs to choose one of two firmware images to install, based on which of its two images is older.
 
-Implements: MFUR8
+Implements: [REQ.USE.IMG.SELECT](#req-use-img-select)
 
 
-## Manifest Element: Load-time metadata
-## Manifest Element: Boot-time metadata
-## Manifest Element: Payload
+## Manifest Element: Load-time metadata {#manifest-element-load-metadata}
+
+Load-time metadata provides the device with information that it needs in order to load one or more images. This is effectively a copy operation from the permanent storage location of an image into the active use location of that image. The metadata contains the source and destination of the image as well as any operations that are performed on the image.
+
+Implements: [REQ.USE.LOAD](#req-use-load)
+
+## Manifest Element: Run-time metadata {#manifest-element-exec-metadata}
+
+Run-time metadata provides the device with any extra information needed to boot the device. This may include information such as the entry-point of an XIP image or the kernel command-line of a linux image.
+
+Implements: [REQ.USE.EXEC](#req-use-exec)
+
+## Manifest Element: Payload {#manifest-element-payload}
+
+The Payload element provides a recipient device with the whole payload, contained within the manifest superstructure. This enables the manifest and payload to be delivered simultaneously.
+
+Implements: [REQ.USE.PAYLOAD](#req-use-payload)
+
+## Manifest Element: Key Claims {#manifest-element-key-claims}
+
+The Key Claims element is not authenticated by the [Signature](#manifest-element-signature), instead, it provides a chain of key delegations (or references to them) for the device to follow in order to verify the key that authenticated the manifest using a trusted key.
+
+Implements: [REQ.USE.DELEGATION](#req-use-delegation)
 
 # Motivation for Manifest Fields {#design-motivation}
 The following sub-sections describe the threat model, user stories, security requirements, and usability requirements.
@@ -328,7 +384,7 @@ This threat model only covers elements related to the transport of firmware upda
 
 ## Threat Descriptions
 
-### Threat MFT1: Old Firmware
+### THREAT.IMG.EXPIRED: Old Firmware {#threat-expired}
 
 Classification: Elevation of Privilege
 
@@ -336,23 +392,9 @@ An attacker sends an old, but valid manifest with an old, but valid firmware ima
 
 Threat Escalation: If the attacker is able to exploit the known vulnerability, then this threat can be escalated to ALL TYPES.
 
-Mitigated by: MFSR1
+Mitigated by: [REQ.SEC.SEQUENCE](#req-sec-sequence)
 
-### Threat MFT2: Mismatched Firmware
-
-Classification: Denial of Service
-
-An attacker sends a valid firmware image, for the wrong type of device, signed by an actor with firmware installation permission on both types of device. The firmware is verified by the device positively because it is signed by an actor with the appropriate permission. This could have wide-ranging consequences. For devices that are similar, it could cause minor breakage, or expose security vulnerabilities. For devices that are very different, it is likely to render devices inoperable.
-
-Mitigated by: MFSR2
-
-Example:
-
-Suppose that two vendors, Vendor A and Vendor B, adopt the same trade name in different geographic regions, and they both make products with the same names, or product name matching is not used. This causes firmware from Vendor A to match devices from Vendor B.
-
-If the vendors are the firmware authorities, then devices from Vendor A will reject images signed by Vendor B since they use different credentials. However, if both devices trust the same firmware authority, then, devices from Vendor A could install firmware intended for devices from Vendor B.
-
-### Threat MFT3: Offline device + Old Firmware
+### THREAT.IMG.EXPIRED.ROLLBACK : Offline device + Old Firmware {#threat-expired-rollback}
 
 Classification: Elevation of Privilege
 
@@ -360,19 +402,34 @@ An attacker targets a device that has been offline for a long time and runs an o
 
 Threat Escalation: If the attacker is able to exploit the known vulnerability, then this threat can be escalated to ALL TYPES.
 
-Mitigated by: MFSR3
+Mitigated by: [REQ.SEC.EXP](#req-sec-exp)
 
-### Threat MFT4: The target device misinterprets the type of payload
+### THREAT.IMG.INCOMPATIBLE: Mismatched Firmware {#threat-incompatible}
 
 Classification: Denial of Service
 
-If a device misinterprets the type of the firmware image, it may cause a device to install a firmware image incorrectly. An incorrectly installed firmware image would likely cause the device to stop functioning.
+An attacker sends a valid firmware image, for the wrong type of device, signed by an actor with firmware installation permission on both types of device. The firmware is verified by the device positively because it is signed by an actor with the appropriate permission. This could have wide-ranging consequences. For devices that are similar, it could cause minor breakage, or expose security vulnerabilities. For devices that are very different, it is likely to render devices inoperable.
+
+Mitigated by: [REQ.SEC.COMPATIBLE](#req-sec-compatible)
+
+#### Example:
+
+Suppose that two vendors, Vendor A and Vendor B, adopt the same trade name in different geographic regions, and they both make products with the same names, or product name matching is not used. This causes firmware from Vendor A to match devices from Vendor B.
+
+If the vendors are the firmware authorities, then devices from Vendor A will reject images signed by Vendor B since they use different credentials. However, if both devices trust the same firmware authority, then, devices from Vendor A could install firmware intended for devices from Vendor B.
+
+
+### THREAT.IMG.FORMAT: The target device misinterprets the type of payload {#threat-img-format}
+
+Classification: Denial of Service
+
+If a device misinterprets the format of the firmware image, it may cause a device to install a firmware image incorrectly. An incorrectly installed firmware image would likely cause the device to stop functioning.
 
 Threat Escalation: An attacker that can cause a device to misinterpret the received firmware image may gain elevation of privilege and potentially expand this to all types of threat.
 
-Mitigated by: MFSR4a
+Mitigated by: [REQ.SEC.AUTH.IMG_TYPE](#req-sec-authentic-image-type)
 
-### Threat MFT5: The target device installs the payload to the wrong location
+### THREAT.IMG.LOCATION: The target device installs the payload to the wrong location {#threat-img-location}
 
 Classification: Denial of Service
 
@@ -380,49 +437,48 @@ If a device installs a firmware image to the wrong location on the device, then 
 
 Threat Escalation: An attacker that can cause a device to misinterpret the received code may gain elevation of privilege and potentially expand this to all types of threat.
 
-Mitigated by: MFSR4b
+Mitigated by: [REQ.SEC.AUTH.IMG_LOC](#req-sec-authentic-image-type)
 
-### Threat MFT6: Redirection
+### THREAT.NET.REDIRECT: Redirection to inauthentic payload hosting {#threat-net-redirect}
 
 Classification: Denial of Service
 
 If a device does not know where to obtain the payload for an update, it may be redirected to an attacker's server. This would allow an attacker to provide broken payloads to devices.
 
-Mitigated by: MFSR4c
+Mitigated by: [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-resource)
 
-### Threat MFT7: Payload Verification on Boot
+### THREAT.NET.MITM
+
+### THREAT.IMG.REPLACE: Payload Replacement {#threat-image-replacement}
 
 Classification: Elevation of Privilege
 
-An attacker replaces a newly downloaded firmware after a device finishes verifying a manifest. This could cause the device to execute the attacker's code. This attack likely requires physical access to the device. However, it is possible that this attack is carried out in combination with another threat that allows remote execution.
+An attacker replaces a newly downloaded firmware after a device finishes verifying a manifest. This could cause the device to execute the attacker's code. This attack likely requires physical access to the device. However, it is possible that this attack is carried out in combination with another threat that allows remote execution. This is a typical Time Of Check/Time Of Use threat.
 
 Threat Escalation: If the attacker is able to exploit a known
 vulnerability, or if the attacker can supply their own firmware, then this threat can be escalated to ALL TYPES.
 
-Mitigated by: MFSR4d
+Mitigated by: [REQ.SEC.AUTH.EXEC](#req-sec-authentic-execution)
 
-### Threat MFT8: Unauthenticated Updates
+### THREAT.IMG.NON_AUTH: Unauthenticated Images {#threat-img-unauthenticated}
 
-Classification: Elevation of Privilege
+Classification: Elevation of Privilege / All Types
 
 If an attacker can install their firmware on a device, by manipulating either payload or metadata, then they have complete control of the device.
 
-Threat Escalation: If the attacker is able to exploit a known
-vulnerability, or if the attacker can supply their own firmware, then this threat can be escalated to ALL TYPES.
+Mitigated by: [REQ.SEC.AUTHENTIC](#req-sec-authentic)
 
-Mitigated by: MFSR5
+### THREAT.UPD.WRONG_PRECURSOR: Unexpected Precursor images {#threat-upd-wrong-precursor}
 
-### Threat MFT9: Unexpected Precursor images
-
-Classification: Denial of Service
+Classification: Denial of Service / All Types
 
 An attacker sends a valid, current manifest to a device that has an unexpected precursor image. If a payload format requires a precursor image (for example, delta updates) and that precursor image is not available on the target device, it could cause the update to break.
 
-Threat Escalation: An attacker that can cause a device to install a payload against the wrong precursor image could gain elevation of privilege and potentially expand this to all types of threat.
+An attacker that can cause a device to install a payload against the wrong precursor image could gain elevation of privilege and potentially expand this to all types of threat. However, it is unlikely that a valid differential update applied to an incorrect precursor would result in a functional, but vulnerable firmware.
 
-Mitigated by: MFSR4e
+Mitigated by: [REQ.SEC.AUTH.PRECURSOR](#req-sec-authentic-precursor)
 
-### Threat MFT10: Unqualified Firmware
+### THREAT.UPD.INTEROP: Unqualified Firmware {#threat-upd-interop}
 
 Classification: Denial of Service, Elevation of Privilege
 
@@ -430,13 +486,13 @@ This threat can appear in several ways, however it is ultimately about interoper
 
 Threat Escalation: If the firmware expects configuration that is present in devices deployed in Network A, but not in devices deployed in Network B, then the device may experience degraded security, leading to threats of All Types.
 
-Mitigated by: MFSR6, MFSR8
+Mitigated by: [REQ.SEC.RIGHTS](#req-sec-rights), [REQ.SEC.ACCESS_CONTROL](#req-sec-access-control)
 
 #### Example 1: Multiple Network Operators with a Single Device Operator
 
-In this example let us assume that Device Operators expect the rights to create firmware but that Network Operators expect the rights to qualify firmware as fit-for-purpose on their networks. Additionally assume that an Device Operators manage devices that can be deployed on any network, including Network A and B in our example.
+In this example, assume that Device Operators expect the rights to create firmware but that Network Operators expect the rights to qualify firmware as fit-for-purpose on their networks. Additionally, assume that Device Operators manage devices that can be deployed on any network, including Network A and B in our example.
 
-An attacker may obtain a manifest for a device on Network A. Then, this attacker sends that manifest to a device on Network B. Because Network A and Network B are under control of different Operators, and the firmware for a device on Network A has not been qualified to be deployed on Network B, the target device on Network B is now in violation of the Operator B's policy and may get disabled by this unqualified, but signed firmware.
+An attacker may obtain a manifest for a device on Network A. Then, this attacker sends that manifest to a device on Network B. Because Network A and Network B are under control of different Operators, and the firmware for a device on Network A has not been qualified to be deployed on Network B, the target device on Network B is now in violation of the Operator B's policy and may be disabled by this unqualified, but signed firmware.
 
 This is a denial of service because it can render devices inoperable. This is an elevation of privilege because it allows the attacker to make installation decisions that should be made by the Operator.
 
@@ -444,170 +500,178 @@ This is a denial of service because it can render devices inoperable. This is an
 
 Multiple devices that interoperate are used on the same network and communicate with each other. Some devices are manufactured and managed by Device Operator A and other devices by Device Operator B. A new firmware is released by Device Operator A that breaks compatibility with devices from Device Operator B. An attacker sends the new firmware to the devices managed by Device Operator A without approval of the Network Operator. This breaks the behaviour of the larger system causing denial of service and possibly other threats. Where the network is a distributed SCADA system, this could cause misbehaviour of the process that is under control.
 
-### Threat MFT11: Reverse Engineering Of Firmware Image for Vulnerability Analysis
+### THREAT.IMG.DISCLOSURE: Reverse Engineering Of Firmware Image for Vulnerability Analysis {#threat-img-disclosure}
 
 Classification: All Types
 
 An attacker wants to mount an attack on an IoT device. To prepare the attack he or she retrieves the provided firmware image and performs reverse engineering of the firmware image to analyze it for specific vulnerabilities.
 
-Mitigated by: MFSR7
+Mitigated by: [REQ.SEC.IMG.CONFIDENTIALITY](#req-sec-image-confidentiality)
 
-### Threat MFT12: Overriding Critical Manifest Elements
+### THREAT.MFST.OVERRIDE: Overriding Critical Manifest Elements {#threat-mfst-override}
 
 Classification: Elevation of Privilege
 
-An authorised actor, but not the firmware authority, uses an override mechanism (MFUS2) to change an information element in a manifest signed by the firmware authority. For example, if the authorised actor overrides the digest and URI of the payload, the actor can replace the entire payload with a payload of their choice.
+An authorised actor, but not the firmware authority, uses an override mechanism ([USER_STORY.OVERRIDE](#user-story-override)) to change an information element in a manifest signed by the firmware authority. For example, if the authorised actor overrides the digest and URI of the payload, the actor can replace the entire payload with a payload of their choice.
 
 Threat Escalation: By overriding elements such as payload installation instructions or firmware digest, this threat can be escalated to all types.
 
-Mitigated by: MFSR8
+Mitigated by: [REQ.SEC.ACCESS_CONTROL](#req-sec-access-control)
 
-### Threat MFT13: Manifest Element Exposure
+### THREAT.MFST.EXPOSURE: Confidential Manifest Element Exposure {#threat-mfst-exposure}
 
 Classification: Information Disclosure
 
 A third party may be able to extract sensitive information from the manifest.
 
-Mitigated by: MFSR9
+Mitigated by: [REQ.SEC.MFST.CONFIDENTIALITY](#req-sec-mfst-confidentiality)
+
+### THREAT.IMG.EXTRA: Extra data after image {#threat-img-extra}
+
+Classification: All Types
+
+If a third party modifies the image so that it contains extra code after a valid, authentic image, that third party can then use their own code in order to make better use of an existing vulnerability
+
+Mitigated by: [REQ.SEC.IMG.COMPLETE_DIGEST](#req-sec-img-complete-digest)
 
 ## Security Requirements {#security-requirements}
 
 The security requirements here are a set of policies that mitigate the threats described in {{threat-model}}.
 
-### Security Requirement MFSR1: Monotonic Sequence Numbers
+### REQ.SEC.SEQUENCE: Monotonic Sequence Numbers {#req-sec-sequence}
 
 Only an actor with firmware installation authority is permitted to decide when device firmware can be installed. To enforce this rule, manifests MUST contain monotonically increasing sequence numbers. Manifests MAY use UTC epoch timestamps to coordinate monotonically increasing sequence numbers across many actors in many locations. If UTC epoch timestamps are used, they MUST NOT be treated as times, they MUST be treated only as sequence numbers. Devices MUST reject manifests with sequence numbers smaller than any onboard sequence number.
 
 Note: This is not a firmware version. It is a manifest sequence number. A firmware version may be rolled back by creating a new manifest for the old firmware version with a later sequence number.
 
-Mitigates: Threat MFT1
+Mitigates: [THREAT.IMG.EXPIRED](#threat-expired)
 
-Implemented by: Manifest Element: Monotonic Sequence Number
+Implemented by: [Monotonic Sequence Number](#element-sequence-number)
 
-### Security Requirement MFSR2: Vendor, Device-type Identifiers
+### REQ.SEC.COMPATIBLE: Vendor, Device-type Identifiers {#req-sec-compatible}
 
 Devices MUST only apply firmware that is intended for them. Devices MUST know with fine granularity that a given update applies to their vendor, model, hardware revision, software revision. Human-readable identifiers are often error-prone in this regard, so unique identifiers SHOULD be used.
 
-Mitigates: Threat MFT2
+Mitigates: [THREAT.IMG.INCOMPATIBLE](#threat-incompatible)
 
-Implemented by: Manifest Elements: Vendor ID Condition, Class ID Condition
+Implemented by: [Vendor ID Condition](#element-vendor-id), [Class ID Condition](#element-class-id)
 
-### Security Requirement MFSR3: Best-Before Timestamps
+### REQ.SEC.EXP: Expiration Time {#req-sec-exp}
 
-Firmware MAY expire after a given time. Devices MAY provide a secure clock (local or remote). If a secure clock is provided and the Firmware manifest has a best-before timestamp, the device MUST reject the manifest if current time is larger than the best-before time.
+Firmware MAY expire after a given time. Devices MAY provide a secure clock (local or remote). If a secure clock is provided and the Firmware manifest has an expiration timestamp, the device MUST reject the manifest if current time is later than the expiration time.
 
-Mitigates: Threat MFT3
+Mitigates: [THREAT.IMG.EXPIRED.ROLLBACK ](#threat-expired-rollback)
 
-Implemented by: Manifest Element: Best-Before timestamp condition
+Implemented by: [Expiration Time](#manifest-element-expiration)
 
-### Security Requirement MFSR5: Cryptographic Authenticity
+### REQ.SEC.AUTHENTIC: Cryptographic Authenticity {#req-sec-authentic}
 
-The authenticity of an update must be demonstrable. Typically, this means that updates must be digitally authenticated. Because the manifest contains information about how to install the update, the manifest's authenticity must also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code, the authenticity of the firmware image is tied to the manifest by the use of a digest of the firmware image.
+The authenticity of an update MUST be demonstrable. Typically, this means that updates must be digitally authenticated. Because the manifest contains information about how to install the update, the manifest's authenticity MUST also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code, the authenticity of the firmware image is tied to the manifest by the use of a digest of the firmware image.
 
-Mitigates: Threat MFT8
+Mitigates: [THREAT.IMG.NON_AUTH](#threat-img-unauthenticated)
 
-Implemented by: Signature, Payload Digest
+Implemented by: [Signature](#manifest-element-signature), [Payload Digest](#manifest-element-payload-digest)
 
-### Security Requirement MFSR4a: Authenticated Payload Type
+### REQ.SEC.AUTH.IMG_TYPE: Authenticated Payload Type {#req-sec-authentic-image-type}
 
 The type of payload (which may be independent of format) MUST be authenticated. For example, the target must know whether the payload is XIP firmware, a loadable module, or serialized configuration data.
 
-Mitigates: MFT4
+Mitigates: [THREAT.IMG.FORMAT](#threat-img-format)
 
-Implemented by: Manifest Elements: Payload Format, Storage Location
+Implemented by: [Payload Format](#manifest-element-format), [Storage Location](#maniest-element-storage-location)
 
-### Security Requirement MFSR4b: Authenticated Storage Location
+### Security Requirement REQ.SEC.AUTH.IMG_LOC: Authenticated Storage Location {#req-sec-authentic-image-location}
 
 The location on the target where the payload is to be stored MUST be authenticated.
 
-Mitigates: MFT5
+Mitigates: [THREAT.IMG.LOCATION](#threat-img-location)
 
-Implemented by: Manifest Elements: Storage Location
+Implemented by: [Storage Location](#maniest-element-storage-location)
 
-### Security Requirement MFSR4c: Authenticated Remote Resource Location
+### REQ.SEC.AUTH.REMOTE_LOC: Authenticated Remote Resource Location {#req-sec-authenticated-remote-resource}
 
 The location where a target should find a payload MUST be authenticated.
 
-Mitigates: MFT6
+Mitigates: [THREAT.NET.REDIRECT](#threat-net-redirect)
 
-Implemented by: Manifest Elements: URIs
+Implemented by: [Resource Indicator](#manifest-element-resource-indicator)
 
-### Security Requirement MFSR4d: Secure Boot
+### REQ.SEC.AUTH.EXEC: Secure Execution {#req-sec-authentic-execution}
 
 The target SHOULD verify firmware at time of boot. This requires authenticated payload size, and digest.
 
-Mitigates: MFT7
+Mitigates: [THREAT.IMG.REPLACE](#threat-image-replacement)
 
-Implemented by: Manifest Elements: Payload Digest, Size
+Implemented by: [Payload Digest](#manifest-element-payload-digest), [Size](#manifest-element-size)
 
-### Security Requirement MFSR4e: Authenticated precursor images
+### REQ.SEC.AUTH.PRECURSOR: Authenticated precursor images {#req-sec-authentic-precursor}
 
 If an update uses a differential compression method, it MUST specify the digest of the precursor image and that digest MUST be authenticated.
 
-Mitigates: MFT9
+Mitigates: [THREAT.UPD.WRONG_PRECURSOR](#threat-upd-wrong-precursor)
 
-Implemented by: Manifest Elements: Precursor Image Digest Condition
+Implemented by: [Precursor Image Digest](#element-precursor-digest)
 
-### Security Requirement MFSR4f: Authenticated Vendor and Class IDs
-
-The identifiers that specify firmware compatibility MUST be authenticated to ensure that only compatible firmware is installed on a target device.
-
-Mitigates: MFT2
-
-Implemented By: Manifest Elements: Vendor ID Condition, Class ID Condition
-
-### Security Requirement MFSR4f: Authenticated Vendor and Class IDs
+### REQ.SEC.AUTH.COMPATIBILITY: Authenticated Vendor and Class IDs {#req-sec-authentic-compatibility}
 
 The identifiers that specify firmware compatibility MUST be authenticated to ensure that only compatible firmware is installed on a target device.
 
-Mitigates: MFT2
+Mitigates: [THREAT.IMG.INCOMPATIBLE](#threat-incompatible)
 
-Implemented By: Manifest Elements: Vendor ID Condition, Class ID Condition
+Implemented By: [Vendor ID Condition](#element-vendor-id), [Class ID Condition](#element-class-id)
 
-### Security Requirement MFSR6: Rights Require Authenticity
+### REQ.SEC.RIGHTS: Rights Require Authenticity {#req-sec-rights}
 
-If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in MFSR5 are acceptable but need to follow the end-to-end security model.
+If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in [REQ.SEC.AUTHENTIC](#req-sec-authentic) are acceptable but need to follow the end-to-end security model.
 
 For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device and the Network Operator.
 
-Mitigates: MFT10
+Mitigates: [THREAT.UPD.INTEROP](#threat-upd-interop)
 
-Implemented by: Signature
+Implemented by: [Signature](#manifest-element-signature)
 
-### Security Requirement MFSR7: Firmware encryption
+### REQ.SEC.IMG.CONFIDENTIALITY: Payload Encryption {#req-sec-image-confidentiality}
 
-The manifest information model must enable encrypted payloads. Encryption helps to prevent third parties, including attackers, from reading the content of the firmware image. This can protect against confidential information disclosures and discovery of vulnerabilities through reverse engineering. Therefore the manifest must convey the information required to allow an intended recipient to decrypt an encrypted payload.
+The manifest information model MUST enable encrypted payloads. Encryption helps to prevent third parties, including attackers, from reading the content of the firmware image. This can protect against confidential information disclosures and discovery of vulnerabilities through reverse engineering. Therefore the manifest must convey the information required to allow an intended recipient to decrypt an encrypted payload.
 
-Mitigates: MFT11
+Mitigates: [THREAT.IMG.DISCLOSURE](#threat-img-disclosure)
 
-Implemented by: Manifest Element: Content Key Distribution Method
+Implemented by: [Encryption Wrapper](#manifest-element-encryption-wrapper)
 
-### Security Requirement MFSR8: Access Control Lists
+### REQ.SEC.ACCESS_CONTROL: Access Control {#req-sec-access-control}
 
-If a device grants different rights to different actors, then an exercise of those rights must be validated against a list of rights for the actor. This typically takes the form of an Access Control List (ACL). ACLs are applied to two scenarios:
+If a device grants different rights to different actors, then an exercise of those rights MUST be validated against a list of rights for the actor. This typically takes the form of an Access Control List (ACL). ACLs are applied to two scenarios:
 
 1. An ACL decides which elements of the manifest may be overridden and by which actors.
 2. An ACL decides which component identifier/storage identifier pairs can be written by which actors.
 
-Mitigates: MFT12, MFT10
+Mitigates: [THREAT.MFST.OVERRIDE](#threat-mfst-override), [THREAT.UPD.INTEROP](#threat-upd-interop)
 
 Implemented by: Client-side code, not specified in manifest.
 
-### Security Requirement MFSR9: Encrypted Manifests
+### REQ.SEC.MFST.CONFIDENTIALITY: Encrypted Manifests {#req-sec-mfst-confidentiality}
 
-It must be possible to encrypt part or all of the manifest. This may be accomplished with either transport encryption or with at-rest encryption, for example COSE_Encrypt.
+It MUST be possible to encrypt part or all of the manifest. This may be accomplished with either transport encryption or with at-rest encryption.
 
-Mitigates: MFT13
+Mitigates: [THREAT.MFST.EXPOSURE](#threat-mfst-exposure)
 
-Implemented by: TLS/COSE
+Implemented by: External Encryption Wrapper / Transport Security
+
+### REQ.SEC.IMG.COMPLETE_DIGEST: Whole Image Digest {#req-sec-img-complete-digest}
+
+The digest SHOULD cover all available space in a fixed-size storage location. Variable-size storage locations MUST be restricted to exactly the size of deployed payload. This prevents any data from being distributed without being covered by the digest. For example, XIP microcontrollers typically have fixed-size storage. These devices should deploy a digest that covers the deployed firmware image, concatenated with the default erased value of any remaining space.
+
+Mitigates: [THREAT.IMG.EXTRA](#threat-img-extra)
+
+Implemented by: [Payload Digests](#manifest-element-payload-digest)
 
 ## User Stories {#user-stories}
 
 User stories provide expected use cases. These are used to feed into usability requirements.
 
-### Use Case MFUS1: Installation Instructions
+### USER_STORY.INSTALL.INSTRUCTIONS: Installation Instructions {#user-story-install-instructions}
 
-As an Device Operator, I want to provide my devices with additional installation instructions so that I can keep process details out of my payload data.
+As a Device Operator, I want to provide my devices with additional installation instructions so that I can keep process details out of my payload data.
 
 Some installation instructions might be:
 
@@ -617,118 +681,144 @@ Some installation instructions might be:
 * Install the pre-cached update matching this manifest.
 * Install this update immediately, overriding any long-running tasks.
 
-Satisfied by: MFUR1
+Satisfied by: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
 
-### Use Case MFUS2: Override Non-Critical Manifest Elements
+### USER_STORY.MFST.FAIL_EARLY: Fail Early {#user-story-fail-early}
 
-As a Network Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. This assumes that the Device Operator delegated rights about the device to the Network Operator.
+As a designer of a resource-constrained IoT device, I want bad updates to fail as early as possible to preserve battery life and limit consumed bandwidth.
+
+Satisfied by: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
+
+### USER_STORY.OVERRIDE: Override Non-Critical Manifest Elements {#user-story-override}
+
+As a Network Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. The authority to override this information is provided via the installation of a limited trust relationship by another authority.
 
 Some examples of potentially overridable information:
 
-* URIs: this allows the Network Operator to direct devices to their own infrastructure in order to reduce network load.
+* [URIs](#manifest-element-resource-indicator): this allows the Network Operator to direct devices to their own infrastructure in order to reduce network load.
 * Conditions: this allows the Network Operator to pose additional constraints on the installation of the manifest.
-* Directives: this allows the Network Operator to add more instructions such as time of installation.
-* Processing Steps: If an intermediary performs an action on behalf of a device, it may need to override the processing steps. It is still possible for a device to verify the final content and the result of any processing step that specifies a digest. Some processing steps should be non-overridable.
+* [Directives](#manifest-element-additional-install-info): this allows the Network Operator to add more instructions such as time of installation.
+* [Processing Steps](#manifest-element-processing-steps): If an intermediary performs an action on behalf of a device, it may need to override the processing steps. It is still possible for a device to verify the final content and the result of any processing step that specifies a digest. Some processing steps should be non-overridable.
 
-Satisfied by: MFUR2, MFUR3
+Satisfied by: [USER_STORY.OVERRIDE](#user-story-override), [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
-### Use Case MFUS3: Modular Update
+### USER_STORY.COMPONENT: Component Update {#user-story-component}
 
-As an Operator, I want to divide my firmware into frequently updated and infrequently updated components, so that I can reduce the size of updates and make different parties responsible for different components.
+As an Operator, I want to divide my firmware into components, so that I can reduce the size of updates, make different parties responsible for different components, and divide my firmware into frequently updated and infrequently updated components.
 
-Satisfied by: MFUR3
+Satisfied by: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
-### Use Case MFUS4: Multiple Authorisations
+### USER_STORY.MULTI_AUTH: Multiple Authorisations {#user-story-multi-auth}
 
 As a Device Operator, I want to ensure the quality of a firmware update before installing it, so that I can ensure interoperability of all devices in my product family. I want to restrict the ability to make changes to my devices to require my express approval.
 
-Satisfied by: MFUR4, MFSR8
+Satisfied by: [REQ.USE.MFST.MULTI_AUTH](#req-use-mfst-multi-auth), [REQ.SEC.ACCESS_CONTROL](#req-sec-access-control)
 
-### Use Case MFUS5: Multiple Payload Formats
+### USER_STORY.IMG.FORMAT: Multiple Payload Formats {#user-story-img-format}
 
 As an Operator, I want to be able to send multiple payload formats to suit the needs of my update, so that I can optimise the bandwidth used by my devices.
 
-Satisfied by: MFUR5
+Satisfied by: [REQ.USE.IMG.FORMAT](#req-use-img-format)
 
-### Use Case MFUS6: Prevent Confidential Information Disclosures
+### USER_STORY.IMG.CONFIDENTIALITY: Prevent Confidential Information Disclosures {#user-story-img-confidentiality}
 
-As an firmware author, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security is adequate to protect the manifest itself against information disclosure.
+As an firmware author, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security or at-rest encryption is adequate to protect the manifest itself against information disclosure.
 
-Satisfied by: MFSR7
+Satisfied by: [REQ.SEC.IMG.CONFIDENTIALITY](#req-sec-image-confidentiality)
 
-### Use Case MFUS7: Prevent Devices from Unpacking Unknown Formats
+### USER_STORY.IMG.UNKNOWN_FORMAT: Prevent Devices from Unpacking Unknown Formats {#user-story-img-unknown-format}
 
 As a Device Operator, I want devices to determine whether they can process a payload prior to downloading it.
 
 In some cases, it may be desirable for a third party to perform some processing on behalf of a target. For this to occur, the third party MUST indicate what processing occurred and how to verify it against the Trust Provisioning Authority's intent.
 
-This amounts to overriding Processing Steps and URIs.
+This amounts to overriding [Processing Steps](#manifest-element-processing-steps) and [Resource Indicator](#manifest-element-resource-indicator).
 
-Satisfied by: MFUR6, MFUR2
+Satisfied by: [REQ.USE.IMG.FORMAT](#req-use-img-format), [REQ.USE.IMG.NESTED](#req-use-img-nested), [REQ.USE.MFST.OVERRIDE_REMOTE](#req-use-mfst-override)
 
-### Use Case MFUS8: Specify Version Numbers of Target Firmware
+### USER_STORY.IMG.CURRENT_VERSION: Specify Version Numbers of Target Firmware {#user-story-img-current-version}
 
 As a Device Operator, I want to be able to target devices for updates based on their current firmware version, so that I can control which versions are replaced with a single manifest.
 
-Satisfied by: MFUR7
+Satisfied by: [REQ.USE.IMG.VERSIONS](#req-use-img-versions)
 
-### Use Case MFUS9: Enable Devices to Choose Between Images
+### USER_STORY.IMG.SELECT: Enable Devices to Choose Between Images {#user-story-img-select}
 
 As a developer, I want to be able to sign two or more versions of my firmware in a single manifest so that I can use a very simple bootloader that chooses between two or more images that are executed in-place.
 
-Satisfied by: MFUR8
+Satisfied by: [REQ.USE.IMG.SELECT](#req-use-img-select)
 
-### Use Case MFUS10: Secure Boot Using Manifests
+### USER_STORY.EXEC.MFST: Secure Execution Using Manifests {#user-story-exec-mfst}
 
-As a signer for both secure boot and firmware deployment, I would like to use the same signed document for both tasks so that my data size is smaller, I can share common code, and I can reduce signature verifications.
+As a signer for both secure execution/boot and firmware deployment, I would like to use the same signed document for both tasks so that my data size is smaller, I can share common code, and I can reduce signature verifications.
 
-Satisfied by: MFUR9
+Satisfied by: [REQ.USE.EXEC](#req-use-exec)
 
-### Use Case MFUS11: Decompress on Load
+### USER_STORY.EXEC.DECOMPRESS: Decompress on Load {#user-story-exec-decompress}
 
-As a developer of firmware for a run-from-RAM device, I would like to use compressed images and to indicate to the bootloader that I am using a compressed image in the manifest so that it can be used with secure boot.
+As a developer of firmware for a run-from-RAM device, I would like to use compressed images and to indicate to the bootloader that I am using a compressed image in the manifest so that it can be used with secure execution/boot.
 
-Satisfied by: MFUR10
+Satisfied by: [REQ.USE.LOAD](#req-use-load)
 
-### Use Case MFUS12: Payload in Manifest
+### USER_STORY.MFST.IMG: Payload in Manifest {#user-story-mfst-img}
 
 As an operator of a constrained network, I would like to be able to send a small payload in the same packet as the manifest so that I can reduce network traffic.
 
-Satisfied by: MFUR11
+Satisfied by: [REQ.USE.PAYLOAD](#req-use-payload)
 
-### Use Case MFUS13: Simple Parsing
+### USER_STORY.MFST.PARSE: Simple Parsing {#user-story-mfst-parse}
 
 As a developer for constrained devices, I want a low complexity library for processing updates so that I can fit more application code on my device.
 
-Satisfied by: MFUR12
+Satisfied by: [REQ.USE.PARSE](#req-use-parse)
+
+### USER_STORY.MFST.DELEGATION: Delegated Authority in Manifest {#user-story-mfst-delegation}
+
+As an operator that rotates delegated authority more often than delivering firmware updates, I would like to delegate a new authority when I deliver a firmware update so that I can accomplish both tasks in a single transmission.
+
+Satisfied by: [REQ.USE.DELEGATION](#req-use-delegation)
+
+### USER_STORY.MFST.PRE_CHECK: Update Evaluation {#user-story-mfst-pre-check}
+
+As an operator of a constrained network, I would like devices on my network to be able to evaluate the suitability of an update prior to initiating any large download so that I can prevent unnecessary consumption of bandwidth.
+
+Satisfied by: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
 
 ## Usability Requirements
 
 The following usability requirements satisfy the user stories listed above.
 
-### Usability Requirement MFUR1
+### REQ.USE.MFST.PRE_CHECK: Pre-Installation Checks {#req-use-mfst-pre-check}
 
-It must be possible to provide all information necessary for the processing of a manifest into the manifest.
+It MUST be possible for a manifest author to place ALL information required to process an update in the manifest.
 
-Satisfies: User story MFUS1
+For example: Information about which precursor image is required for a differential update MUST be placed in the manifest, not in the differential compression header.
 
-Implemented by: Manifest Element: Directives
+Satisfies: [USER_STORY.MFST.PRE_CHECK(#user-story-mfst-pre-check), [USER_STORY.INSTALL.INSTRUCTIONS](#user-story-install-instructions)
 
-### Usability Requirement MFUR2
+Implemented by: [Additional installation instructions](#manifest-element-additional-install-info)
 
-It must be possible to redirect payload fetches. This applies where two manifests are used in conjunction. For example, a Device Operator creates a manifest specifying a payload and signs it, and provides a URI for that payload. A Network Operator creates a second manifest, with a dependency on the first. They use this second manifest to override the URIs provided by the Device Operator, directing them into their own infrastructure instead. Some devices may provide this capability, while others may only look at canonical sources of firmware. For this to be possible, the device must fetch the payload, whereas a device that accpets payload pushes will ignore this feature.
+### REQ.USE.MFST.OVERRIDE_REMOTE: Override Remote Resource Location {#req-use-mfst-override}
 
-Satisfies: User story MFUS2
+It MUST be possible to redirect payload fetches. This applies where two manifests are used in conjunction. For example, a Device Operator creates a manifest specifying a payload and signs it, and provides a URI for that payload. A Network Operator creates a second manifest, with a dependency on the first. They use this second manifest to override the URIs provided by the Device Operator, directing them into their own infrastructure instead. Some devices may provide this capability, while others may only look at canonical sources of firmware. For this to be possible, the device must fetch the payload, whereas a device that accepts payload pushes will ignore this feature.
 
-Implemented by: Manifest Element: Aliases
+N.B. If a manifest is delivered over an authenticated channel and that manifest contains only override information for which the remote is authorised, then it can be considered authenticated by the channel authentication.
 
-### Usability Requirement MFUR3
+Satisfies: [USER_STORY.OVERRIDE](#user-story-override)
 
-It must be possible express the requirement to install one or more payloads from one or more authorities so that a multi-payload update can be described. This allows multiple parties with different permissions to collaborate in creating a single update for the IoT device, across multiple components.
+Implemented by: [Aliases](#manifest-element-aliases)
+
+### REQ.USE.MFST.COMPONENT: Component Updates {#req-use-mfst-component}
+
+It MUST be possible express the requirement to install one or more payloads from one or more authorities so that a multi-payload update can be described. This allows multiple parties with different permissions to collaborate in creating a single update for the IoT device, across multiple components.
 
 This requirement effectively means that it must be possible to construct a tree of manifests on a multi-image target.
 
-Because devices can be either HeSA or HoSA both the storage system and the storage location within that storage system must be possible to specify. In a HoSA device, the payload location may be as simple as an address, or a file path. In a HeSA device, the payload location may be scoped by a component identifier. It is expedient to consider that all HoSA devices are HeSA devices with a single component.
+In order to enable devices with a heterogeneous storage architecture, the manifest must enable specification of both storage system and the storage location within that storage system.
+
+Satisfies: [USER_STORY.OVERRIDE](#user-story-override), [USER_STORY.COMPONENT](#user-story-component)
+
+Implemented by Manifest Element: Dependencies, StorageIdentifier, ComponentIdentifier
 
 #### Example 1: Multiple Microcontrollers
 
@@ -736,27 +826,23 @@ An IoT device with multiple microcontrollers in the same physical device (HeSA) 
 
 #### Example 2: Code and Configuration
 
-A firmware image can be divided into two payloads: code and configuration. These payloads may require authorizations from different actors in order to install (see MFSR6 and MFSR8). This structure means that multiple manifests may be required, with a dependency structure between them.
+A firmware image can be divided into two payloads: code and configuration. These payloads may require authorizations from different actors in order to install (see [REQ.SEC.RIGHTS](#req-sec-rights) and [REQ.SEC.ACCESS_CONTROL](#req-sec-access-control)). This structure means that multiple manifests may be required, with a dependency structure between them.
 
-#### Example 3: Multiple Chunks
+#### Example 3: Multiple Software Modules
 
 A firmware image can be divided into multiple functional blocks for separate testing and distribution. This means that code would need to be distributed in multiple payloads. For example, this might be desirable in order to ensure that common code between devices is identical in order to reduce distribution bandwidth.
 
-Satisfies: User story MFUS2, MFUS3
+### REQ.USE.MFST.MULTI_AUTH: Multiple authentications {#req-use-mfst-multi-auth}
 
-Implemented by Manifest Element: Dependencies, StorageIdentifier, ComponentIdentifier
+It MUST be possible to authenticate a manifest multiple times so that authorisations from multiple parties with different permissions can be required in order to authorise installation of a manifest.
 
-### Usability Requirement MFUR4
+Satisfies: [USER_STORY.MULTI_AUTH](#user-story-multi-auth)
 
-It MUST be possible to sign a manifest multiple times so that signatures from multiple parties with different permissions can be required in order to authorise installation of a manifest.
+Implemented by: [Signature](#manifest-element-signature)
 
-Satisfies: User story MFUS4
+### REQ.USE.IMG.FORMAT: Format Usability {#req-use-img-format}
 
-Implemented by: COSE Signature (or similar)
-
-### Usability Requirement MFUR5
-
-The manifest format MUST accommodate any payload format that an Operator wishes to use. Some examples of payload format would be:
+The manifest serialisation MUST accommodate any payload format that an Operator wishes to use. This enables the recipient to detect which format the Operator has chosen. Some examples of payload format are:
 
 * Binary
 * Elf
@@ -766,67 +852,75 @@ The manifest format MUST accommodate any payload format that an Operator wishes 
 * Intel HEX
 * S-Record
 
-Satisfies: User story MFUS5
+Satisfies: [USER_STORY.IMG.FORMAT](#user-story-img-format) [USER_STORY.IMG.UNKNOWN_FORMAT](#user-story-img-unknown-format)
 
-Implemented by: Manifest Element: Payload Format
+Implemented by: [Payload Format](#manifest-element-format)
 
-### Usability Requirement MFUR6
+### REQ.USE.IMG.NESTED: Nested Formats {#req-use-img-nested}
 
-The manifest format must accommodate nested formats, announcing to the target device all the nesting steps and any parameters used by those steps.
+The manifest serialisation MUST accommodate nested formats, announcing to the target device all the nesting steps and any parameters used by those steps.
 
-Satisfies: User story MFUS6
+Satisfies: [USER_STORY.IMG.CONFIDENTIALITY](#user-story-img-confidentiality)
 
-Implemented by: Manifest Element: Processing Steps
+Implemented by: [Processing Steps](#manifest-element-processing-steps)
 
-### Usability Requirement MFUR7
+### REQ.USE.IMG.VERSIONS: Target Version Matching {#req-use-img-versions}
 
-The manifest format must provide a method to specify multiple version numbers of firmware to which the manifest applies, either with a list or with range matching.
+The manifest serialisation MUST provide a method to specify multiple version numbers of firmware to which the manifest applies, either with a list or with range matching.
 
-Satisfies: User story MFUS8
+Satisfies: [USER_STORY.IMG.CURRENT_VERSION](#user-story-img-current-version)
 
-Implemented by: Manifest Element: Required Image Version List
+Implemented by: [Required Image Version List](#element-required-version)
 
-### Usability Requirement MFUR8
+### REQ.USE.IMG.SELECT: Select Image by Destination {#req-use-img-select}
 
-The manifest format must provide a mechanism to list multiple equivalent payloads by Execute-In-Place Installation Address, including the payload digest and, optionally, payload URIs.
+The manifest serialisation MUST provide a mechanism to list multiple equivalent payloads by Execute-In-Place Installation Address, including the payload digest and, optionally, payload URIs.
 
-Satisfies: User story MFUS9
+Satisfies: [USER_STORY.IMG.SELECT](#user-story-img-select)
 
-Implemented by: Manifest Element: XIP Address
+Implemented by: [XIP Address](#manifest-element-xip-address)
 
 
-### Usability Requirement MFUR9: Bootable Manifest
-It must be possible to describe a bootable system with a manifest on both Execute-In-Place microcontrollers and on complex operating systems. This requires the manifest to specify the digest of each statically linked storage location. In addition, the manifest must be able to express metadata used by the bootloader, such as a kernel command-line.
+### REQ.USE.EXEC: Executable Manifest {#req-use-exec}
+It MUST be possible to describe an executable system with a manifest on both Execute-In-Place microcontrollers and on complex operating systems. This requires the manifest to specify the digest of each statically linked dependency. In addition, the manifest serialisation MUST be able to express metadata, such as a kernel command-line, used by any loader or bootloader.
 
-Satisfies: User story MFUS10
+Satisfies: [USER_STORY.EXEC.MFST](#user-story-exec-mfst)
 
-Implemented by: Manifest Element: Boot-time Metadata
+Implemented by: [Run-time metadata](#manifest-element-exec-metadata)
 
-### Usability Requirement MFUR10: Load-Time Information
+### REQ.USE.LOAD: Load-Time Information {#req-use-load}
 
-It must be possible to specify additional metadata for load time processing of a payload, such as load-address, and compression algorithm.
+It MUST be possible to specify additional metadata for load time processing of a payload, such as cryptographic information, load-address, and compression algorithm.
 
-N.B. load comes before boot.
+N.B. load comes before exec/boot.
 
-Satisfies: User Story MFUS11
+Satisfies: [USER_STORY.EXEC.DECOMPRESS](#user-story-exec-decompress)
 
-Implemented by: Manifest Element: Load-time Metadata
+Implemented by: [Load-time metadata](#manifest-element-load-metadata)
 
-### Usability Requirement MFUR11: Payload in Manifest Superstructure
+### REQ.USE.PAYLOAD: Payload in Manifest Superstructure {#req-use-payload}
 
-It must be possible to place a payload in the same structure as the manifest. This typically places the payload in the same packet as the manifest.
+It MUST be possible to place a payload in the same structure as the manifest. This MAY place the payload in the same packet as the manifest.
 
-Satisfies: User Story MFUS12
+Satisfies: [USER_STORY.MFST.IMG](#user-story-mfst-img)
 
-Implemented by: Manifest Element: Payload
+Implemented by: [Payload](#manifest-element-payload)
 
-### Usability Requirement MFUR12: Simple Parsing
+### REQ.USE.PARSE: Simple Parsing {#req-use-parse}
 
-The structure of the manifest must be simple to parse, without need for a general-purpose parser.
+The structure of the manifest MUST be simple to parse, without need for a general-purpose parser.
 
-Satisfies: User Story MFUS13
+Satisfies: [USER_STORY.MFST.PARSE](#user-story-mfst-parse)
 
 Implemented by: N/A
+
+### REQ.USE.DELEGATION: Delegation of Authority in Manifest {#req-use-delegation}
+
+Any serialisation MUST enable the delivery of a key claim with, but not authenticated by a manifest. This key claim delivers a new key with which the recipient can verify the manifest.
+
+Satisfies: [USER_STORY.MFST.DELEGATION](#user-story-mfst-delegation)
+
+Implemented by: [Key Claims](#manifest-element-key-claims)
 
 # Security Considerations
 
@@ -841,7 +935,9 @@ This document does not require any actions by IANA.
 We would like to thank our working group chairs, Dave Thaler, Russ Housley and David Waltermire, for their review comments and their support.
 
 We would like to thank the participants of the 2018 Berlin SUIT Hackathon and the June 2018 virtual design team meetings for their discussion input.
-In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten Bormann, David Brown, Markus Gueller, Frank Audun Kvamtro, Oyvind Ronningstad, Michael Richardson, Jan-Frederik Rieckers Francisco Acosta, Anton Gerasimov, Matthias Waehlisch, Max Groening, Daniel Petry, Gaetan Harter, Ralph Hamm, Steve Patrick, Fabio Utzig, Paul Lambert, Benjamin Kaduk, Said Gharout, and Milen Stoychev.  
+In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten Bormann, David Brown, Markus Gueller, Frank Audun Kvamtro, Oyvind Ronningstad, Michael Richardson, Jan-Frederik Rieckers, Francisco Acosta, Anton Gerasimov, Matthias Waehlisch, Max Groening, Daniel Petry, Gaetan Harter, Ralph Hamm, Steve Patrick, Fabio Utzig, Paul Lambert, Benjamin Kaduk, Said Gharout, and Milen Stoychev.  
+
+We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, Gary Thomson.
 
 --- back
 
