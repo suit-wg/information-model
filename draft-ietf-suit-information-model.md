@@ -19,7 +19,6 @@ pi:
   strict: yes
   comments: yes
   inline: yes
-  text-list-symbols: -o*+
   docmapping: yes
 author:
  -
@@ -58,34 +57,36 @@ informative:
 
 --- abstract
 
-Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Incorporating such update mechanism to fix vulnerabilities, to update configuration settings as well as adding new functionality is recommended by security experts.
+Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Incorporating such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality is recommended by security experts.
 
-One component of such a firmware update is the meta-data, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes all the information that must be present in the manifest.
+One component of such a firmware update is a concise and machine-processable meta-data document, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes the information that must be present in the manifest.
 
 --- middle
 
 #  Introduction
 
-The information model describes all the information elements required to secure firmware updates of IoT devices from the threats described in {{threat-model}} and enable the user stories captured in {{user-stories}}. These threats and user stories are not intended to be an exhaustive list of the threats against IoT devices, nor of the possible use cases of firmware update; instead they are intended to describe the threats against firmware update in isolation and provide sufficient motivation to provide information elements that cover a wide range of use cases. The information model does not define the encoding, ordering, or structure of information elements, only their semantics.
+The information model describes all the information elements required to secure firmware updates of IoT devices from the threats described in {{threat-model}} and enables the user stories captured in {{user-stories}}. These threats and user stories are not intended to be an exhaustive list of the threats against IoT devices, nor of the possible user stories that describe how to conduct a firmware update. Instead they are intended to describe the threats against firmware updates in isolation and provide sufficient motivation to specify the information elements that cover a wide range of user stories. The information model does not define the serialization, encoding, ordering, or structure of information elements, only their semantics.
 
-Because the information model covers a wide range of user stories and a wide range of threats, not all information elements apply to all scenarios. As a result, many information elements could be considered optional to implement and optional to use, depending on which threats exist in a particular system and which use cases are required. Elements marked as mandatory provide baseline security and usability properties that are expected to be required for most applications. Those elements are mandatory to implement and mandatory to use. Elements marked as recommended provide important security or usability properties that are needed on most devices. Elements marked as optional enable security or usability properties that are useful in some applications.
+Because the information model covers a wide range of user stories and a wide range of threats, not all information elements apply to all scenarios. As a result, various information elements could be considered optional to implement and optional to use, depending on which threats exist in a particular domain of application and which user stories are required. Elements marked as mandatory provide baseline security and usability properties that are expected to be required for most applications. Those elements are mandatory to implement and mandatory to use. Elements marked as recommended provide important security or usability properties that are needed on most devices. Elements marked as optional enable security or usability properties that are useful in some applications.
+
+The definition of some of the information elements include examples that illustrate their semantics and how they are intended to be used.
 
 #  Conventions and Terminology
-
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in {{RFC2119}}.
 
 This document uses terms defined in {{I-D.ietf-suit-architecture}}.
 The term 'Operator' refers to both, Device and Network Operator.
 
 This document treats devices with a homogeneous storage architecture as devices with a heterogeneous storage architecture, but with a single storage subsystem.
 
+## Requirements Notation
+
+{::boilerplate bcp14}
+
 # Manifest Information Elements
 
-Each manifest element is anchored in a security requirement or a usability requirement. The manifest elements are described below and justified by their requirements.
+Each manifest information element is anchored in a security requirement or a usability requirement. The manifest elements are described below, justified by their requirements.
 
-## Manifest Element: version identifier of the manifest structure {#element-version-id}
+## Manifest Element: Version ID of the manifest structure {#element-version-id}
 
 An identifier that describes which iteration of the manifest format is contained in the structure.
 
@@ -95,17 +96,17 @@ This element is MANDATORY and MUST be present in order to allow devices to ident
 
 A monotonically increasing sequence number. For convenience, the monotonic sequence number MAY be a UTC timestamp. This allows global synchronisation of sequence numbers without any additional management. This number MUST be easily accessible so that code choosing one out of several manifests can choose which is the latest.
 
-This element is MANDATORY and is necessary to prevent malicious actors from reverting a firmware update against the wishes of the relevant authority.
+This element is MANDATORY and is necessary to prevent malicious actors from reverting a firmware update against the policies of the relevant authority.
 
 Implements: [REQ.SEC.SEQUENCE](#req-sec-sequence)
 
-## Manifest Element: Vendor ID Condition {#element-vendor-id}
+## Manifest Element: Vendor ID {#element-vendor-id}
 
 Vendor IDs MUST be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer's infrastructure. Recommended practice is to use {{RFC4122}} version 5 UUIDs with the vendor's domain name and the UUID DNS prefix. Other options include type 1 and type 4 UUIDs.
 
-Note Well: Vendor ID is not a human-readable element. It is intended for match/mismatch use only.
+Vendor ID is not intended to be a human-readable element. It is intended for match/mismatch comparison only.
 
-This ID is RECOMMENDED and helps to distinguish between identically named products from different vendors.
+The use of a Vendor ID is RECOMMENDED. It helps to distinguish between identically named products from different vendors.
 
 Implements: [REQ.SEC.COMPATIBLE](#req-sec-compatible), [REQ.SEC.AUTH.COMPATIBILITY](#req-sec-authentic-compatibility).
 
@@ -117,9 +118,11 @@ vendorId = UUID5(DNS, "vendor-a.com")
 
 Because the DNS infrastructure prevents multiple registrations of the same domain name, this UUID is guaranteed to be unique. Because the domain name is known, this UUID is reproducible. Type 1 and type 4 UUIDs produce similar guarantees of uniqueness, but not reproducibility.
 
-## Manifest Element: Class ID Condition {#element-class-id}
+This approach creates a contention when a vendor changes its name or relinquishes control of a domain name. In this scenario, it is possible that another vendor would start using that same domain name. However, this UUID is not proof of identity; a device's trust in a vendor must be anchored in a cryptographic key, not a UUID.
 
-A device "Class" is defined as any device that can accept the same firmware update without modification. Class Identifiers MUST be unique within a Vendor ID. This is to prevent similarly, or identically named devices colliding in their customer's infrastructure.
+## Manifest Element: Class ID {#element-class-id}
+
+A device "Class" is a set of different device types that can accept the same firmware update without modification. Class IDs MUST be unique within the scope of a Vendor ID. This is to prevent similarly, or identically named devices colliding in their customer's infrastructure.
 
 Recommended practice is to use {{RFC4122}} version 5 UUIDs with as much information as necessary to define firmware compatibility. Possible information used to derive the class UUID includes:
 
@@ -132,9 +135,9 @@ Recommended practice is to use {{RFC4122}} version 5 UUIDs with as much informat
 
 The Class Identifier UUID SHOULD use the Vendor ID as the UUID prefix. Other options include version 1 and 4 UUIDs. Classes MAY be more granular than is required to identify firmware compatibility. Classes MUST NOT be less granular than is required to identify firmware compatibility. Devices MAY have multiple Class IDs.
 
-Note Well: Class ID is not a human-readable element. It is intended for match/mismatch use only.
+Class ID is not intended to be a human-readable element. It is intended for match/mismatch comparison only.
 
-Class ID is RECOMMENDED and allows devices to determine applicability of a firmware in an unambiguous way.
+The use of Class ID is RECOMMENDED. It allows devices to determine applicability of a firmware in an unambiguous way.
 
 If Class ID is not implemented, then each logical device class MUST use a unique Root of Trust for authorisation.
 
@@ -195,9 +198,9 @@ Implements: [REQ.USE.IMG.VERSIONS](#req-use-img-versions)
 
 ## Manifest Element: Expiration Time {#manifest-element-expiration}
 
-This element tells a device the time at which the manifest expires and should no longer be used. This is only usable in conjunction with a secure clock.
+This element tells a device the time at which the manifest expires and should no longer be used. This is only usable in conjunction with a secure source of time.
 
-This element is OPTIONAL and MAY enable use cases where a secure clock is provided and firmware is intended to expire predictably.
+This element is OPTIONAL and MAY enable user stories where a secure source of time is provided and firmware is intended to expire predictably.
 
 Implements: [REQ.SEC.EXP](#req-sec-exp)
 
@@ -233,12 +236,12 @@ Implements: [REQ.SEC.AUTH.IMG_LOC](#req-sec-authentic-image-location)
 
 A device supports two components: an OS and an application. These components can be updated independently, expressing dependencies to ensure compatibility between the components. The firmware authority chooses two storage identifiers:
 
-* OS
-* APP
+* "OS"
+* "APP"
 
 ### Example 2: File System
 
-A device supports a full filesystem. The firmware authority chooses to make the storage identifier the path at which to install the payload. The payload may be a tarball, in which case, it unpacks the tarball into the specified path.
+A device supports a full filesystem. The firmware authority chooses to use the storage identifier as the path at which to install the payload. The payload may be a tarball, in which case, it unpacks the tarball into the specified path.
 
 ### Example 3: Flash Memory
 
@@ -308,7 +311,7 @@ Implements: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
 
 A mechanism for a manifest to augment or replace URIs or URI lists defined by one or more of its dependencies.
 
-This element is OPTIONAL and enables some use cases.
+This element is OPTIONAL and enables some user stories.
 
 Implements: [REQ.USE.MFST.OVERRIDE_REMOTE](#req-use-mfst-override)
 
