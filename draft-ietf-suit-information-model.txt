@@ -5,9 +5,9 @@
 SUIT                                                            B. Moran
 Internet-Draft                                             H. Tschofenig
 Intended status: Standards Track                             Arm Limited
-Expires: 14 December 2019                                    H. Birkholz
+Expires: 6 January 2020                                      H. Birkholz
                                                           Fraunhofer SIT
-                                                            12 June 2019
+                                                             5 July 2019
 
 
  Firmware Updates for Internet of Things Devices - An Information Model
@@ -18,14 +18,15 @@ Abstract
 
    Vulnerabilities with Internet of Things (IoT) devices have raised the
    need for a solid and secure firmware update mechanism that is also
-   suitable for constrained devices.  Incorporating such update
-   mechanism to fix vulnerabilities, to update configuration settings as
-   well as adding new functionality is recommended by security experts.
+   suitable for constrained devices.  Incorporating such an update
+   mechanism to fix vulnerabilities, to update configuration settings,
+   as well as adding new functionality is recommended by security
+   experts.
 
-   One component of such a firmware update is the meta-data, or
-   manifest, that describes the firmware image(s) and offers appropriate
-   protection.  This document describes all the information that must be
-   present in the manifest.
+   One component of such a firmware update is a concise and machine-
+   processable meta-data document, or manifest, that describes the
+   firmware image(s) and offers appropriate protection.  This document
+   describes the information that must be present in the manifest.
 
 Status of This Memo
 
@@ -42,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 December 2019.
+   This Internet-Draft will expire on 6 January 2020.
 
 Copyright Notice
 
@@ -74,13 +75,14 @@ Table of Contents
 
    1.  Introduction
    2.  Conventions and Terminology
+       2.1.  Requirements Notation
    3.  Manifest Information Elements
-       3.1.  Manifest Element: version identifier of the manifest
+       3.1.  Manifest Element: Version ID of the manifest
              structure
        3.2.  Manifest Element: Monotonic Sequence Number
-       3.3.  Manifest Element: Vendor ID Condition
+       3.3.  Manifest Element: Vendor ID
              3.3.1.  Example: Domain Name-based UUIDs
-       3.4.  Manifest Element: Class ID Condition
+       3.4.  Manifest Element: Class ID
              3.4.1.  Example 1: Different Classes
              3.4.2.  Example 2: Upgrading Class ID
              3.4.3.  Example 3: Shared Functionality
@@ -226,34 +228,33 @@ Table of Contents
 
    The information model describes all the information elements required
    to secure firmware updates of IoT devices from the threats described
-   in Section 4.1 and enable the user stories captured in Section 4.4.
+   in Section 4.1 and enables the user stories captured in Section 4.4.
    These threats and user stories are not intended to be an exhaustive
-   list of the threats against IoT devices, nor of the possible use
-   cases of firmware update; instead they are intended to describe the
-   threats against firmware update in isolation and provide sufficient
-   motivation to provide information elements that cover a wide range of
-   use cases.  The information model does not define the encoding,
+   list of the threats against IoT devices, nor of the possible user
+   stories that describe how to conduct a firmware update.  Instead they
+   are intended to describe the threats against firmware updates in
+   isolation and provide sufficient motivation to specify the
+   information elements that cover a wide range of user stories.  The
+   information model does not define the serialization, encoding,
    ordering, or structure of information elements, only their semantics.
 
    Because the information model covers a wide range of user stories and
    a wide range of threats, not all information elements apply to all
-   scenarios.  As a result, many information elements could be
+   scenarios.  As a result, various information elements could be
    considered optional to implement and optional to use, depending on
-   which threats exist in a particular system and which use cases are
-   required.  Elements marked as mandatory provide baseline security and
-   usability properties that are expected to be required for most
-   applications.  Those elements are mandatory to implement and
-   mandatory to use.  Elements marked as recommended provide important
-   security or usability properties that are needed on most devices.
-   Elements marked as optional enable security or usability properties
-   that are useful in some applications.
+   which threats exist in a particular domain of application and which
+   user stories are required.  Elements marked as mandatory provide
+   baseline security and usability properties that are expected to be
+   required for most applications.  Those elements are mandatory to
+   implement and mandatory to use.  Elements marked as recommended
+   provide important security or usability properties that are needed on
+   most devices.  Elements marked as optional enable security or
+   usability properties that are useful in some applications.
+
+   The definition of some of the information elements include examples
+   that illustrate their semantics and how they are intended to be used.
 
 2.  Conventions and Terminology
-
-   The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
-   “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “NOT RECOMMENDED”, “MAY”, and
-   “OPTIONAL” in this document are to be interpreted as described in
-   [RFC2119].
 
    This document uses terms defined in [I-D.ietf-suit-architecture].
    The term ‘Operator’ refers to both, Device and Network Operator.
@@ -262,13 +263,21 @@ Table of Contents
    as devices with a heterogeneous storage architecture, but with a
    single storage subsystem.
 
+2.1.  Requirements Notation
+
+   The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”,
+   “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “NOT RECOMMENDED”, “MAY”, and
+   “OPTIONAL” in this document are to be interpreted as described in
+   BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
 3.  Manifest Information Elements
 
-   Each manifest element is anchored in a security requirement or a
-   usability requirement.  The manifest elements are described below and
-   justified by their requirements.
+   Each manifest information element is anchored in a security
+   requirement or a usability requirement.  The manifest elements are
+   described below, justified by their requirements.
 
-3.1.  Manifest Element: version identifier of the manifest structure
+3.1.  Manifest Element: Version ID of the manifest structure
 
    An identifier that describes which iteration of the manifest format
    is contained in the structure.
@@ -286,12 +295,12 @@ Table of Contents
    choosing one out of several manifests can choose which is the latest.
 
    This element is MANDATORY and is necessary to prevent malicious
-   actors from reverting a firmware update against the wishes of the
+   actors from reverting a firmware update against the policies of the
    relevant authority.
 
    Implements: REQ.SEC.SEQUENCE (Section 4.3.1)
 
-3.3.  Manifest Element: Vendor ID Condition
+3.3.  Manifest Element: Vendor ID
 
    Vendor IDs MUST be unique.  This is to prevent similarly, or
    identically named entities from different geographic regions from
@@ -299,11 +308,11 @@ Table of Contents
    is to use [RFC4122] version 5 UUIDs with the vendor’s domain name and
    the UUID DNS prefix.  Other options include type 1 and type 4 UUIDs.
 
-   Note Well: Vendor ID is not a human-readable element.  It is intended
-   for match/mismatch use only.
+   Vendor ID is not intended to be a human-readable element.  It is
+   intended for match/mismatch comparison only.
 
-   This ID is RECOMMENDED and helps to distinguish between identically
-   named products from different vendors.
+   The use of a Vendor ID is RECOMMENDED.  It helps to distinguish
+   between identically named products from different vendors.
 
    Implements: REQ.SEC.COMPATIBLE (Section 4.3.2),
    REQ.SEC.AUTH.COMPATIBILITY (Section 4.3.10).
@@ -320,12 +329,18 @@ Table of Contents
    UUIDs produce similar guarantees of uniqueness, but not
    reproducibility.
 
-3.4.  Manifest Element: Class ID Condition
+   This approach creates a contention when a vendor changes its name or
+   relinquishes control of a domain name.  In this scenario, it is
+   possible that another vendor would start using that same domain name.
+   However, this UUID is not proof of identity; a device’s trust in a
+   vendor must be anchored in a cryptographic key, not a UUID.
 
-   A device “Class” is defined as any device that can accept the same
-   firmware update without modification.  Class Identifiers MUST be
-   unique within a Vendor ID.  This is to prevent similarly, or
-   identically named devices colliding in their customer’s
+3.4.  Manifest Element: Class ID
+
+   A device “Class” is a set of different device types that can accept
+   the same firmware update without modification.  Class IDs MUST be
+   unique within the scope of a Vendor ID.  This is to prevent
+   similarly, or identically named devices colliding in their customer’s
    infrastructure.
 
    Recommended practice is to use [RFC4122] version 5 UUIDs with as much
@@ -350,11 +365,11 @@ Table of Contents
    Classes MUST NOT be less granular than is required to identify
    firmware compatibility.  Devices MAY have multiple Class IDs.
 
-   Note Well: Class ID is not a human-readable element.  It is intended
-   for match/mismatch use only.
+   Class ID is not intended to be a human-readable element.  It is
+   intended for match/mismatch comparison only.
 
-   Class ID is RECOMMENDED and allows devices to determine applicability
-   of a firmware in an unambiguous way.
+   The use of Class ID is RECOMMENDED.  It allows devices to determine
+   applicability of a firmware in an unambiguous way.
 
    If Class ID is not implemented, then each logical device class MUST
    use a unique Root of Trust for authorisation.
@@ -449,10 +464,11 @@ Table of Contents
 
    This element tells a device the time at which the manifest expires
    and should no longer be used.  This is only usable in conjunction
-   with a secure clock.
+   with a secure source of time.
 
-   This element is OPTIONAL and MAY enable use cases where a secure
-   clock is provided and firmware is intended to expire predictably.
+   This element is OPTIONAL and MAY enable user stories where a secure
+   source of time is provided and firmware is intended to expire
+   predictably.
 
    Implements: REQ.SEC.EXP (Section 4.3.3)
 
@@ -503,14 +519,14 @@ Table of Contents
    ensure compatibility between the components.  The firmware authority
    chooses two storage identifiers:
 
-   *  OS
+   *  “OS”
 
-   *  APP
+   *  “APP”
 
 3.10.2.  Example 2: File System
 
    A device supports a full filesystem.  The firmware authority chooses
-   to make the storage identifier the path at which to install the
+   to use the storage identifier as the path at which to install the
    payload.  The payload may be a tarball, in which case, it unpacks the
    tarball into the specified path.
 
@@ -620,7 +636,7 @@ Table of Contents
    A mechanism for a manifest to augment or replace URIs or URI lists
    defined by one or more of its dependencies.
 
-   This element is OPTIONAL and enables some use cases.
+   This element is OPTIONAL and enables some user stories.
 
    Implements: REQ.USE.MFST.OVERRIDE_REMOTE (Section 4.5.2)
 
@@ -1634,6 +1650,10 @@ Firmware
    [RFC8152]  Schaad, J., "CBOR Object Signing and Encryption (COSE)",
               RFC 8152, DOI 10.17487/RFC8152, July 2017,
               <https://www.rfc-editor.org/info/rfc8152>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
 8.2.  Informative References
 
