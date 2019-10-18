@@ -15,10 +15,10 @@
 <?rfc inline="yes"?>
 <?rfc docmapping="yes"?>
 
-<rfc ipr="pre5378Trust200902" docName="draft-ietf-suit-information-model-03" category="std">
+<rfc ipr="pre5378Trust200902" docName="draft-ietf-suit-information-model-04" category="std">
 
   <front>
-    <title abbrev="A Firmware Manifest Information Model">Firmware Updates for Internet of Things Devices - An Information Model for Manifests</title>
+    <title abbrev="A Firmware Manifest Information Model">An Information Model for Firmware Updates in IoT Devices</title>
 
     <author initials="B." surname="Moran" fullname="Brendan Moran">
       <organization>Arm Limited</organization>
@@ -39,7 +39,7 @@
       </address>
     </author>
 
-    <date year="2019" month="July" day="05"/>
+    <date year="2019" month="October" day="18"/>
 
     <area>Security</area>
     <workgroup>SUIT</workgroup>
@@ -48,7 +48,7 @@
     <abstract>
 
 
-<t>Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Incorporating such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality is recommended by security experts.</t>
+<t>Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality</t>
 
 <t>One component of such a firmware update is a concise and machine-processable meta-data document, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes the information that must be present in the manifest.</t>
 
@@ -74,7 +74,7 @@
 <section anchor="conventions-and-terminology" title="Conventions and Terminology">
 
 <t>This document uses terms defined in <xref target="I-D.ietf-suit-architecture"/>.
-The term ‘Operator’ refers to both, Device and Network Operator.</t>
+The term ‘Operator’ refers to both Device and Network Operator.</t>
 
 <t>This document treats devices with a homogeneous storage architecture as devices with a heterogeneous storage architecture, but with a single storage subsystem.</t>
 
@@ -110,9 +110,9 @@ appear in all capitals, as shown here.</t>
 </section>
 <section anchor="element-vendor-id" title="Manifest Element: Vendor ID">
 
-<t>Vendor IDs MUST be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer’s infrastructure. Recommended practice is to use <xref target="RFC4122"/> version 5 UUIDs with the vendor’s domain name and the UUID DNS prefix. Other options include type 1 and type 4 UUIDs.</t>
+<t>Vendor IDs must be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer’s infrastructure. Recommended practice is to use <xref target="RFC4122"/> version 5 UUIDs with the vendor’s domain name and the DNS name space ID. Other options include type 1 and type 4 UUIDs.</t>
 
-<t>Vendor ID is not intended to be a human-readable element. It is intended for match/mismatch comparison only.</t>
+<t>Vendor ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only.</t>
 
 <t>The use of a Vendor ID is RECOMMENDED. It helps to distinguish between identically named products from different vendors.</t>
 
@@ -124,7 +124,7 @@ appear in all capitals, as shown here.</t>
 
 <t>vendorId = UUID5(DNS, “vendor-a.com”)</t>
 
-<t>Because the DNS infrastructure prevents multiple registrations of the same domain name, this UUID is guaranteed to be unique. Because the domain name is known, this UUID is reproducible. Type 1 and type 4 UUIDs produce similar guarantees of uniqueness, but not reproducibility.</t>
+<t>Because the DNS infrastructure prevents multiple registrations of the same domain name, this UUID is (with very high probability) guaranteed to be unique. Because the domain name is known, this UUID is reproducible. Type 1 and type 4 UUIDs produce similar guarantees of uniqueness, but not reproducibility.</t>
 
 <t>This approach creates a contention when a vendor changes its name or relinquishes control of a domain name. In this scenario, it is possible that another vendor would start using that same domain name. However, this UUID is not proof of identity; a device’s trust in a vendor must be anchored in a cryptographic key, not a UUID.</t>
 
@@ -145,13 +145,13 @@ appear in all capitals, as shown here.</t>
   <t>silicon batch number</t>
 </list></t>
 
-<t>The Class Identifier UUID SHOULD use the Vendor ID as the UUID prefix. Other options include version 1 and 4 UUIDs. Classes MAY be more granular than is required to identify firmware compatibility. Classes MUST NOT be less granular than is required to identify firmware compatibility. Devices MAY have multiple Class IDs.</t>
+<t>The Class Identifier UUID SHOULD use the Vendor ID as the name space ID. Other options include version 1 and 4 UUIDs. Classes MAY be more granular than is required to identify firmware compatibility. Classes MUST NOT be less granular than is required to identify firmware compatibility. Devices MAY have multiple Class IDs.</t>
 
-<t>Class ID is not intended to be a human-readable element. It is intended for match/mismatch comparison only.</t>
+<t>Class ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only.</t>
 
 <t>The use of Class ID is RECOMMENDED. It allows devices to determine applicability of a firmware in an unambiguous way.</t>
 
-<t>If Class ID is not implemented, then each logical device class MUST use a unique Root of Trust for authorisation.</t>
+<t>If Class ID is not implemented, then each logical device class MUST use a unique trust anchor for authorisation.</t>
 
 <t>Implements: Security Requirement <xref target="req-sec-compatible">REQ.SEC.COMPATIBLE</xref>, <xref target="req-sec-authentic-compatibility">REQ.SEC.AUTH.COMPATIBILITY</xref>.</t>
 
@@ -231,7 +231,7 @@ appear in all capitals, as shown here.</t>
 </section>
 <section anchor="manifest-element-format" title="Manifest Element: Payload Format">
 
-<t>The format of the payload MUST be indicated to devices is in an unambiguous way. This element provides a mechanism to describe the payload format, within the signed metadata.</t>
+<t>The format of the payload MUST be indicated to devices in an unambiguous way. This element provides a mechanism to describe the payload format, within the signed metadata.</t>
 
 <t>This element is MANDATORY and MUST be present to enable devices to decode payloads correctly.</t>
 
@@ -261,7 +261,7 @@ appear in all capitals, as shown here.</t>
 
 <section anchor="example-1-two-storage-locations" title="Example 1: Two Storage Locations">
 
-<t>A device supports two components: an OS and an application. These components can be updated independently, expressing dependencies to ensure compatibility between the components. The firmware authority chooses two storage identifiers:</t>
+<t>A device supports two components: an OS and an application. These components can be updated independently, expressing dependencies to ensure compatibility between the components. The Author chooses two storage identifiers:</t>
 
 <t><list style="symbols">
   <t>“OS”</t>
@@ -271,12 +271,12 @@ appear in all capitals, as shown here.</t>
 </section>
 <section anchor="example-2-file-system" title="Example 2: File System">
 
-<t>A device supports a full filesystem. The firmware authority chooses to use the storage identifier as the path at which to install the payload. The payload may be a tarball, in which case, it unpacks the tarball into the specified path.</t>
+<t>A device supports a full filesystem. The Author chooses to use the storage identifier as the path at which to install the payload. The payload may be a tarball, in which case, it unpacks the tarball into the specified path.</t>
 
 </section>
 <section anchor="example-3-flash-memory" title="Example 3: Flash Memory">
 
-<t>A device supports flash memory. The firmware authority chooses to make the storage identifier the offset where the image should be written.</t>
+<t>A device supports flash memory. The Author chooses to make the storage identifier the offset where the image should be written.</t>
 
 </section>
 </section>
@@ -298,7 +298,7 @@ appear in all capitals, as shown here.</t>
 <t><list style="symbols">
   <t>One URI</t>
   <t>A list of URIs</t>
-  <t>A prioritised list or URIs</t>
+  <t>A prioritised list of URIs</t>
   <t>A list of signed URIs</t>
 </list></t>
 
@@ -311,7 +311,7 @@ appear in all capitals, as shown here.</t>
 </section>
 <section anchor="manifest-element-payload-digest" title="Manifest Element: Payload Digests">
 
-<t>This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A serialisation MUST provide a mechanism to select one payload from a list based on system parameters, such as XIP address.</t>
+<t>This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A serialisation MUST provide a mechanism to select one payload from a list based on system parameters, such as Execute-In-Place Installation Address.</t>
 
 <t>This element is MANDATORY to implement and fundamentally necessary to ensure the authenticity and integrity of the payload. Support for more than one digest is OPTIONAL to implement in a recipient device.</t>
 
@@ -340,7 +340,7 @@ appear in all capitals, as shown here.</t>
 </section>
 <section anchor="manifest-element-additional-install-info" title="Manifest Element: Additional installation instructions">
 
-<t>Instructions that the device should execute when processing the manifest. This information is distinct from the information necessary to process a payload. Additional installation instructions include information such as update timing (For example, install only on Sunday, at 0200), procedural considerations (for example, shut down the equipment under control before executing the update), pre and post-installation steps (for example, run a script).</t>
+<t>Instructions that the device should execute when processing the manifest. This information is distinct from the information necessary to process a payload. Additional installation instructions include information such as update timing (for example, install only on Sunday, at 0200), procedural considerations (for example, shut down the equipment under control before executing the update), pre- and post-installation steps (for example, run a script).</t>
 
 <t>This element is OPTIONAL.</t>
 
@@ -358,7 +358,7 @@ appear in all capitals, as shown here.</t>
 </section>
 <section anchor="manifest-element-dependencies" title="Manifest Element: Dependencies">
 
-<t>A list of other manifests that are required by the current manifest. Manifests are identified an an unambiguous way, such as a digest.</t>
+<t>A list of other manifests that are required by the current manifest. Manifests are identified an unambiguous way, such as a digest.</t>
 
 <t>This element is MANDATORY to use in deployments that include both multiple authorities and multiple payloads.</t>
 
@@ -392,7 +392,7 @@ appear in all capitals, as shown here.</t>
 </section>
 <section anchor="manifest-element-exec-metadata" title="Manifest Element: Run-time metadata">
 
-<t>Run-time metadata provides the device with any extra information needed to boot the device. This may include information such as the entry-point of an XIP image or the kernel command-line of a linux image.</t>
+<t>Run-time metadata provides the device with any extra information needed to boot the device. This may include information such as the entry-point of an XIP image or the kernel command-line of a Linux image.</t>
 
 <t>Implements: <xref target="req-use-exec">REQ.USE.EXEC</xref></t>
 
@@ -412,15 +412,15 @@ appear in all capitals, as shown here.</t>
 
 </section>
 </section>
-<section anchor="design-motivation" title="Motivation for Manifest Fields">
-<t>The following sub-sections describe the threat model, user stories, security requirements, and usability requirements.</t>
+<section anchor="design-motivation" title="Security Considerations">
+<t>The following sub-sections describe the threat model, user stories, security requirements, and usability requirements. This section also provides the motivations for each of the manifest information elements.</t>
 
 <section anchor="threat-model" title="Threat Model">
 
 <t>The following sub-sections aim to provide information about the threats that were considered, the security requirements that are derived from those threats and the fields that permit implementation of the security requirements. This model uses the S.T.R.I.D.E. <xref target="STRIDE"/> approach. Each threat is classified according to:</t>
 
 <t><list style="symbols">
-  <t>Spoofing Identity</t>
+  <t>Spoofing identity</t>
   <t>Tampering with data</t>
   <t>Repudiation</t>
   <t>Information disclosure</t>
@@ -467,7 +467,7 @@ appear in all capitals, as shown here.</t>
 
 <t>Suppose that two vendors, Vendor A and Vendor B, adopt the same trade name in different geographic regions, and they both make products with the same names, or product name matching is not used. This causes firmware from Vendor A to match devices from Vendor B.</t>
 
-<t>If the vendors are the firmware authorities, then devices from Vendor A will reject images signed by Vendor B since they use different credentials. However, if both devices trust the same firmware authority, then, devices from Vendor A could install firmware intended for devices from Vendor B.</t>
+<t>If the vendors are the firmware authorities, then devices from Vendor A will reject images signed by Vendor B since they use different credentials. However, if both devices trust the same Author, then, devices from Vendor A could install firmware intended for devices from Vendor B.</t>
 
 </section>
 </section>
@@ -502,7 +502,13 @@ appear in all capitals, as shown here.</t>
 <t>Mitigated by: <xref target="req-sec-authenticated-remote-resource">REQ.SEC.AUTH.REMOTE_LOC</xref></t>
 
 </section>
-<section anchor="threatnetmitm" title="THREAT.NET.MITM">
+<section anchor="threat-net-mitm" title="THREAT.NET.MITM: Traffic interception">
+
+<t>Classification: Spoofing Identity, Tampering with Data</t>
+
+<t>An attacker intercepts all traffic to and from a device. The attacker can monitor or modify any data sent to or received from the device. This can take the form of: manifests, payloads, status reports, and capability reports being modified or not delivered to the intended recipient. It can also take the form of analysis of data sent to or from the device, either in content, size, or frequency.</t>
+
+<t>Mitigated by: <xref target="req-sec-authentic">REQ.SEC.AUTHENTIC</xref>, <xref target="req-sec-image-confidentiality">REQ.SEC.IMG.CONFIDENTIALITY</xref>, <xref target="req-sec-authenticated-remote-resource">REQ.SEC.AUTH.REMOTE_LOC</xref>, <xref target="req-sec-mfst-confidentiality">REQ.SEC.MFST.CONFIDENTIALITY</xref>, <xref target="req-sec-reporting">REQ.SEC.REPORTING</xref></t>
 
 </section>
 <section anchor="threat-image-replacement" title="THREAT.IMG.REPLACE: Payload Replacement">
@@ -541,7 +547,9 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 
 <t>Classification: Denial of Service, Elevation of Privilege</t>
 
-<t>This threat can appear in several ways, however it is ultimately about interoperability of devices with other systems. The owner or operator of a network needs to approve firmware for their network in order to ensure interoperability with other devices on the network, or the network itself. If the firmware is not qualified, it may not work. Therefore, if a device installs firmware without the approval of the network owner or operator, this is a threat to devices and the network.</t>
+<t>This threat can appear in several ways, however it is ultimately about interoperability of devices with other systems. The owner or operator of a system of two or more interoperating devices needs to approve firmware for their system in order to ensure interoperability with other devices in the system. If the firmware is not qualified, it may not work. Therefore, if a device installs firmware without the approval of the device owner or operator, this is a threat to devices.</t>
+
+<t>Similarly, the operator of a network may need to approve firmware for devices attached to the network in order to ensure favourable operating conditions within the network. If the firmware is not qualified, it may degrade the performance of the network. Therefore, if a device installs firmware without the approval of the network operator, this is a threat to the network itself.</t>
 
 <t>Threat Escalation: If the firmware expects configuration that is present in devices deployed in Network A, but not in devices deployed in Network B, then the device may experience degraded security, leading to threats of All Types.</t>
 
@@ -575,7 +583,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 
 <t>Classification: Elevation of Privilege</t>
 
-<t>An authorised actor, but not the firmware authority, uses an override mechanism (<xref target="user-story-override">USER_STORY.OVERRIDE</xref>) to change an information element in a manifest signed by the firmware authority. For example, if the authorised actor overrides the digest and URI of the payload, the actor can replace the entire payload with a payload of their choice.</t>
+<t>An authorised actor, but not the Author, uses an override mechanism (<xref target="user-story-override">USER_STORY.OVERRIDE</xref>) to change an information element in a manifest signed by the Author. For example, if the authorised actor overrides the digest and URI of the payload, the actor can replace the entire payload with a payload of their choice.</t>
 
 <t>Threat Escalation: By overriding elements such as payload installation instructions or firmware digest, this threat can be escalated to all types.</t>
 
@@ -595,9 +603,33 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 
 <t>Classification: All Types</t>
 
-<t>If a third party modifies the image so that it contains extra code after a valid, authentic image, that third party can then use their own code in order to make better use of an existing vulnerability</t>
+<t>If a third party modifies the image so that it contains extra code after a valid, authentic image, that third party can then use their own code in order to make better use of an existing vulnerability.</t>
 
 <t>Mitigated by: <xref target="req-sec-img-complete-digest">REQ.SEC.IMG.COMPLETE_DIGEST</xref></t>
+
+</section>
+<section anchor="threat-key-exposure" title="THREAT.KEY.EXPOSURE: Exposure of signing keys">
+
+<t>Classification: All Types</t>
+
+<t>If a third party obtains a key or even indirect access to a key, for example in an HSM, then they can perform the same actions as the legitimate owner of the key. If the key is trusted for firmware update, then the third party can perform firmware updates as though they were the legitimate owner of the key.</t>
+
+<t>For example, if manifest signing is performed on a server connected to the internet, an attacker may compromise the server and then be able to sign manifests, even if the keys for manifest signing are held in an HSM that is accessed by the server.</t>
+
+<t>Mitigated by: <xref target="req-sec-key-protection">REQ.SEC.KEY.PROTECTION</xref></t>
+
+</section>
+<section anchor="threat-mfst-modification" title="THREAT.MFST.MODIFICATION: Modification of manifest or payload prior to signing">
+
+<t>Classification: All Types</t>
+
+<t>If an attacker can alter a manifest or payload before it is signed, they can perform all the same actions as the manifest author. This allows the attacker to deploy firmware updates to any devices that trust the manifest author. If an attacker can modify the code of a payload before the corresponding manifest is created, they can insert their own code. If an attacker can modify the manifest before it is signed, they can redirect the manifest to their own payload.</t>
+
+<t>For example, the attacker deploys malware to the developer’s computer or signing service that watches manifest creation activities and inserts code into any binary that is referenced by a manifest.</t>
+
+<t>For example, the attacker deploys malware to the developer’s computer or signing service that replaces the referenced binary (digest) and URI with the attacker’s binary (digest) and URI.</t>
+
+<t>Mitigated by: <xref target="req-sec-mfst-check">REQ.SEC.MFST.CHECK</xref>, <xref target="req-sec-mfst-trusted">REQ.SEC.MFST.TRUSTED</xref></t>
 
 </section>
 </section>
@@ -636,9 +668,9 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 </section>
 <section anchor="req-sec-authentic" title="REQ.SEC.AUTHENTIC: Cryptographic Authenticity">
 
-<t>The authenticity of an update MUST be demonstrable. Typically, this means that updates must be digitally authenticated. Because the manifest contains information about how to install the update, the manifest’s authenticity MUST also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code, the authenticity of the firmware image is tied to the manifest by the use of a digest of the firmware image.</t>
+<t>The authenticity of an update MUST be demonstrable. Typically, this means that updates must be digitally authenticated. Because the manifest contains information about how to install the update, the manifest’s authenticity MUST also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code. The authenticity of the firmware image is tied to the manifest by the use of a digest of the firmware image.</t>
 
-<t>Mitigates: <xref target="threat-img-unauthenticated">THREAT.IMG.NON_AUTH</xref></t>
+<t>Mitigates: <xref target="threat-img-unauthenticated">THREAT.IMG.NON_AUTH</xref>, <xref target="threat-net-mitm">THREAT.NET.MITM</xref></t>
 
 <t>Implemented by: <xref target="manifest-element-signature">Signature</xref>, <xref target="manifest-element-payload-digest">Payload Digest</xref></t>
 
@@ -665,7 +697,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 
 <t>The location where a target should find a payload MUST be authenticated.</t>
 
-<t>Mitigates: <xref target="threat-net-redirect">THREAT.NET.REDIRECT</xref></t>
+<t>Mitigates: <xref target="threat-net-redirect">THREAT.NET.REDIRECT</xref>, <xref target="threat-net-mitm">THREAT.NET.MITM</xref></t>
 
 <t>Implemented by: <xref target="manifest-element-resource-indicator">Resource Indicator</xref></t>
 
@@ -699,7 +731,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 </section>
 <section anchor="req-sec-rights" title="REQ.SEC.RIGHTS: Rights Require Authenticity">
 
-<t>If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in <xref target="req-sec-authentic">REQ.SEC.AUTHENTIC</xref> are acceptable but need to follow the end-to-end security model.</t>
+<t>If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in <xref target="req-sec-authentic">REQ.SEC.AUTHENTIC</xref> can be used to prove authenticity.</t>
 
 <t>For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device and the Network Operator.</t>
 
@@ -712,7 +744,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 
 <t>The manifest information model MUST enable encrypted payloads. Encryption helps to prevent third parties, including attackers, from reading the content of the firmware image. This can protect against confidential information disclosures and discovery of vulnerabilities through reverse engineering. Therefore the manifest must convey the information required to allow an intended recipient to decrypt an encrypted payload.</t>
 
-<t>Mitigates: <xref target="threat-img-disclosure">THREAT.IMG.DISCLOSURE</xref></t>
+<t>Mitigates: <xref target="threat-img-disclosure">THREAT.IMG.DISCLOSURE</xref>, <xref target="threat-net-mitm">THREAT.NET.MITM</xref></t>
 
 <t>Implemented by: <xref target="manifest-element-encryption-wrapper">Encryption Wrapper</xref></t>
 
@@ -735,7 +767,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 
 <t>It MUST be possible to encrypt part or all of the manifest. This may be accomplished with either transport encryption or with at-rest encryption.</t>
 
-<t>Mitigates: <xref target="threat-mfst-exposure">THREAT.MFST.EXPOSURE</xref></t>
+<t>Mitigates: <xref target="threat-mfst-exposure">THREAT.MFST.EXPOSURE</xref>, <xref target="threat-net-mitm">THREAT.NET.MITM</xref></t>
 
 <t>Implemented by: External Encryption Wrapper / Transport Security</t>
 
@@ -747,6 +779,36 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 <t>Mitigates: <xref target="threat-img-extra">THREAT.IMG.EXTRA</xref></t>
 
 <t>Implemented by: <xref target="manifest-element-payload-digest">Payload Digests</xref></t>
+
+</section>
+<section anchor="req-sec-reporting" title="REQ.SEC.REPORTING: Secure Reporting">
+
+<t>Status reports from the device to any remote system SHOULD be performed over an authenticated, confidential channel in order to prevent modification or spoofing of the reports.</t>
+
+<t>Mitigates: <xref target="threat-net-mitm">THREAT.NET.MITM</xref></t>
+
+</section>
+<section anchor="req-sec-key-protection" title="REQ.SEC.KEY.PROTECTION: Protected storage of signing keys">
+
+<t>Cryptographic keys for signing manifests SHOULD be stored in a manner that is inaccessible to networked devices, for example in an HSM, or an air-gapped computer. This protects against an attacker obtaining the keys.</t>
+
+<t>Keys SHOULD be stored in a way that limits the risk of a legitimate, but compromised, entity (such as a server or developer computer) issuing signing requests.</t>
+
+<t>Mitigates: <xref target="threat-key-exposure">THREAT.KEY.EXPOSURE</xref></t>
+
+</section>
+<section anchor="req-sec-mfst-check" title="REQ.SEC.MFST.CHECK: Validate manifests prior to deployment">
+
+<t>Manifests SHOULD be parsed and examined prior to deployment to validate that their contents have not been modified during creation and signing.</t>
+
+<t>Mitigates: <xref target="threat-mfst-modification">THREAT.MFST.MODIFICATION</xref></t>
+
+</section>
+<section anchor="req-sec-mfst-trusted" title="REQ.SEC.MFST.TRUSTED: Construct manifests in a trusted environment">
+
+<t>For high risk deployments, such as large numbers of devices or critical function devices, manifests SHOULD be constructed in an environment that is protected from interference, such as an air-gapped computer. Note that a networked computer connected to an HSM does not fulfill this requirement (see <xref target="threat-mfst-modification">THREAT.MFST.MODIFICATION</xref>).</t>
+
+<t>Mitigates: <xref target="threat-mfst-modification">THREAT.MFST.MODIFICATION</xref></t>
 
 </section>
 </section>
@@ -780,14 +842,14 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 </section>
 <section anchor="user-story-override" title="USER_STORY.OVERRIDE: Override Non-Critical Manifest Elements">
 
-<t>As a Network Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. The authority to override this information is provided via the installation of a limited trust relationship by another authority.</t>
+<t>As a Device Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. The authority to override this information is provided via the installation of a limited trust anchor by another authority.</t>
 
 <t>Some examples of potentially overridable information:</t>
 
 <t><list style="symbols">
-  <t><xref target="manifest-element-resource-indicator">URIs</xref>: this allows the Network Operator to direct devices to their own infrastructure in order to reduce network load.</t>
-  <t>Conditions: this allows the Network Operator to pose additional constraints on the installation of the manifest.</t>
-  <t><xref target="manifest-element-additional-install-info">Directives</xref>: this allows the Network Operator to add more instructions such as time of installation.</t>
+  <t><xref target="manifest-element-resource-indicator">URIs</xref>: this allows the Device Operator to direct devices to their own infrastructure in order to reduce network load.</t>
+  <t>Conditions: this allows the Device Operator to pose additional constraints on the installation of the manifest.</t>
+  <t><xref target="manifest-element-additional-install-info">Directives</xref>: this allows the Device Operator to add more instructions such as time of installation.</t>
   <t><xref target="manifest-element-processing-steps">Processing Steps</xref>: If an intermediary performs an action on behalf of a device, it may need to override the processing steps. It is still possible for a device to verify the final content and the result of any processing step that specifies a digest. Some processing steps should be non-overridable.</t>
 </list></t>
 
@@ -796,7 +858,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 </section>
 <section anchor="user-story-component" title="USER_STORY.COMPONENT: Component Update">
 
-<t>As an Operator, I want to divide my firmware into components, so that I can reduce the size of updates, make different parties responsible for different components, and divide my firmware into frequently updated and infrequently updated components.</t>
+<t>As a Device Operator, I want to divide my firmware into components, so that I can reduce the size of updates, make different parties responsible for different components, and divide my firmware into frequently updated and infrequently updated components.</t>
 
 <t>Satisfied by: <xref target="req-use-mfst-component">REQ.USE.MFST.COMPONENT</xref></t>
 
@@ -810,14 +872,14 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 </section>
 <section anchor="user-story-img-format" title="USER_STORY.IMG.FORMAT: Multiple Payload Formats">
 
-<t>As an Operator, I want to be able to send multiple payload formats to suit the needs of my update, so that I can optimise the bandwidth used by my devices.</t>
+<t>As a Device Operator, I want to be able to send multiple payload formats to suit the needs of my update, so that I can optimise the bandwidth used by my devices.</t>
 
 <t>Satisfied by: <xref target="req-use-img-format">REQ.USE.IMG.FORMAT</xref></t>
 
 </section>
 <section anchor="user-story-img-confidentiality" title="USER_STORY.IMG.CONFIDENTIALITY: Prevent Confidential Information Disclosures">
 
-<t>As an firmware author, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security or at-rest encryption is adequate to protect the manifest itself against information disclosure.</t>
+<t>As a firmware author, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security or at-rest encryption is adequate to protect the manifest itself against information disclosure.</t>
 
 <t>Satisfied by: <xref target="req-sec-image-confidentiality">REQ.SEC.IMG.CONFIDENTIALITY</xref></t>
 
@@ -863,7 +925,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 </section>
 <section anchor="user-story-mfst-img" title="USER_STORY.MFST.IMG: Payload in Manifest">
 
-<t>As an operator of a constrained network, I would like to be able to send a small payload in the same packet as the manifest so that I can reduce network traffic.</t>
+<t>As an operator of devices on a constrained network, I would like the manifest to be able to include a small payload in the same packet so that I can reduce network traffic.</t>
 
 <t>Satisfied by: <xref target="req-use-payload">REQ.USE.PAYLOAD</xref></t>
 
@@ -877,7 +939,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 </section>
 <section anchor="user-story-mfst-delegation" title="USER_STORY.MFST.DELEGATION: Delegated Authority in Manifest">
 
-<t>As an operator that rotates delegated authority more often than delivering firmware updates, I would like to delegate a new authority when I deliver a firmware update so that I can accomplish both tasks in a single transmission.</t>
+<t>As a Device Operator that rotates delegated authority more often than delivering firmware updates, I would like to delegate a new authority when I deliver a firmware update so that I can accomplish both tasks in a single transmission.</t>
 
 <t>Satisfied by: <xref target="req-use-delegation">REQ.USE.DELEGATION</xref></t>
 
@@ -1038,7 +1100,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 </section>
 <section anchor="req-use-delegation" title="REQ.USE.DELEGATION: Delegation of Authority in Manifest">
 
-<t>Any serialisation MUST enable the delivery of a key claim with, but not authenticated by a manifest. This key claim delivers a new key with which the recipient can verify the manifest.</t>
+<t>Any serialisation MUST enable the delivery of a key claim with, but not authenticated by, a manifest. This key claim delivers a new key with which the recipient can verify the manifest.</t>
 
 <t>Satisfies: <xref target="user-story-mfst-delegation">USER_STORY.MFST.DELEGATION</xref></t>
 
@@ -1046,11 +1108,6 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 
 </section>
 </section>
-</section>
-<section anchor="security-considerations" title="Security Considerations">
-
-<t>Security considerations for this document are covered in <xref target="design-motivation"/>.</t>
-
 </section>
 <section anchor="iana-considerations" title="IANA Considerations">
 
@@ -1064,7 +1121,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
 <t>We would like to thank the participants of the 2018 Berlin SUIT Hackathon and the June 2018 virtual design team meetings for their discussion input.
 In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten Bormann, David Brown, Markus Gueller, Frank Audun Kvamtro, Oyvind Ronningstad, Michael Richardson, Jan-Frederik Rieckers, Francisco Acosta, Anton Gerasimov, Matthias Waehlisch, Max Groening, Daniel Petry, Gaetan Harter, Ralph Hamm, Steve Patrick, Fabio Utzig, Paul Lambert, Benjamin Kaduk, Said Gharout, and Milen Stoychev.</t>
 
-<t>We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, Gary Thomson.</t>
+<t>We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, and Gary Thomson.</t>
 
 </section>
 
@@ -1108,33 +1165,6 @@ In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten 
 
 
 
-<reference  anchor="RFC5652" target='https://www.rfc-editor.org/info/rfc5652'>
-<front>
-<title>Cryptographic Message Syntax (CMS)</title>
-<author initials='R.' surname='Housley' fullname='R. Housley'><organization /></author>
-<date year='2009' month='September' />
-<abstract><t>This document describes the Cryptographic Message Syntax (CMS).  This syntax is used to digitally sign, digest, authenticate, or encrypt arbitrary message content.  [STANDARDS-TRACK]</t></abstract>
-</front>
-<seriesInfo name='STD' value='70'/>
-<seriesInfo name='RFC' value='5652'/>
-<seriesInfo name='DOI' value='10.17487/RFC5652'/>
-</reference>
-
-
-
-<reference  anchor="RFC8152" target='https://www.rfc-editor.org/info/rfc8152'>
-<front>
-<title>CBOR Object Signing and Encryption (COSE)</title>
-<author initials='J.' surname='Schaad' fullname='J. Schaad'><organization /></author>
-<date year='2017' month='July' />
-<abstract><t>Concise Binary Object Representation (CBOR) is a data format designed for small code size and small message size.  There is a need for the ability to have basic security services defined for this data format. This document defines the CBOR Object Signing and Encryption (COSE) protocol.  This specification describes how to create and process signatures, message authentication codes, and encryption using CBOR for serialization.  This specification additionally describes how to represent cryptographic keys using CBOR.</t></abstract>
-</front>
-<seriesInfo name='RFC' value='8152'/>
-<seriesInfo name='DOI' value='10.17487/RFC8152'/>
-</reference>
-
-
-
 <reference anchor="I-D.ietf-suit-architecture">
 <front>
 <title>A Firmware Update Architecture for Internet of Things Devices</title>
@@ -1155,15 +1185,15 @@ In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten 
     <organization />
 </author>
 
-<date month='April' day='9' year='2019' />
+<date month='September' day='13' year='2019' />
 
 <abstract><t>Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices.  Incorporating such update mechanism to fix vulnerabilities, to update configuration settings as well as adding new functionality is recommended by security experts.  This document lists requirements and describes an architecture for a firmware update mechanism suitable for IoT devices.  The architecture is agnostic to the transport of the firmware images and associated meta-data.  This version of the document assumes asymmetric cryptography and a public key infrastructure.  Future versions may also describe a symmetric key approach for very constrained devices.</t></abstract>
 
 </front>
 
-<seriesInfo name='Internet-Draft' value='draft-ietf-suit-architecture-05' />
+<seriesInfo name='Internet-Draft' value='draft-ietf-suit-architecture-06' />
 <format type='TXT'
-        target='http://www.ietf.org/internet-drafts/draft-ietf-suit-architecture-05.txt' />
+        target='http://www.ietf.org/internet-drafts/draft-ietf-suit-architecture-06.txt' />
 </reference>
 
 
@@ -1199,6 +1229,36 @@ In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten 
 </reference>
 
 
+
+
+<reference  anchor="RFC5652" target='https://www.rfc-editor.org/info/rfc5652'>
+<front>
+<title>Cryptographic Message Syntax (CMS)</title>
+<author initials='R.' surname='Housley' fullname='R. Housley'><organization /></author>
+<date year='2009' month='September' />
+<abstract><t>This document describes the Cryptographic Message Syntax (CMS).  This syntax is used to digitally sign, digest, authenticate, or encrypt arbitrary message content.  [STANDARDS-TRACK]</t></abstract>
+</front>
+<seriesInfo name='STD' value='70'/>
+<seriesInfo name='RFC' value='5652'/>
+<seriesInfo name='DOI' value='10.17487/RFC5652'/>
+</reference>
+
+
+
+<reference  anchor="RFC8152" target='https://www.rfc-editor.org/info/rfc8152'>
+<front>
+<title>CBOR Object Signing and Encryption (COSE)</title>
+<author initials='J.' surname='Schaad' fullname='J. Schaad'><organization /></author>
+<date year='2017' month='July' />
+<abstract><t>Concise Binary Object Representation (CBOR) is a data format designed for small code size and small message size.  There is a need for the ability to have basic security services defined for this data format. This document defines the CBOR Object Signing and Encryption (COSE) protocol.  This specification describes how to create and process signatures, message authentication codes, and encryption using CBOR for serialization.  This specification additionally describes how to represent cryptographic keys using CBOR.</t></abstract>
+</front>
+<seriesInfo name='RFC' value='8152'/>
+<seriesInfo name='DOI' value='10.17487/RFC8152'/>
+</reference>
+
+
+
+
     </references>
 
 
@@ -1217,372 +1277,398 @@ subscribe to the list is at <eref target="https://www1.ietf.org/mailman/listinfo
   </back>
 
 <!-- ##markdown-source:
-H4sIAHRsH10AA81963LbVprgfz0FNvkRO0vSsbt7J6OdmWpaomNNdBuRyqVT
-UymQBEW0QYADgJIZl99ln2WfbL/rueGAkp3MzHZVV2QCOJfvfPfbGQ6HR23e
-Ftlx8iavNw9pnSW322XaZk2yqurkrGyzuszapFols3Ve3jXJaXafL+DxMBmX
-8Bze2qRtXpXJRbXMCvrqIi3zVda0zVE6n9fZ/XEytsPrw+63R8tqUaYbWMuy
-TlftMM/a1bDZ5fCXfXW4wVeH3/zpaAGrvKvq/XHStMujo3xbHyfbOvvLn/7h
-21m9a9pX33zzj9+8OoI50+Nkmi12dd7ujx6q+t1dXe228Nvt2ezoXbaHn5bH
-ZqvDU5z86Khp03L5a1pUJSxonzVH2/z4KEnq1SJbNu2+kF+TpK0Wzp95uczK
-Vn9oqrqts1Vj/r3feP9s63xhXl5Umw18a57mZZGXZhoAzibdbuEM+Jd0166r
-GpY0hIf0v7yET1+PAJh1WuqPDNDXdVYu09J/VNV3cBa/EVjhiOpNcp5v8jZb
-6gvZJs0L8/GIPv5rWm9GsNKjcOK3o2TWLNbVKivzO3/2t2lZAsZ0Hz91BWsa
-YNSaAf56t3k/gsOKreJ1Xr9bV8VvwRqy8l3nkT//mzrdlThBnUwBM4IlwPej
-uXz/1yZvRyvz+miZHR2VjKH3GWLJzZuTVy9f/qP8+eeXr17Jn3/5X3/RP799
-yX+eDU9HFtXTerEGCCzaXQ0jGcTnYaezm7PTyTEtrU3ruwxwJ1m37bY5fvFi
-0yzL0SZf1FVTrVo8oxdZOdw1L4p8Xqf1/kWWffvqT9/+w7fP7v950YxeffN8
-lDbb9zwY84DZOpM54E+gm1YIE18x+KaQO04udDL6EbkG/Jbuk1ffvPyWfuLF
-6zdvZxfnf8B6j4bDYZLOgXbSBSDAD7uizOp0nhd5mwOWPeTtOsa3np1Vs+fJ
-UrjXOr3PkjrNm2yZtLDrMoM/kHelQLNFvkyA+JMGmUaWrJR17YgzJptsAQiZ
-Nxv4EkCUN0laNFWCx5fOi4yGWVQlLhDod6lzjmBVi6reAhW1sCJ4f7GGaSKj
-VjDl++Te39gAf5d3YfRVfrermXk2WYsDwhspbD8rCvxvulziJGX2kKx25QJf
-TGGgPS63zpjVLGFx8z1vEx9l77dZ3Tajo6OrEifZbIH5lQREXmwHFLh3XM0C
-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
-AA==
+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
 
 -->
 

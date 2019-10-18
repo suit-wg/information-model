@@ -5,7 +5,7 @@
 <head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
   <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
 
-  <title>Firmware Updates for Internet of Things Devices - An Information Model for Manifests</title>
+  <title>An Information Model for Firmware Updates in IoT Devices</title>
 
   <style type="text/css" title="Xml2Rfc (sans serif)">
   /*<![CDATA[*/
@@ -409,7 +409,7 @@
 <link href="#rfc.section.3.22" rel="Chapter" title="3.22 Manifest Element: Run-time metadata">
 <link href="#rfc.section.3.23" rel="Chapter" title="3.23 Manifest Element: Payload">
 <link href="#rfc.section.3.24" rel="Chapter" title="3.24 Manifest Element: Key Claims">
-<link href="#rfc.section.4" rel="Chapter" title="4 Motivation for Manifest Fields">
+<link href="#rfc.section.4" rel="Chapter" title="4 Security Considerations">
 <link href="#rfc.section.4.1" rel="Chapter" title="4.1 Threat Model">
 <link href="#rfc.section.4.2" rel="Chapter" title="4.2 Threat Descriptions">
 <link href="#rfc.section.4.2.1" rel="Chapter" title="4.2.1 THREAT.IMG.EXPIRED: Old Firmware">
@@ -418,7 +418,7 @@
 <link href="#rfc.section.4.2.4" rel="Chapter" title="4.2.4 THREAT.IMG.FORMAT: The target device misinterprets the type of payload">
 <link href="#rfc.section.4.2.5" rel="Chapter" title="4.2.5 THREAT.IMG.LOCATION: The target device installs the payload to the wrong location">
 <link href="#rfc.section.4.2.6" rel="Chapter" title="4.2.6 THREAT.NET.REDIRECT: Redirection to inauthentic payload hosting">
-<link href="#rfc.section.4.2.7" rel="Chapter" title="4.2.7 THREAT.NET.MITM">
+<link href="#rfc.section.4.2.7" rel="Chapter" title="4.2.7 THREAT.NET.MITM: Traffic interception">
 <link href="#rfc.section.4.2.8" rel="Chapter" title="4.2.8 THREAT.IMG.REPLACE: Payload Replacement">
 <link href="#rfc.section.4.2.9" rel="Chapter" title="4.2.9 THREAT.IMG.NON_AUTH: Unauthenticated Images">
 <link href="#rfc.section.4.2.10" rel="Chapter" title="4.2.10 THREAT.UPD.WRONG_PRECURSOR: Unexpected Precursor images">
@@ -427,6 +427,8 @@
 <link href="#rfc.section.4.2.13" rel="Chapter" title="4.2.13 THREAT.MFST.OVERRIDE: Overriding Critical Manifest Elements">
 <link href="#rfc.section.4.2.14" rel="Chapter" title="4.2.14 THREAT.MFST.EXPOSURE: Confidential Manifest Element Exposure">
 <link href="#rfc.section.4.2.15" rel="Chapter" title="4.2.15 THREAT.IMG.EXTRA: Extra data after image">
+<link href="#rfc.section.4.2.16" rel="Chapter" title="4.2.16 THREAT.KEY.EXPOSURE: Exposure of signing keys">
+<link href="#rfc.section.4.2.17" rel="Chapter" title="4.2.17 THREAT.MFST.MODIFICATION: Modification of manifest or payload prior to signing">
 <link href="#rfc.section.4.3" rel="Chapter" title="4.3 Security Requirements">
 <link href="#rfc.section.4.3.1" rel="Chapter" title="4.3.1 REQ.SEC.SEQUENCE: Monotonic Sequence Numbers">
 <link href="#rfc.section.4.3.2" rel="Chapter" title="4.3.2 REQ.SEC.COMPATIBLE: Vendor, Device-type Identifiers">
@@ -443,6 +445,10 @@
 <link href="#rfc.section.4.3.13" rel="Chapter" title="4.3.13 REQ.SEC.ACCESS_CONTROL: Access Control">
 <link href="#rfc.section.4.3.14" rel="Chapter" title="4.3.14 REQ.SEC.MFST.CONFIDENTIALITY: Encrypted Manifests">
 <link href="#rfc.section.4.3.15" rel="Chapter" title="4.3.15 REQ.SEC.IMG.COMPLETE_DIGEST: Whole Image Digest">
+<link href="#rfc.section.4.3.16" rel="Chapter" title="4.3.16 REQ.SEC.REPORTING: Secure Reporting">
+<link href="#rfc.section.4.3.17" rel="Chapter" title="4.3.17 REQ.SEC.KEY.PROTECTION: Protected storage of signing keys">
+<link href="#rfc.section.4.3.18" rel="Chapter" title="4.3.18 REQ.SEC.MFST.CHECK: Validate manifests prior to deployment">
+<link href="#rfc.section.4.3.19" rel="Chapter" title="4.3.19 REQ.SEC.MFST.TRUSTED: Construct manifests in a trusted environment">
 <link href="#rfc.section.4.4" rel="Chapter" title="4.4 User Stories">
 <link href="#rfc.section.4.4.1" rel="Chapter" title="4.4.1 USER_STORY.INSTALL.INSTRUCTIONS: Installation Instructions">
 <link href="#rfc.section.4.4.2" rel="Chapter" title="4.4.2 USER_STORY.MFST.FAIL_EARLY: Fail Early">
@@ -474,12 +480,11 @@
 <link href="#rfc.section.4.5.11" rel="Chapter" title="4.5.11 REQ.USE.PAYLOAD: Payload in Manifest Superstructure">
 <link href="#rfc.section.4.5.12" rel="Chapter" title="4.5.12 REQ.USE.PARSE: Simple Parsing">
 <link href="#rfc.section.4.5.13" rel="Chapter" title="4.5.13 REQ.USE.DELEGATION: Delegation of Authority in Manifest">
-<link href="#rfc.section.5" rel="Chapter" title="5 Security Considerations">
-<link href="#rfc.section.6" rel="Chapter" title="6 IANA Considerations">
-<link href="#rfc.section.7" rel="Chapter" title="7 Acknowledgements">
-<link href="#rfc.references" rel="Chapter" title="8 References">
-<link href="#rfc.references.1" rel="Chapter" title="8.1 Normative References">
-<link href="#rfc.references.2" rel="Chapter" title="8.2 Informative References">
+<link href="#rfc.section.5" rel="Chapter" title="5 IANA Considerations">
+<link href="#rfc.section.6" rel="Chapter" title="6 Acknowledgements">
+<link href="#rfc.references" rel="Chapter" title="7 References">
+<link href="#rfc.references.1" rel="Chapter" title="7.1 Normative References">
+<link href="#rfc.references.2" rel="Chapter" title="7.2 Informative References">
 <link href="#rfc.appendix.A" rel="Chapter" title="A Mailing List Information">
 <link href="#rfc.authors" rel="Chapter">
 
@@ -488,10 +493,10 @@
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Moran, B., Tschofenig, H., and H. Birkholz" />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-suit-information-model-03" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-07-05" />
-  <meta name="dct.abstract" content="Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Incorporating such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality is recommended by security experts." />
-  <meta name="description" content="Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Incorporating such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality is recommended by security experts." />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-suit-information-model-04" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-10-18" />
+  <meta name="dct.abstract" content="Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality" />
+  <meta name="description" content="Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality" />
 
 </head>
 
@@ -513,7 +518,7 @@
 <td class="right">Arm Limited</td>
 </tr>
 <tr>
-<td class="left">Expires: January 6, 2020</td>
+<td class="left">Expires: April 20, 2020</td>
 <td class="right">H. Birkholz</td>
 </tr>
 <tr>
@@ -522,24 +527,24 @@
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">July 05, 2019</td>
+<td class="right">October 18, 2019</td>
 </tr>
 
     	
     </tbody>
   </table>
 
-  <p class="title">Firmware Updates for Internet of Things Devices - An Information Model for Manifests<br />
-  <span class="filename">draft-ietf-suit-information-model-03</span></p>
+  <p class="title">An Information Model for Firmware Updates in IoT Devices<br />
+  <span class="filename">draft-ietf-suit-information-model-04</span></p>
   
   <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
-<p>Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Incorporating such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality is recommended by security experts.</p>
+<p>Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality</p>
 <p>One component of such a firmware update is a concise and machine-processable meta-data document, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes the information that must be present in the manifest.</p>
 <h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on January 6, 2020.</p>
+<p>This Internet-Draft will expire on April 20, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -620,7 +625,7 @@
 </li>
 <li>3.24.   <a href="#rfc.section.3.24">Manifest Element: Key Claims</a>
 </li>
-</ul><li>4.   <a href="#rfc.section.4">Motivation for Manifest Fields</a>
+</ul><li>4.   <a href="#rfc.section.4">Security Considerations</a>
 </li>
 <ul><li>4.1.   <a href="#rfc.section.4.1">Threat Model</a>
 </li>
@@ -638,7 +643,7 @@
 </li>
 <li>4.2.6.   <a href="#rfc.section.4.2.6">THREAT.NET.REDIRECT: Redirection to inauthentic payload hosting</a>
 </li>
-<li>4.2.7.   <a href="#rfc.section.4.2.7">THREAT.NET.MITM</a>
+<li>4.2.7.   <a href="#rfc.section.4.2.7">THREAT.NET.MITM: Traffic interception</a>
 </li>
 <li>4.2.8.   <a href="#rfc.section.4.2.8">THREAT.IMG.REPLACE: Payload Replacement</a>
 </li>
@@ -655,6 +660,10 @@
 <li>4.2.14.   <a href="#rfc.section.4.2.14">THREAT.MFST.EXPOSURE: Confidential Manifest Element Exposure</a>
 </li>
 <li>4.2.15.   <a href="#rfc.section.4.2.15">THREAT.IMG.EXTRA: Extra data after image</a>
+</li>
+<li>4.2.16.   <a href="#rfc.section.4.2.16">THREAT.KEY.EXPOSURE: Exposure of signing keys</a>
+</li>
+<li>4.2.17.   <a href="#rfc.section.4.2.17">THREAT.MFST.MODIFICATION: Modification of manifest or payload prior to signing</a>
 </li>
 </ul><li>4.3.   <a href="#rfc.section.4.3">Security Requirements</a>
 </li>
@@ -687,6 +696,14 @@
 <li>4.3.14.   <a href="#rfc.section.4.3.14">REQ.SEC.MFST.CONFIDENTIALITY: Encrypted Manifests</a>
 </li>
 <li>4.3.15.   <a href="#rfc.section.4.3.15">REQ.SEC.IMG.COMPLETE_DIGEST: Whole Image Digest</a>
+</li>
+<li>4.3.16.   <a href="#rfc.section.4.3.16">REQ.SEC.REPORTING: Secure Reporting</a>
+</li>
+<li>4.3.17.   <a href="#rfc.section.4.3.17">REQ.SEC.KEY.PROTECTION: Protected storage of signing keys</a>
+</li>
+<li>4.3.18.   <a href="#rfc.section.4.3.18">REQ.SEC.MFST.CHECK: Validate manifests prior to deployment</a>
+</li>
+<li>4.3.19.   <a href="#rfc.section.4.3.19">REQ.SEC.MFST.TRUSTED: Construct manifests in a trusted environment</a>
 </li>
 </ul><li>4.4.   <a href="#rfc.section.4.4">User Stories</a>
 </li>
@@ -750,17 +767,15 @@
 </li>
 <li>4.5.13.   <a href="#rfc.section.4.5.13">REQ.USE.DELEGATION: Delegation of Authority in Manifest</a>
 </li>
-</ul></ul><li>5.   <a href="#rfc.section.5">Security Considerations</a>
+</ul></ul><li>5.   <a href="#rfc.section.5">IANA Considerations</a>
 </li>
-<li>6.   <a href="#rfc.section.6">IANA Considerations</a>
+<li>6.   <a href="#rfc.section.6">Acknowledgements</a>
 </li>
-<li>7.   <a href="#rfc.section.7">Acknowledgements</a>
+<li>7.   <a href="#rfc.references">References</a>
 </li>
-<li>8.   <a href="#rfc.references">References</a>
+<ul><li>7.1.   <a href="#rfc.references.1">Normative References</a>
 </li>
-<ul><li>8.1.   <a href="#rfc.references.1">Normative References</a>
-</li>
-<li>8.2.   <a href="#rfc.references.2">Informative References</a>
+<li>7.2.   <a href="#rfc.references.2">Informative References</a>
 </li>
 </ul><li>Appendix A.   <a href="#rfc.appendix.A">Mailing List Information</a>
 </li>
@@ -779,7 +794,7 @@
 <h1 id="rfc.section.2">
 <a href="#rfc.section.2">2.</a> <a href="#conventions-and-terminology" id="conventions-and-terminology">Conventions and Terminology</a>
 </h1>
-<p id="rfc.section.2.p.1">This document uses terms defined in <a href="#I-D.ietf-suit-architecture" class="xref">[I-D.ietf-suit-architecture]</a>.  The term &#8216;Operator&#8217; refers to both, Device and Network Operator.</p>
+<p id="rfc.section.2.p.1">This document uses terms defined in <a href="#I-D.ietf-suit-architecture" class="xref">[I-D.ietf-suit-architecture]</a>.  The term &#8216;Operator&#8217; refers to both Device and Network Operator.</p>
 <p id="rfc.section.2.p.2">This document treats devices with a homogeneous storage architecture as devices with a heterogeneous storage architecture, but with a single storage subsystem.</p>
 <h2 id="rfc.section.2.1">
 <a href="#rfc.section.2.1">2.1.</a> <a href="#requirements-notation" id="requirements-notation">Requirements Notation</a>
@@ -803,8 +818,8 @@
 <h2 id="rfc.section.3.3">
 <a href="#rfc.section.3.3">3.3.</a> <a href="#element-vendor-id" id="element-vendor-id">Manifest Element: Vendor ID</a>
 </h2>
-<p id="rfc.section.3.3.p.1">Vendor IDs MUST be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer&#8217;s infrastructure. Recommended practice is to use <a href="#RFC4122" class="xref">[RFC4122]</a> version 5 UUIDs with the vendor&#8217;s domain name and the UUID DNS prefix. Other options include type 1 and type 4 UUIDs.</p>
-<p id="rfc.section.3.3.p.2">Vendor ID is not intended to be a human-readable element. It is intended for match/mismatch comparison only.</p>
+<p id="rfc.section.3.3.p.1">Vendor IDs must be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer&#8217;s infrastructure. Recommended practice is to use <a href="#RFC4122" class="xref">[RFC4122]</a> version 5 UUIDs with the vendor&#8217;s domain name and the DNS name space ID. Other options include type 1 and type 4 UUIDs.</p>
+<p id="rfc.section.3.3.p.2">Vendor ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only.</p>
 <p id="rfc.section.3.3.p.3">The use of a Vendor ID is RECOMMENDED. It helps to distinguish between identically named products from different vendors.</p>
 <p id="rfc.section.3.3.p.4">Implements: <a href="#req-sec-compatible" class="xref">REQ.SEC.COMPATIBLE</a>, <a href="#req-sec-authentic-compatibility" class="xref">REQ.SEC.AUTH.COMPATIBILITY</a>.</p>
 <h3 id="rfc.section.3.3.1">
@@ -812,7 +827,7 @@
 </h3>
 <p id="rfc.section.3.3.1.p.1">Vendor A creates a UUID based on their domain name:</p>
 <p id="rfc.section.3.3.1.p.2">vendorId = UUID5(DNS, &#8220;vendor-a.com&#8221;)</p>
-<p id="rfc.section.3.3.1.p.3">Because the DNS infrastructure prevents multiple registrations of the same domain name, this UUID is guaranteed to be unique. Because the domain name is known, this UUID is reproducible. Type 1 and type 4 UUIDs produce similar guarantees of uniqueness, but not reproducibility.</p>
+<p id="rfc.section.3.3.1.p.3">Because the DNS infrastructure prevents multiple registrations of the same domain name, this UUID is (with very high probability) guaranteed to be unique. Because the domain name is known, this UUID is reproducible. Type 1 and type 4 UUIDs produce similar guarantees of uniqueness, but not reproducibility.</p>
 <p id="rfc.section.3.3.1.p.4">This approach creates a contention when a vendor changes its name or relinquishes control of a domain name. In this scenario, it is possible that another vendor would start using that same domain name. However, this UUID is not proof of identity; a device&#8217;s trust in a vendor must be anchored in a cryptographic key, not a UUID.</p>
 <h2 id="rfc.section.3.4">
 <a href="#rfc.section.3.4">3.4.</a> <a href="#element-class-id" id="element-class-id">Manifest Element: Class ID</a>
@@ -829,10 +844,10 @@
 <li>ROM revision</li>
 <li>silicon batch number</li>
 </ul>
-<p id="rfc.section.3.4.p.4">The Class Identifier UUID SHOULD use the Vendor ID as the UUID prefix. Other options include version 1 and 4 UUIDs. Classes MAY be more granular than is required to identify firmware compatibility. Classes MUST NOT be less granular than is required to identify firmware compatibility. Devices MAY have multiple Class IDs.</p>
-<p id="rfc.section.3.4.p.5">Class ID is not intended to be a human-readable element. It is intended for match/mismatch comparison only.</p>
+<p id="rfc.section.3.4.p.4">The Class Identifier UUID SHOULD use the Vendor ID as the name space ID. Other options include version 1 and 4 UUIDs. Classes MAY be more granular than is required to identify firmware compatibility. Classes MUST NOT be less granular than is required to identify firmware compatibility. Devices MAY have multiple Class IDs.</p>
+<p id="rfc.section.3.4.p.5">Class ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only.</p>
 <p id="rfc.section.3.4.p.6">The use of Class ID is RECOMMENDED. It allows devices to determine applicability of a firmware in an unambiguous way.</p>
-<p id="rfc.section.3.4.p.7">If Class ID is not implemented, then each logical device class MUST use a unique Root of Trust for authorisation.</p>
+<p id="rfc.section.3.4.p.7">If Class ID is not implemented, then each logical device class MUST use a unique trust anchor for authorisation.</p>
 <p id="rfc.section.3.4.p.8">Implements: Security Requirement <a href="#req-sec-compatible" class="xref">REQ.SEC.COMPATIBLE</a>, <a href="#req-sec-authentic-compatibility" class="xref">REQ.SEC.AUTH.COMPATIBILITY</a>.</p>
 <h3 id="rfc.section.3.4.1">
 <a href="#rfc.section.3.4.1">3.4.1.</a> <a href="#example-1-different-classes" id="example-1-different-classes">Example 1: Different Classes</a>
@@ -895,7 +910,7 @@
 <h2 id="rfc.section.3.8">
 <a href="#rfc.section.3.8">3.8.</a> <a href="#manifest-element-format" id="manifest-element-format">Manifest Element: Payload Format</a>
 </h2>
-<p id="rfc.section.3.8.p.1">The format of the payload MUST be indicated to devices is in an unambiguous way. This element provides a mechanism to describe the payload format, within the signed metadata.</p>
+<p id="rfc.section.3.8.p.1">The format of the payload MUST be indicated to devices in an unambiguous way. This element provides a mechanism to describe the payload format, within the signed metadata.</p>
 <p id="rfc.section.3.8.p.2">This element is MANDATORY and MUST be present to enable devices to decode payloads correctly.</p>
 <p id="rfc.section.3.8.p.3">Implements: <a href="#req-sec-authentic-image-type" class="xref">REQ.SEC.AUTH.IMG_TYPE</a>, <a href="#req-use-img-format" class="xref">REQ.USE.IMG.FORMAT</a></p>
 <h2 id="rfc.section.3.9">
@@ -915,7 +930,7 @@
 <h3 id="rfc.section.3.10.1">
 <a href="#rfc.section.3.10.1">3.10.1.</a> <a href="#example-1-two-storage-locations" id="example-1-two-storage-locations">Example 1: Two Storage Locations</a>
 </h3>
-<p id="rfc.section.3.10.1.p.1">A device supports two components: an OS and an application. These components can be updated independently, expressing dependencies to ensure compatibility between the components. The firmware authority chooses two storage identifiers:</p>
+<p id="rfc.section.3.10.1.p.1">A device supports two components: an OS and an application. These components can be updated independently, expressing dependencies to ensure compatibility between the components. The Author chooses two storage identifiers:</p>
 <p></p>
 
 <ul>
@@ -925,11 +940,11 @@
 <h3 id="rfc.section.3.10.2">
 <a href="#rfc.section.3.10.2">3.10.2.</a> <a href="#example-2-file-system" id="example-2-file-system">Example 2: File System</a>
 </h3>
-<p id="rfc.section.3.10.2.p.1">A device supports a full filesystem. The firmware authority chooses to use the storage identifier as the path at which to install the payload. The payload may be a tarball, in which case, it unpacks the tarball into the specified path.</p>
+<p id="rfc.section.3.10.2.p.1">A device supports a full filesystem. The Author chooses to use the storage identifier as the path at which to install the payload. The payload may be a tarball, in which case, it unpacks the tarball into the specified path.</p>
 <h3 id="rfc.section.3.10.3">
 <a href="#rfc.section.3.10.3">3.10.3.</a> <a href="#example-3-flash-memory" id="example-3-flash-memory">Example 3: Flash Memory</a>
 </h3>
-<p id="rfc.section.3.10.3.p.1">A device supports flash memory. The firmware authority chooses to make the storage identifier the offset where the image should be written.</p>
+<p id="rfc.section.3.10.3.p.1">A device supports flash memory. The Author chooses to make the storage identifier the offset where the image should be written.</p>
 <h2 id="rfc.section.3.11">
 <a href="#rfc.section.3.11">3.11.</a> <a href="#manifest-element-component-identifier" id="manifest-element-component-identifier">Manifest Element: Component Identifier</a>
 </h2>
@@ -946,7 +961,7 @@
 <ul>
 <li>One URI</li>
 <li>A list of URIs</li>
-<li>A prioritised list or URIs</li>
+<li>A prioritised list of URIs</li>
 <li>A list of signed URIs</li>
 </ul>
 <p id="rfc.section.3.12.p.3">This element is OPTIONAL and only needed when the target device does not intrinsically know where to find the payload.</p>
@@ -955,7 +970,7 @@
 <h2 id="rfc.section.3.13">
 <a href="#rfc.section.3.13">3.13.</a> <a href="#manifest-element-payload-digest" id="manifest-element-payload-digest">Manifest Element: Payload Digests</a>
 </h2>
-<p id="rfc.section.3.13.p.1">This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A serialisation MUST provide a mechanism to select one payload from a list based on system parameters, such as XIP address.</p>
+<p id="rfc.section.3.13.p.1">This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A serialisation MUST provide a mechanism to select one payload from a list based on system parameters, such as Execute-In-Place Installation Address.</p>
 <p id="rfc.section.3.13.p.2">This element is MANDATORY to implement and fundamentally necessary to ensure the authenticity and integrity of the payload. Support for more than one digest is OPTIONAL to implement in a recipient device.</p>
 <p id="rfc.section.3.13.p.3">Implements: <a href="#req-sec-authentic" class="xref">REQ.SEC.AUTHENTIC</a>, <a href="#req-use-img-select" class="xref">REQ.USE.IMG.SELECT</a></p>
 <h2 id="rfc.section.3.14">
@@ -974,7 +989,7 @@
 <h2 id="rfc.section.3.16">
 <a href="#rfc.section.3.16">3.16.</a> <a href="#manifest-element-additional-install-info" id="manifest-element-additional-install-info">Manifest Element: Additional installation instructions</a>
 </h2>
-<p id="rfc.section.3.16.p.1">Instructions that the device should execute when processing the manifest. This information is distinct from the information necessary to process a payload. Additional installation instructions include information such as update timing (For example, install only on Sunday, at 0200), procedural considerations (for example, shut down the equipment under control before executing the update), pre and post-installation steps (for example, run a script).</p>
+<p id="rfc.section.3.16.p.1">Instructions that the device should execute when processing the manifest. This information is distinct from the information necessary to process a payload. Additional installation instructions include information such as update timing (for example, install only on Sunday, at 0200), procedural considerations (for example, shut down the equipment under control before executing the update), pre- and post-installation steps (for example, run a script).</p>
 <p id="rfc.section.3.16.p.2">This element is OPTIONAL.</p>
 <p id="rfc.section.3.16.p.3">Implements: <a href="#req-use-mfst-pre-check" class="xref">REQ.USE.MFST.PRE_CHECK</a></p>
 <h2 id="rfc.section.3.17">
@@ -986,7 +1001,7 @@
 <h2 id="rfc.section.3.18">
 <a href="#rfc.section.3.18">3.18.</a> <a href="#manifest-element-dependencies" id="manifest-element-dependencies">Manifest Element: Dependencies</a>
 </h2>
-<p id="rfc.section.3.18.p.1">A list of other manifests that are required by the current manifest. Manifests are identified an an unambiguous way, such as a digest.</p>
+<p id="rfc.section.3.18.p.1">A list of other manifests that are required by the current manifest. Manifests are identified an unambiguous way, such as a digest.</p>
 <p id="rfc.section.3.18.p.2">This element is MANDATORY to use in deployments that include both multiple authorities and multiple payloads.</p>
 <p id="rfc.section.3.18.p.3">Implements: <a href="#req-use-mfst-component" class="xref">REQ.USE.MFST.COMPONENT</a></p>
 <h2 id="rfc.section.3.19">
@@ -1009,7 +1024,7 @@
 <h2 id="rfc.section.3.22">
 <a href="#rfc.section.3.22">3.22.</a> <a href="#manifest-element-exec-metadata" id="manifest-element-exec-metadata">Manifest Element: Run-time metadata</a>
 </h2>
-<p id="rfc.section.3.22.p.1">Run-time metadata provides the device with any extra information needed to boot the device. This may include information such as the entry-point of an XIP image or the kernel command-line of a linux image.</p>
+<p id="rfc.section.3.22.p.1">Run-time metadata provides the device with any extra information needed to boot the device. This may include information such as the entry-point of an XIP image or the kernel command-line of a Linux image.</p>
 <p id="rfc.section.3.22.p.2">Implements: <a href="#req-use-exec" class="xref">REQ.USE.EXEC</a></p>
 <h2 id="rfc.section.3.23">
 <a href="#rfc.section.3.23">3.23.</a> <a href="#manifest-element-payload" id="manifest-element-payload">Manifest Element: Payload</a>
@@ -1022,9 +1037,9 @@
 <p id="rfc.section.3.24.p.1">The Key Claims element is not authenticated by the <a href="#manifest-element-signature" class="xref">Signature</a>, instead, it provides a chain of key delegations (or references to them) for the device to follow in order to verify the key that authenticated the manifest using a trusted key.</p>
 <p id="rfc.section.3.24.p.2">Implements: <a href="#req-use-delegation" class="xref">REQ.USE.DELEGATION</a></p>
 <h1 id="rfc.section.4">
-<a href="#rfc.section.4">4.</a> <a href="#design-motivation" id="design-motivation">Motivation for Manifest Fields</a>
+<a href="#rfc.section.4">4.</a> <a href="#design-motivation" id="design-motivation">Security Considerations</a>
 </h1>
-<p id="rfc.section.4.p.1">The following sub-sections describe the threat model, user stories, security requirements, and usability requirements.</p>
+<p id="rfc.section.4.p.1">The following sub-sections describe the threat model, user stories, security requirements, and usability requirements. This section also provides the motivations for each of the manifest information elements.</p>
 <h2 id="rfc.section.4.1">
 <a href="#rfc.section.4.1">4.1.</a> <a href="#threat-model" id="threat-model">Threat Model</a>
 </h2>
@@ -1032,7 +1047,7 @@
 <p></p>
 
 <ul>
-<li>Spoofing Identity</li>
+<li>Spoofing identity</li>
 <li>Tampering with data</li>
 <li>Repudiation</li>
 <li>Information disclosure</li>
@@ -1067,7 +1082,7 @@
 <a href="#rfc.section.4.2.3.1">4.2.3.1.</a> <a href="#example" id="example">Example:</a>
 </h4>
 <p id="rfc.section.4.2.3.1.p.1">Suppose that two vendors, Vendor A and Vendor B, adopt the same trade name in different geographic regions, and they both make products with the same names, or product name matching is not used. This causes firmware from Vendor A to match devices from Vendor B.</p>
-<p id="rfc.section.4.2.3.1.p.2">If the vendors are the firmware authorities, then devices from Vendor A will reject images signed by Vendor B since they use different credentials. However, if both devices trust the same firmware authority, then, devices from Vendor A could install firmware intended for devices from Vendor B.</p>
+<p id="rfc.section.4.2.3.1.p.2">If the vendors are the firmware authorities, then devices from Vendor A will reject images signed by Vendor B since they use different credentials. However, if both devices trust the same Author, then, devices from Vendor A could install firmware intended for devices from Vendor B.</p>
 <h3 id="rfc.section.4.2.4">
 <a href="#rfc.section.4.2.4">4.2.4.</a> <a href="#threat-img-format" id="threat-img-format">THREAT.IMG.FORMAT: The target device misinterprets the type of payload</a>
 </h3>
@@ -1089,8 +1104,11 @@
 <p id="rfc.section.4.2.6.p.2">If a device does not know where to obtain the payload for an update, it may be redirected to an attacker&#8217;s server. This would allow an attacker to provide broken payloads to devices.</p>
 <p id="rfc.section.4.2.6.p.3">Mitigated by: <a href="#req-sec-authenticated-remote-resource" class="xref">REQ.SEC.AUTH.REMOTE_LOC</a></p>
 <h3 id="rfc.section.4.2.7">
-<a href="#rfc.section.4.2.7">4.2.7.</a> <a href="#threatnetmitm" id="threatnetmitm">THREAT.NET.MITM</a>
+<a href="#rfc.section.4.2.7">4.2.7.</a> <a href="#threat-net-mitm" id="threat-net-mitm">THREAT.NET.MITM: Traffic interception</a>
 </h3>
+<p id="rfc.section.4.2.7.p.1">Classification: Spoofing Identity, Tampering with Data</p>
+<p id="rfc.section.4.2.7.p.2">An attacker intercepts all traffic to and from a device. The attacker can monitor or modify any data sent to or received from the device. This can take the form of: manifests, payloads, status reports, and capability reports being modified or not delivered to the intended recipient. It can also take the form of analysis of data sent to or from the device, either in content, size, or frequency.</p>
+<p id="rfc.section.4.2.7.p.3">Mitigated by: <a href="#req-sec-authentic" class="xref">REQ.SEC.AUTHENTIC</a>, <a href="#req-sec-image-confidentiality" class="xref">REQ.SEC.IMG.CONFIDENTIALITY</a>, <a href="#req-sec-authenticated-remote-resource" class="xref">REQ.SEC.AUTH.REMOTE_LOC</a>, <a href="#req-sec-mfst-confidentiality" class="xref">REQ.SEC.MFST.CONFIDENTIALITY</a>, <a href="#req-sec-reporting" class="xref">REQ.SEC.REPORTING</a></p>
 <h3 id="rfc.section.4.2.8">
 <a href="#rfc.section.4.2.8">4.2.8.</a> <a href="#threat-image-replacement" id="threat-image-replacement">THREAT.IMG.REPLACE: Payload Replacement</a>
 </h3>
@@ -1115,9 +1133,10 @@
 <a href="#rfc.section.4.2.11">4.2.11.</a> <a href="#threat-upd-interop" id="threat-upd-interop">THREAT.UPD.INTEROP: Unqualified Firmware</a>
 </h3>
 <p id="rfc.section.4.2.11.p.1">Classification: Denial of Service, Elevation of Privilege</p>
-<p id="rfc.section.4.2.11.p.2">This threat can appear in several ways, however it is ultimately about interoperability of devices with other systems. The owner or operator of a network needs to approve firmware for their network in order to ensure interoperability with other devices on the network, or the network itself. If the firmware is not qualified, it may not work. Therefore, if a device installs firmware without the approval of the network owner or operator, this is a threat to devices and the network.</p>
-<p id="rfc.section.4.2.11.p.3">Threat Escalation: If the firmware expects configuration that is present in devices deployed in Network A, but not in devices deployed in Network B, then the device may experience degraded security, leading to threats of All Types.</p>
-<p id="rfc.section.4.2.11.p.4">Mitigated by: <a href="#req-sec-rights" class="xref">REQ.SEC.RIGHTS</a>, <a href="#req-sec-access-control" class="xref">REQ.SEC.ACCESS_CONTROL</a></p>
+<p id="rfc.section.4.2.11.p.2">This threat can appear in several ways, however it is ultimately about interoperability of devices with other systems. The owner or operator of a system of two or more interoperating devices needs to approve firmware for their system in order to ensure interoperability with other devices in the system. If the firmware is not qualified, it may not work. Therefore, if a device installs firmware without the approval of the device owner or operator, this is a threat to devices.</p>
+<p id="rfc.section.4.2.11.p.3">Similarly, the operator of a network may need to approve firmware for devices attached to the network in order to ensure favourable operating conditions within the network. If the firmware is not qualified, it may degrade the performance of the network. Therefore, if a device installs firmware without the approval of the network operator, this is a threat to the network itself.</p>
+<p id="rfc.section.4.2.11.p.4">Threat Escalation: If the firmware expects configuration that is present in devices deployed in Network A, but not in devices deployed in Network B, then the device may experience degraded security, leading to threats of All Types.</p>
+<p id="rfc.section.4.2.11.p.5">Mitigated by: <a href="#req-sec-rights" class="xref">REQ.SEC.RIGHTS</a>, <a href="#req-sec-access-control" class="xref">REQ.SEC.ACCESS_CONTROL</a></p>
 <h4 id="rfc.section.4.2.11.1">
 <a href="#rfc.section.4.2.11.1">4.2.11.1.</a> <a href="#example-1-multiple-network-operators-with-a-single-device-operator" id="example-1-multiple-network-operators-with-a-single-device-operator">Example 1: Multiple Network Operators with a Single Device Operator</a>
 </h4>
@@ -1138,7 +1157,7 @@
 <a href="#rfc.section.4.2.13">4.2.13.</a> <a href="#threat-mfst-override" id="threat-mfst-override">THREAT.MFST.OVERRIDE: Overriding Critical Manifest Elements</a>
 </h3>
 <p id="rfc.section.4.2.13.p.1">Classification: Elevation of Privilege</p>
-<p id="rfc.section.4.2.13.p.2">An authorised actor, but not the firmware authority, uses an override mechanism (<a href="#user-story-override" class="xref">USER_STORY.OVERRIDE</a>) to change an information element in a manifest signed by the firmware authority. For example, if the authorised actor overrides the digest and URI of the payload, the actor can replace the entire payload with a payload of their choice.</p>
+<p id="rfc.section.4.2.13.p.2">An authorised actor, but not the Author, uses an override mechanism (<a href="#user-story-override" class="xref">USER_STORY.OVERRIDE</a>) to change an information element in a manifest signed by the Author. For example, if the authorised actor overrides the digest and URI of the payload, the actor can replace the entire payload with a payload of their choice.</p>
 <p id="rfc.section.4.2.13.p.3">Threat Escalation: By overriding elements such as payload installation instructions or firmware digest, this threat can be escalated to all types.</p>
 <p id="rfc.section.4.2.13.p.4">Mitigated by: <a href="#req-sec-access-control" class="xref">REQ.SEC.ACCESS_CONTROL</a></p>
 <h3 id="rfc.section.4.2.14">
@@ -1151,8 +1170,23 @@
 <a href="#rfc.section.4.2.15">4.2.15.</a> <a href="#threat-img-extra" id="threat-img-extra">THREAT.IMG.EXTRA: Extra data after image</a>
 </h3>
 <p id="rfc.section.4.2.15.p.1">Classification: All Types</p>
-<p id="rfc.section.4.2.15.p.2">If a third party modifies the image so that it contains extra code after a valid, authentic image, that third party can then use their own code in order to make better use of an existing vulnerability</p>
+<p id="rfc.section.4.2.15.p.2">If a third party modifies the image so that it contains extra code after a valid, authentic image, that third party can then use their own code in order to make better use of an existing vulnerability.</p>
 <p id="rfc.section.4.2.15.p.3">Mitigated by: <a href="#req-sec-img-complete-digest" class="xref">REQ.SEC.IMG.COMPLETE_DIGEST</a></p>
+<h3 id="rfc.section.4.2.16">
+<a href="#rfc.section.4.2.16">4.2.16.</a> <a href="#threat-key-exposure" id="threat-key-exposure">THREAT.KEY.EXPOSURE: Exposure of signing keys</a>
+</h3>
+<p id="rfc.section.4.2.16.p.1">Classification: All Types</p>
+<p id="rfc.section.4.2.16.p.2">If a third party obtains a key or even indirect access to a key, for example in an HSM, then they can perform the same actions as the legitimate owner of the key. If the key is trusted for firmware update, then the third party can perform firmware updates as though they were the legitimate owner of the key.</p>
+<p id="rfc.section.4.2.16.p.3">For example, if manifest signing is performed on a server connected to the internet, an attacker may compromise the server and then be able to sign manifests, even if the keys for manifest signing are held in an HSM that is accessed by the server.</p>
+<p id="rfc.section.4.2.16.p.4">Mitigated by: <a href="#req-sec-key-protection" class="xref">REQ.SEC.KEY.PROTECTION</a></p>
+<h3 id="rfc.section.4.2.17">
+<a href="#rfc.section.4.2.17">4.2.17.</a> <a href="#threat-mfst-modification" id="threat-mfst-modification">THREAT.MFST.MODIFICATION: Modification of manifest or payload prior to signing</a>
+</h3>
+<p id="rfc.section.4.2.17.p.1">Classification: All Types</p>
+<p id="rfc.section.4.2.17.p.2">If an attacker can alter a manifest or payload before it is signed, they can perform all the same actions as the manifest author. This allows the attacker to deploy firmware updates to any devices that trust the manifest author. If an attacker can modify the code of a payload before the corresponding manifest is created, they can insert their own code. If an attacker can modify the manifest before it is signed, they can redirect the manifest to their own payload.</p>
+<p id="rfc.section.4.2.17.p.3">For example, the attacker deploys malware to the developer&#8217;s computer or signing service that watches manifest creation activities and inserts code into any binary that is referenced by a manifest.</p>
+<p id="rfc.section.4.2.17.p.4">For example, the attacker deploys malware to the developer&#8217;s computer or signing service that replaces the referenced binary (digest) and URI with the attacker&#8217;s binary (digest) and URI.</p>
+<p id="rfc.section.4.2.17.p.5">Mitigated by: <a href="#req-sec-mfst-check" class="xref">REQ.SEC.MFST.CHECK</a>, <a href="#req-sec-mfst-trusted" class="xref">REQ.SEC.MFST.TRUSTED</a></p>
 <h2 id="rfc.section.4.3">
 <a href="#rfc.section.4.3">4.3.</a> <a href="#security-requirements" id="security-requirements">Security Requirements</a>
 </h2>
@@ -1179,8 +1213,8 @@
 <h3 id="rfc.section.4.3.4">
 <a href="#rfc.section.4.3.4">4.3.4.</a> <a href="#req-sec-authentic" id="req-sec-authentic">REQ.SEC.AUTHENTIC: Cryptographic Authenticity</a>
 </h3>
-<p id="rfc.section.4.3.4.p.1">The authenticity of an update MUST be demonstrable. Typically, this means that updates must be digitally authenticated. Because the manifest contains information about how to install the update, the manifest&#8217;s authenticity MUST also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code, the authenticity of the firmware image is tied to the manifest by the use of a digest of the firmware image.</p>
-<p id="rfc.section.4.3.4.p.2">Mitigates: <a href="#threat-img-unauthenticated" class="xref">THREAT.IMG.NON_AUTH</a></p>
+<p id="rfc.section.4.3.4.p.1">The authenticity of an update MUST be demonstrable. Typically, this means that updates must be digitally authenticated. Because the manifest contains information about how to install the update, the manifest&#8217;s authenticity MUST also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code. The authenticity of the firmware image is tied to the manifest by the use of a digest of the firmware image.</p>
+<p id="rfc.section.4.3.4.p.2">Mitigates: <a href="#threat-img-unauthenticated" class="xref">THREAT.IMG.NON_AUTH</a>, <a href="#threat-net-mitm" class="xref">THREAT.NET.MITM</a></p>
 <p id="rfc.section.4.3.4.p.3">Implemented by: <a href="#manifest-element-signature" class="xref">Signature</a>, <a href="#manifest-element-payload-digest" class="xref">Payload Digest</a></p>
 <h3 id="rfc.section.4.3.5">
 <a href="#rfc.section.4.3.5">4.3.5.</a> <a href="#req-sec-authentic-image-type" id="req-sec-authentic-image-type">REQ.SEC.AUTH.IMG_TYPE: Authenticated Payload Type</a>
@@ -1198,7 +1232,7 @@
 <a href="#rfc.section.4.3.7">4.3.7.</a> <a href="#req-sec-authenticated-remote-resource" id="req-sec-authenticated-remote-resource">REQ.SEC.AUTH.REMOTE_LOC: Authenticated Remote Resource Location</a>
 </h3>
 <p id="rfc.section.4.3.7.p.1">The location where a target should find a payload MUST be authenticated.</p>
-<p id="rfc.section.4.3.7.p.2">Mitigates: <a href="#threat-net-redirect" class="xref">THREAT.NET.REDIRECT</a></p>
+<p id="rfc.section.4.3.7.p.2">Mitigates: <a href="#threat-net-redirect" class="xref">THREAT.NET.REDIRECT</a>, <a href="#threat-net-mitm" class="xref">THREAT.NET.MITM</a></p>
 <p id="rfc.section.4.3.7.p.3">Implemented by: <a href="#manifest-element-resource-indicator" class="xref">Resource Indicator</a></p>
 <h3 id="rfc.section.4.3.8">
 <a href="#rfc.section.4.3.8">4.3.8.</a> <a href="#req-sec-authentic-execution" id="req-sec-authentic-execution">REQ.SEC.AUTH.EXEC: Secure Execution</a>
@@ -1221,7 +1255,7 @@
 <h3 id="rfc.section.4.3.11">
 <a href="#rfc.section.4.3.11">4.3.11.</a> <a href="#req-sec-rights" id="req-sec-rights">REQ.SEC.RIGHTS: Rights Require Authenticity</a>
 </h3>
-<p id="rfc.section.4.3.11.p.1">If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in <a href="#req-sec-authentic" class="xref">REQ.SEC.AUTHENTIC</a> are acceptable but need to follow the end-to-end security model.</p>
+<p id="rfc.section.4.3.11.p.1">If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in <a href="#req-sec-authentic" class="xref">REQ.SEC.AUTHENTIC</a> can be used to prove authenticity.</p>
 <p id="rfc.section.4.3.11.p.2">For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device and the Network Operator.</p>
 <p id="rfc.section.4.3.11.p.3">Mitigates: <a href="#threat-upd-interop" class="xref">THREAT.UPD.INTEROP</a></p>
 <p id="rfc.section.4.3.11.p.4">Implemented by: <a href="#manifest-element-signature" class="xref">Signature</a></p>
@@ -1229,7 +1263,7 @@
 <a href="#rfc.section.4.3.12">4.3.12.</a> <a href="#req-sec-image-confidentiality" id="req-sec-image-confidentiality">REQ.SEC.IMG.CONFIDENTIALITY: Payload Encryption</a>
 </h3>
 <p id="rfc.section.4.3.12.p.1">The manifest information model MUST enable encrypted payloads. Encryption helps to prevent third parties, including attackers, from reading the content of the firmware image. This can protect against confidential information disclosures and discovery of vulnerabilities through reverse engineering. Therefore the manifest must convey the information required to allow an intended recipient to decrypt an encrypted payload.</p>
-<p id="rfc.section.4.3.12.p.2">Mitigates: <a href="#threat-img-disclosure" class="xref">THREAT.IMG.DISCLOSURE</a></p>
+<p id="rfc.section.4.3.12.p.2">Mitigates: <a href="#threat-img-disclosure" class="xref">THREAT.IMG.DISCLOSURE</a>, <a href="#threat-net-mitm" class="xref">THREAT.NET.MITM</a></p>
 <p id="rfc.section.4.3.12.p.3">Implemented by: <a href="#manifest-element-encryption-wrapper" class="xref">Encryption Wrapper</a></p>
 <h3 id="rfc.section.4.3.13">
 <a href="#rfc.section.4.3.13">4.3.13.</a> <a href="#req-sec-access-control" id="req-sec-access-control">REQ.SEC.ACCESS_CONTROL: Access Control</a>
@@ -1247,7 +1281,7 @@
 <a href="#rfc.section.4.3.14">4.3.14.</a> <a href="#req-sec-mfst-confidentiality" id="req-sec-mfst-confidentiality">REQ.SEC.MFST.CONFIDENTIALITY: Encrypted Manifests</a>
 </h3>
 <p id="rfc.section.4.3.14.p.1">It MUST be possible to encrypt part or all of the manifest. This may be accomplished with either transport encryption or with at-rest encryption.</p>
-<p id="rfc.section.4.3.14.p.2">Mitigates: <a href="#threat-mfst-exposure" class="xref">THREAT.MFST.EXPOSURE</a></p>
+<p id="rfc.section.4.3.14.p.2">Mitigates: <a href="#threat-mfst-exposure" class="xref">THREAT.MFST.EXPOSURE</a>, <a href="#threat-net-mitm" class="xref">THREAT.NET.MITM</a></p>
 <p id="rfc.section.4.3.14.p.3">Implemented by: External Encryption Wrapper / Transport Security</p>
 <h3 id="rfc.section.4.3.15">
 <a href="#rfc.section.4.3.15">4.3.15.</a> <a href="#req-sec-img-complete-digest" id="req-sec-img-complete-digest">REQ.SEC.IMG.COMPLETE_DIGEST: Whole Image Digest</a>
@@ -1255,6 +1289,27 @@
 <p id="rfc.section.4.3.15.p.1">The digest SHOULD cover all available space in a fixed-size storage location. Variable-size storage locations MUST be restricted to exactly the size of deployed payload. This prevents any data from being distributed without being covered by the digest. For example, XIP microcontrollers typically have fixed-size storage. These devices should deploy a digest that covers the deployed firmware image, concatenated with the default erased value of any remaining space.</p>
 <p id="rfc.section.4.3.15.p.2">Mitigates: <a href="#threat-img-extra" class="xref">THREAT.IMG.EXTRA</a></p>
 <p id="rfc.section.4.3.15.p.3">Implemented by: <a href="#manifest-element-payload-digest" class="xref">Payload Digests</a></p>
+<h3 id="rfc.section.4.3.16">
+<a href="#rfc.section.4.3.16">4.3.16.</a> <a href="#req-sec-reporting" id="req-sec-reporting">REQ.SEC.REPORTING: Secure Reporting</a>
+</h3>
+<p id="rfc.section.4.3.16.p.1">Status reports from the device to any remote system SHOULD be performed over an authenticated, confidential channel in order to prevent modification or spoofing of the reports.</p>
+<p id="rfc.section.4.3.16.p.2">Mitigates: <a href="#threat-net-mitm" class="xref">THREAT.NET.MITM</a></p>
+<h3 id="rfc.section.4.3.17">
+<a href="#rfc.section.4.3.17">4.3.17.</a> <a href="#req-sec-key-protection" id="req-sec-key-protection">REQ.SEC.KEY.PROTECTION: Protected storage of signing keys</a>
+</h3>
+<p id="rfc.section.4.3.17.p.1">Cryptographic keys for signing manifests SHOULD be stored in a manner that is inaccessible to networked devices, for example in an HSM, or an air-gapped computer. This protects against an attacker obtaining the keys.</p>
+<p id="rfc.section.4.3.17.p.2">Keys SHOULD be stored in a way that limits the risk of a legitimate, but compromised, entity (such as a server or developer computer) issuing signing requests.</p>
+<p id="rfc.section.4.3.17.p.3">Mitigates: <a href="#threat-key-exposure" class="xref">THREAT.KEY.EXPOSURE</a></p>
+<h3 id="rfc.section.4.3.18">
+<a href="#rfc.section.4.3.18">4.3.18.</a> <a href="#req-sec-mfst-check" id="req-sec-mfst-check">REQ.SEC.MFST.CHECK: Validate manifests prior to deployment</a>
+</h3>
+<p id="rfc.section.4.3.18.p.1">Manifests SHOULD be parsed and examined prior to deployment to validate that their contents have not been modified during creation and signing.</p>
+<p id="rfc.section.4.3.18.p.2">Mitigates: <a href="#threat-mfst-modification" class="xref">THREAT.MFST.MODIFICATION</a></p>
+<h3 id="rfc.section.4.3.19">
+<a href="#rfc.section.4.3.19">4.3.19.</a> <a href="#req-sec-mfst-trusted" id="req-sec-mfst-trusted">REQ.SEC.MFST.TRUSTED: Construct manifests in a trusted environment</a>
+</h3>
+<p id="rfc.section.4.3.19.p.1">For high risk deployments, such as large numbers of devices or critical function devices, manifests SHOULD be constructed in an environment that is protected from interference, such as an air-gapped computer. Note that a networked computer connected to an HSM does not fulfill this requirement (see <a href="#threat-mfst-modification" class="xref">THREAT.MFST.MODIFICATION</a>).</p>
+<p id="rfc.section.4.3.19.p.2">Mitigates: <a href="#threat-mfst-modification" class="xref">THREAT.MFST.MODIFICATION</a></p>
 <h2 id="rfc.section.4.4">
 <a href="#rfc.section.4.4">4.4.</a> <a href="#user-stories" id="user-stories">User Stories</a>
 </h2>
@@ -1282,16 +1337,16 @@
 <h3 id="rfc.section.4.4.3">
 <a href="#rfc.section.4.4.3">4.4.3.</a> <a href="#user-story-override" id="user-story-override">USER_STORY.OVERRIDE: Override Non-Critical Manifest Elements</a>
 </h3>
-<p id="rfc.section.4.4.3.p.1">As a Network Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. The authority to override this information is provided via the installation of a limited trust relationship by another authority.</p>
+<p id="rfc.section.4.4.3.p.1">As a Device Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. The authority to override this information is provided via the installation of a limited trust anchor by another authority.</p>
 <p id="rfc.section.4.4.3.p.2">Some examples of potentially overridable information:</p>
 <p></p>
 
 <ul>
 <li>
-<a href="#manifest-element-resource-indicator" class="xref">URIs</a>: this allows the Network Operator to direct devices to their own infrastructure in order to reduce network load.</li>
-<li>Conditions: this allows the Network Operator to pose additional constraints on the installation of the manifest.</li>
+<a href="#manifest-element-resource-indicator" class="xref">URIs</a>: this allows the Device Operator to direct devices to their own infrastructure in order to reduce network load.</li>
+<li>Conditions: this allows the Device Operator to pose additional constraints on the installation of the manifest.</li>
 <li>
-<a href="#manifest-element-additional-install-info" class="xref">Directives</a>: this allows the Network Operator to add more instructions such as time of installation.</li>
+<a href="#manifest-element-additional-install-info" class="xref">Directives</a>: this allows the Device Operator to add more instructions such as time of installation.</li>
 <li>
 <a href="#manifest-element-processing-steps" class="xref">Processing Steps</a>: If an intermediary performs an action on behalf of a device, it may need to override the processing steps. It is still possible for a device to verify the final content and the result of any processing step that specifies a digest. Some processing steps should be non-overridable.</li>
 </ul>
@@ -1299,7 +1354,7 @@
 <h3 id="rfc.section.4.4.4">
 <a href="#rfc.section.4.4.4">4.4.4.</a> <a href="#user-story-component" id="user-story-component">USER_STORY.COMPONENT: Component Update</a>
 </h3>
-<p id="rfc.section.4.4.4.p.1">As an Operator, I want to divide my firmware into components, so that I can reduce the size of updates, make different parties responsible for different components, and divide my firmware into frequently updated and infrequently updated components.</p>
+<p id="rfc.section.4.4.4.p.1">As a Device Operator, I want to divide my firmware into components, so that I can reduce the size of updates, make different parties responsible for different components, and divide my firmware into frequently updated and infrequently updated components.</p>
 <p id="rfc.section.4.4.4.p.2">Satisfied by: <a href="#req-use-mfst-component" class="xref">REQ.USE.MFST.COMPONENT</a></p>
 <h3 id="rfc.section.4.4.5">
 <a href="#rfc.section.4.4.5">4.4.5.</a> <a href="#user-story-multi-auth" id="user-story-multi-auth">USER_STORY.MULTI_AUTH: Multiple Authorisations</a>
@@ -1309,12 +1364,12 @@
 <h3 id="rfc.section.4.4.6">
 <a href="#rfc.section.4.4.6">4.4.6.</a> <a href="#user-story-img-format" id="user-story-img-format">USER_STORY.IMG.FORMAT: Multiple Payload Formats</a>
 </h3>
-<p id="rfc.section.4.4.6.p.1">As an Operator, I want to be able to send multiple payload formats to suit the needs of my update, so that I can optimise the bandwidth used by my devices.</p>
+<p id="rfc.section.4.4.6.p.1">As a Device Operator, I want to be able to send multiple payload formats to suit the needs of my update, so that I can optimise the bandwidth used by my devices.</p>
 <p id="rfc.section.4.4.6.p.2">Satisfied by: <a href="#req-use-img-format" class="xref">REQ.USE.IMG.FORMAT</a></p>
 <h3 id="rfc.section.4.4.7">
 <a href="#rfc.section.4.4.7">4.4.7.</a> <a href="#user-story-img-confidentiality" id="user-story-img-confidentiality">USER_STORY.IMG.CONFIDENTIALITY: Prevent Confidential Information Disclosures</a>
 </h3>
-<p id="rfc.section.4.4.7.p.1">As an firmware author, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security or at-rest encryption is adequate to protect the manifest itself against information disclosure.</p>
+<p id="rfc.section.4.4.7.p.1">As a firmware author, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security or at-rest encryption is adequate to protect the manifest itself against information disclosure.</p>
 <p id="rfc.section.4.4.7.p.2">Satisfied by: <a href="#req-sec-image-confidentiality" class="xref">REQ.SEC.IMG.CONFIDENTIALITY</a></p>
 <h3 id="rfc.section.4.4.8">
 <a href="#rfc.section.4.4.8">4.4.8.</a> <a href="#user-story-img-unknown-format" id="user-story-img-unknown-format">USER_STORY.IMG.UNKNOWN_FORMAT: Prevent Devices from Unpacking Unknown Formats</a>
@@ -1346,7 +1401,7 @@
 <h3 id="rfc.section.4.4.13">
 <a href="#rfc.section.4.4.13">4.4.13.</a> <a href="#user-story-mfst-img" id="user-story-mfst-img">USER_STORY.MFST.IMG: Payload in Manifest</a>
 </h3>
-<p id="rfc.section.4.4.13.p.1">As an operator of a constrained network, I would like to be able to send a small payload in the same packet as the manifest so that I can reduce network traffic.</p>
+<p id="rfc.section.4.4.13.p.1">As an operator of devices on a constrained network, I would like the manifest to be able to include a small payload in the same packet so that I can reduce network traffic.</p>
 <p id="rfc.section.4.4.13.p.2">Satisfied by: <a href="#req-use-payload" class="xref">REQ.USE.PAYLOAD</a></p>
 <h3 id="rfc.section.4.4.14">
 <a href="#rfc.section.4.4.14">4.4.14.</a> <a href="#user-story-mfst-parse" id="user-story-mfst-parse">USER_STORY.MFST.PARSE: Simple Parsing</a>
@@ -1356,7 +1411,7 @@
 <h3 id="rfc.section.4.4.15">
 <a href="#rfc.section.4.4.15">4.4.15.</a> <a href="#user-story-mfst-delegation" id="user-story-mfst-delegation">USER_STORY.MFST.DELEGATION: Delegated Authority in Manifest</a>
 </h3>
-<p id="rfc.section.4.4.15.p.1">As an operator that rotates delegated authority more often than delivering firmware updates, I would like to delegate a new authority when I deliver a firmware update so that I can accomplish both tasks in a single transmission.</p>
+<p id="rfc.section.4.4.15.p.1">As a Device Operator that rotates delegated authority more often than delivering firmware updates, I would like to delegate a new authority when I deliver a firmware update so that I can accomplish both tasks in a single transmission.</p>
 <p id="rfc.section.4.4.15.p.2">Satisfied by: <a href="#req-use-delegation" class="xref">REQ.USE.DELEGATION</a></p>
 <h3 id="rfc.section.4.4.16">
 <a href="#rfc.section.4.4.16">4.4.16.</a> <a href="#user-story-mfst-pre-check" id="user-story-mfst-pre-check">USER_STORY.MFST.PRE_CHECK: Update Evaluation</a>
@@ -1470,32 +1525,28 @@
 <h3 id="rfc.section.4.5.13">
 <a href="#rfc.section.4.5.13">4.5.13.</a> <a href="#req-use-delegation" id="req-use-delegation">REQ.USE.DELEGATION: Delegation of Authority in Manifest</a>
 </h3>
-<p id="rfc.section.4.5.13.p.1">Any serialisation MUST enable the delivery of a key claim with, but not authenticated by a manifest. This key claim delivers a new key with which the recipient can verify the manifest.</p>
+<p id="rfc.section.4.5.13.p.1">Any serialisation MUST enable the delivery of a key claim with, but not authenticated by, a manifest. This key claim delivers a new key with which the recipient can verify the manifest.</p>
 <p id="rfc.section.4.5.13.p.2">Satisfies: <a href="#user-story-mfst-delegation" class="xref">USER_STORY.MFST.DELEGATION</a></p>
 <p id="rfc.section.4.5.13.p.3">Implemented by: <a href="#manifest-element-key-claims" class="xref">Key Claims</a></p>
 <h1 id="rfc.section.5">
-<a href="#rfc.section.5">5.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a>
+<a href="#rfc.section.5">5.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a>
 </h1>
-<p id="rfc.section.5.p.1">Security considerations for this document are covered in <a href="#design-motivation" class="xref">Section 4</a>.</p>
+<p id="rfc.section.5.p.1">This document does not require any actions by IANA.</p>
 <h1 id="rfc.section.6">
-<a href="#rfc.section.6">6.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a>
+<a href="#rfc.section.6">6.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a>
 </h1>
-<p id="rfc.section.6.p.1">This document does not require any actions by IANA.</p>
-<h1 id="rfc.section.7">
-<a href="#rfc.section.7">7.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a>
-</h1>
-<p id="rfc.section.7.p.1">We would like to thank our working group chairs, Dave Thaler, Russ Housley and David Waltermire, for their review comments and their support.</p>
-<p id="rfc.section.7.p.2">We would like to thank the participants of the 2018 Berlin SUIT Hackathon and the June 2018 virtual design team meetings for their discussion input.  In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten Bormann, David Brown, Markus Gueller, Frank Audun Kvamtro, Oyvind Ronningstad, Michael Richardson, Jan-Frederik Rieckers, Francisco Acosta, Anton Gerasimov, Matthias Waehlisch, Max Groening, Daniel Petry, Gaetan Harter, Ralph Hamm, Steve Patrick, Fabio Utzig, Paul Lambert, Benjamin Kaduk, Said Gharout, and Milen Stoychev.</p>
-<p id="rfc.section.7.p.3">We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, Gary Thomson.</p>
+<p id="rfc.section.6.p.1">We would like to thank our working group chairs, Dave Thaler, Russ Housley and David Waltermire, for their review comments and their support.</p>
+<p id="rfc.section.6.p.2">We would like to thank the participants of the 2018 Berlin SUIT Hackathon and the June 2018 virtual design team meetings for their discussion input.  In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten Bormann, David Brown, Markus Gueller, Frank Audun Kvamtro, Oyvind Ronningstad, Michael Richardson, Jan-Frederik Rieckers, Francisco Acosta, Anton Gerasimov, Matthias Waehlisch, Max Groening, Daniel Petry, Gaetan Harter, Ralph Hamm, Steve Patrick, Fabio Utzig, Paul Lambert, Benjamin Kaduk, Said Gharout, and Milen Stoychev.</p>
+<p id="rfc.section.6.p.3">We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, and Gary Thomson.</p>
 <h1 id="rfc.references">
-<a href="#rfc.references">8.</a> References</h1>
+<a href="#rfc.references">7.</a> References</h1>
 <h2 id="rfc.references.1">
-<a href="#rfc.references.1">8.1.</a> Normative References</h2>
+<a href="#rfc.references.1">7.1.</a> Normative References</h2>
 <table><tbody>
 <tr>
 <td class="reference"><b id="I-D.ietf-suit-architecture">[I-D.ietf-suit-architecture]</b></td>
 <td class="top">
-<a>Moran, B.</a>, <a>Meriac, M.</a>, <a>Tschofenig, H.</a> and <a>D. Brown</a>, "<a href="https://tools.ietf.org/html/draft-ietf-suit-architecture-05">A Firmware Update Architecture for Internet of Things Devices</a>", Internet-Draft draft-ietf-suit-architecture-05, April 2019.</td>
+<a>Moran, B.</a>, <a>Meriac, M.</a>, <a>Tschofenig, H.</a> and <a>D. Brown</a>, "<a href="https://tools.ietf.org/html/draft-ietf-suit-architecture-06">A Firmware Update Architecture for Internet of Things Devices</a>", Internet-Draft draft-ietf-suit-architecture-06, September 2019.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC2119">[RFC2119]</b></td>
@@ -1508,6 +1559,15 @@
 <a>Leach, P.</a>, <a>Mealling, M.</a> and <a>R. Salz</a>, "<a href="https://tools.ietf.org/html/rfc4122">A Universally Unique IDentifier (UUID) URN Namespace</a>", RFC 4122, DOI 10.17487/RFC4122, July 2005.</td>
 </tr>
 <tr>
+<td class="reference"><b id="RFC8174">[RFC8174]</b></td>
+<td class="top">
+<a>Leiba, B.</a>, "<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017.</td>
+</tr>
+</tbody></table>
+<h2 id="rfc.references.2">
+<a href="#rfc.references.2">7.2.</a> Informative References</h2>
+<table><tbody>
+<tr>
 <td class="reference"><b id="RFC5652">[RFC5652]</b></td>
 <td class="top">
 <a>Housley, R.</a>, "<a href="https://tools.ietf.org/html/rfc5652">Cryptographic Message Syntax (CMS)</a>", STD 70, RFC 5652, DOI 10.17487/RFC5652, September 2009.</td>
@@ -1518,18 +1578,11 @@
 <a>Schaad, J.</a>, "<a href="https://tools.ietf.org/html/rfc8152">CBOR Object Signing and Encryption (COSE)</a>", RFC 8152, DOI 10.17487/RFC8152, July 2017.</td>
 </tr>
 <tr>
-<td class="reference"><b id="RFC8174">[RFC8174]</b></td>
-<td class="top">
-<a>Leiba, B.</a>, "<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017.</td>
-</tr>
-</tbody></table>
-<h2 id="rfc.references.2">
-<a href="#rfc.references.2">8.2.</a> Informative References</h2>
-<table><tbody><tr>
 <td class="reference"><b id="STRIDE">[STRIDE]</b></td>
 <td class="top">
 <a>Microsoft</a>, "<a href="https://msdn.microsoft.com/en-us/library/ee823878(v=cs.20).aspx">The STRIDE Threat Model</a>", May 2018.</td>
-</tr></tbody></table>
+</tr>
+</tbody></table>
 <h1 id="rfc.appendix.A">
 <a href="#rfc.appendix.A">Appendix A.</a> <a href="#mailing-list-information" id="mailing-list-information">Mailing List Information</a>
 </h1>

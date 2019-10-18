@@ -1,7 +1,7 @@
 ---
-title: Firmware Updates for Internet of Things Devices - An Information Model for Manifests
+title: An Information Model for Firmware Updates in IoT Devices
 abbrev: A Firmware Manifest Information Model
-docname: draft-ietf-suit-information-model-03
+docname: draft-ietf-suit-information-model-04
 category: std
 
 ipr: pre5378Trust200902
@@ -42,8 +42,6 @@ author:
 normative:
   RFC2119:
   RFC4122:
-  RFC5652:
-  RFC8152:
   I-D.ietf-suit-architecture:
 informative:
   STRIDE:
@@ -54,10 +52,12 @@ informative:
     date: May 2018
     format:
       HTML:  https://msdn.microsoft.com/en-us/library/ee823878(v=cs.20).aspx
+  RFC5652:
+  RFC8152:
 
 --- abstract
 
-Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Incorporating such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality is recommended by security experts.
+Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality
 
 One component of such a firmware update is a concise and machine-processable meta-data document, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes the information that must be present in the manifest.
 
@@ -74,7 +74,7 @@ The definition of some of the information elements include examples that illustr
 #  Conventions and Terminology
 
 This document uses terms defined in {{I-D.ietf-suit-architecture}}.
-The term 'Operator' refers to both, Device and Network Operator.
+The term 'Operator' refers to both Device and Network Operator.
 
 This document treats devices with a homogeneous storage architecture as devices with a heterogeneous storage architecture, but with a single storage subsystem.
 
@@ -102,9 +102,9 @@ Implements: [REQ.SEC.SEQUENCE](#req-sec-sequence)
 
 ## Manifest Element: Vendor ID {#element-vendor-id}
 
-Vendor IDs MUST be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer's infrastructure. Recommended practice is to use {{RFC4122}} version 5 UUIDs with the vendor's domain name and the UUID DNS prefix. Other options include type 1 and type 4 UUIDs.
+Vendor IDs must be unique. This is to prevent similarly, or identically named entities from different geographic regions from colliding in their customer's infrastructure. Recommended practice is to use {{RFC4122}} version 5 UUIDs with the vendor's domain name and the DNS name space ID. Other options include type 1 and type 4 UUIDs.
 
-Vendor ID is not intended to be a human-readable element. It is intended for match/mismatch comparison only.
+Vendor ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only.
 
 The use of a Vendor ID is RECOMMENDED. It helps to distinguish between identically named products from different vendors.
 
@@ -116,7 +116,7 @@ Vendor A creates a UUID based on their domain name:
 
 vendorId = UUID5(DNS, "vendor-a.com")
 
-Because the DNS infrastructure prevents multiple registrations of the same domain name, this UUID is guaranteed to be unique. Because the domain name is known, this UUID is reproducible. Type 1 and type 4 UUIDs produce similar guarantees of uniqueness, but not reproducibility.
+Because the DNS infrastructure prevents multiple registrations of the same domain name, this UUID is (with very high probability) guaranteed to be unique. Because the domain name is known, this UUID is reproducible. Type 1 and type 4 UUIDs produce similar guarantees of uniqueness, but not reproducibility.
 
 This approach creates a contention when a vendor changes its name or relinquishes control of a domain name. In this scenario, it is possible that another vendor would start using that same domain name. However, this UUID is not proof of identity; a device's trust in a vendor must be anchored in a cryptographic key, not a UUID.
 
@@ -133,13 +133,13 @@ Recommended practice is to use {{RFC4122}} version 5 UUIDs with as much informat
 * ROM revision
 * silicon batch number
 
-The Class Identifier UUID SHOULD use the Vendor ID as the UUID prefix. Other options include version 1 and 4 UUIDs. Classes MAY be more granular than is required to identify firmware compatibility. Classes MUST NOT be less granular than is required to identify firmware compatibility. Devices MAY have multiple Class IDs.
+The Class Identifier UUID SHOULD use the Vendor ID as the name space ID. Other options include version 1 and 4 UUIDs. Classes MAY be more granular than is required to identify firmware compatibility. Classes MUST NOT be less granular than is required to identify firmware compatibility. Devices MAY have multiple Class IDs.
 
-Class ID is not intended to be a human-readable element. It is intended for match/mismatch comparison only.
+Class ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only.
 
 The use of Class ID is RECOMMENDED. It allows devices to determine applicability of a firmware in an unambiguous way.
 
-If Class ID is not implemented, then each logical device class MUST use a unique Root of Trust for authorisation.
+If Class ID is not implemented, then each logical device class MUST use a unique trust anchor for authorisation.
 
 Implements: Security Requirement [REQ.SEC.COMPATIBLE](#req-sec-compatible), [REQ.SEC.AUTH.COMPATIBILITY](#req-sec-authentic-compatibility).
 
@@ -206,7 +206,7 @@ Implements: [REQ.SEC.EXP](#req-sec-exp)
 
 ## Manifest Element: Payload Format {#manifest-element-format}
 
-The format of the payload MUST be indicated to devices is in an unambiguous way. This element provides a mechanism to describe the payload format, within the signed metadata.
+The format of the payload MUST be indicated to devices in an unambiguous way. This element provides a mechanism to describe the payload format, within the signed metadata.
 
 This element is MANDATORY and MUST be present to enable devices to decode payloads correctly.
 
@@ -234,18 +234,18 @@ Implements: [REQ.SEC.AUTH.IMG_LOC](#req-sec-authentic-image-location)
 
 ### Example 1: Two Storage Locations
 
-A device supports two components: an OS and an application. These components can be updated independently, expressing dependencies to ensure compatibility between the components. The firmware authority chooses two storage identifiers:
+A device supports two components: an OS and an application. These components can be updated independently, expressing dependencies to ensure compatibility between the components. The Author chooses two storage identifiers:
 
 * "OS"
 * "APP"
 
 ### Example 2: File System
 
-A device supports a full filesystem. The firmware authority chooses to use the storage identifier as the path at which to install the payload. The payload may be a tarball, in which case, it unpacks the tarball into the specified path.
+A device supports a full filesystem. The Author chooses to use the storage identifier as the path at which to install the payload. The payload may be a tarball, in which case, it unpacks the tarball into the specified path.
 
 ### Example 3: Flash Memory
 
-A device supports flash memory. The firmware authority chooses to make the storage identifier the offset where the image should be written.
+A device supports flash memory. The Author chooses to make the storage identifier the offset where the image should be written.
 
 ## Manifest Element: Component Identifier {#manifest-element-component-identifier}
 
@@ -263,7 +263,7 @@ This element provides the information required for the device to acquire the res
 
 * One URI
 * A list of URIs
-* A prioritised list or URIs
+* A prioritised list of URIs
 * A list of signed URIs
 
 This element is OPTIONAL and only needed when the target device does not intrinsically know where to find the payload.
@@ -274,7 +274,7 @@ Implements: [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-resource)
 
 ## Manifest Element: Payload Digests {#manifest-element-payload-digest}
 
-This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A serialisation MUST provide a mechanism to select one payload from a list based on system parameters, such as XIP address.
+This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A serialisation MUST provide a mechanism to select one payload from a list based on system parameters, such as Execute-In-Place Installation Address.
 
 This element is MANDATORY to implement and fundamentally necessary to ensure the authenticity and integrity of the payload. Support for more than one digest is OPTIONAL to implement in a recipient device.
 
@@ -301,7 +301,7 @@ Implements: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.RIGHTS](#req-sec-r
 
 ## Manifest Element: Additional installation instructions {#manifest-element-additional-install-info}
 
-Instructions that the device should execute when processing the manifest. This information is distinct from the information necessary to process a payload. Additional installation instructions include information such as update timing (For example, install only on Sunday, at 0200), procedural considerations (for example, shut down the equipment under control before executing the update), pre and post-installation steps (for example, run a script).
+Instructions that the device should execute when processing the manifest. This information is distinct from the information necessary to process a payload. Additional installation instructions include information such as update timing (for example, install only on Sunday, at 0200), procedural considerations (for example, shut down the equipment under control before executing the update), pre- and post-installation steps (for example, run a script).
 
 This element is OPTIONAL.
 
@@ -317,7 +317,7 @@ Implements: [REQ.USE.MFST.OVERRIDE_REMOTE](#req-use-mfst-override)
 
 ## Manifest Element: Dependencies {#manifest-element-dependencies}
 
-A list of other manifests that are required by the current manifest. Manifests are identified an an unambiguous way, such as a digest.
+A list of other manifests that are required by the current manifest. Manifests are identified an unambiguous way, such as a digest.
 
 This element is MANDATORY to use in deployments that include both multiple authorities and multiple payloads.
 
@@ -348,7 +348,7 @@ Implements: [REQ.USE.LOAD](#req-use-load)
 
 ## Manifest Element: Run-time metadata {#manifest-element-exec-metadata}
 
-Run-time metadata provides the device with any extra information needed to boot the device. This may include information such as the entry-point of an XIP image or the kernel command-line of a linux image.
+Run-time metadata provides the device with any extra information needed to boot the device. This may include information such as the entry-point of an XIP image or the kernel command-line of a Linux image.
 
 Implements: [REQ.USE.EXEC](#req-use-exec)
 
@@ -364,14 +364,14 @@ The Key Claims element is not authenticated by the [Signature](#manifest-element
 
 Implements: [REQ.USE.DELEGATION](#req-use-delegation)
 
-# Motivation for Manifest Fields {#design-motivation}
-The following sub-sections describe the threat model, user stories, security requirements, and usability requirements.
+# Security Considerations {#design-motivation}
+The following sub-sections describe the threat model, user stories, security requirements, and usability requirements. This section also provides the motivations for each of the manifest information elements.
 
 ## Threat Model {#threat-model}
 
 The following sub-sections aim to provide information about the threats that were considered, the security requirements that are derived from those threats and the fields that permit implementation of the security requirements. This model uses the S.T.R.I.D.E. {{STRIDE}} approach. Each threat is classified according to:
 
-* Spoofing Identity
+* Spoofing identity
 
 * Tampering with data
 
@@ -419,7 +419,7 @@ Mitigated by: [REQ.SEC.COMPATIBLE](#req-sec-compatible)
 
 Suppose that two vendors, Vendor A and Vendor B, adopt the same trade name in different geographic regions, and they both make products with the same names, or product name matching is not used. This causes firmware from Vendor A to match devices from Vendor B.
 
-If the vendors are the firmware authorities, then devices from Vendor A will reject images signed by Vendor B since they use different credentials. However, if both devices trust the same firmware authority, then, devices from Vendor A could install firmware intended for devices from Vendor B.
+If the vendors are the firmware authorities, then devices from Vendor A will reject images signed by Vendor B since they use different credentials. However, if both devices trust the same Author, then, devices from Vendor A could install firmware intended for devices from Vendor B.
 
 
 ### THREAT.IMG.FORMAT: The target device misinterprets the type of payload {#threat-img-format}
@@ -450,7 +450,13 @@ If a device does not know where to obtain the payload for an update, it may be r
 
 Mitigated by: [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-resource)
 
-### THREAT.NET.MITM
+### THREAT.NET.MITM: Traffic interception {#threat-net-mitm}
+
+Classification: Spoofing Identity, Tampering with Data
+
+An attacker intercepts all traffic to and from a device. The attacker can monitor or modify any data sent to or received from the device. This can take the form of: manifests, payloads, status reports, and capability reports being modified or not delivered to the intended recipient. It can also take the form of analysis of data sent to or from the device, either in content, size, or frequency.
+
+Mitigated by: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.IMG.CONFIDENTIALITY](#req-sec-image-confidentiality), [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-resource), [REQ.SEC.MFST.CONFIDENTIALITY](#req-sec-mfst-confidentiality), [REQ.SEC.REPORTING](#req-sec-reporting)
 
 ### THREAT.IMG.REPLACE: Payload Replacement {#threat-image-replacement}
 
@@ -485,7 +491,9 @@ Mitigated by: [REQ.SEC.AUTH.PRECURSOR](#req-sec-authentic-precursor)
 
 Classification: Denial of Service, Elevation of Privilege
 
-This threat can appear in several ways, however it is ultimately about interoperability of devices with other systems. The owner or operator of a network needs to approve firmware for their network in order to ensure interoperability with other devices on the network, or the network itself. If the firmware is not qualified, it may not work. Therefore, if a device installs firmware without the approval of the network owner or operator, this is a threat to devices and the network.
+This threat can appear in several ways, however it is ultimately about interoperability of devices with other systems. The owner or operator of a system of two or more interoperating devices needs to approve firmware for their system in order to ensure interoperability with other devices in the system. If the firmware is not qualified, it may not work. Therefore, if a device installs firmware without the approval of the device owner or operator, this is a threat to devices.
+
+Similarly, the operator of a network may need to approve firmware for devices attached to the network in order to ensure favourable operating conditions within the network. If the firmware is not qualified, it may degrade the performance of the network. Therefore, if a device installs firmware without the approval of the network operator, this is a threat to the network itself.
 
 Threat Escalation: If the firmware expects configuration that is present in devices deployed in Network A, but not in devices deployed in Network B, then the device may experience degraded security, leading to threats of All Types.
 
@@ -515,7 +523,7 @@ Mitigated by: [REQ.SEC.IMG.CONFIDENTIALITY](#req-sec-image-confidentiality)
 
 Classification: Elevation of Privilege
 
-An authorised actor, but not the firmware authority, uses an override mechanism ([USER_STORY.OVERRIDE](#user-story-override)) to change an information element in a manifest signed by the firmware authority. For example, if the authorised actor overrides the digest and URI of the payload, the actor can replace the entire payload with a payload of their choice.
+An authorised actor, but not the Author, uses an override mechanism ([USER_STORY.OVERRIDE](#user-story-override)) to change an information element in a manifest signed by the Author. For example, if the authorised actor overrides the digest and URI of the payload, the actor can replace the entire payload with a payload of their choice.
 
 Threat Escalation: By overriding elements such as payload installation instructions or firmware digest, this threat can be escalated to all types.
 
@@ -533,9 +541,31 @@ Mitigated by: [REQ.SEC.MFST.CONFIDENTIALITY](#req-sec-mfst-confidentiality)
 
 Classification: All Types
 
-If a third party modifies the image so that it contains extra code after a valid, authentic image, that third party can then use their own code in order to make better use of an existing vulnerability
+If a third party modifies the image so that it contains extra code after a valid, authentic image, that third party can then use their own code in order to make better use of an existing vulnerability.
 
 Mitigated by: [REQ.SEC.IMG.COMPLETE_DIGEST](#req-sec-img-complete-digest)
+
+### THREAT.KEY.EXPOSURE: Exposure of signing keys {#threat-key-exposure}
+
+Classification: All Types
+
+If a third party obtains a key or even indirect access to a key, for example in an HSM, then they can perform the same actions as the legitimate owner of the key. If the key is trusted for firmware update, then the third party can perform firmware updates as though they were the legitimate owner of the key.
+
+For example, if manifest signing is performed on a server connected to the internet, an attacker may compromise the server and then be able to sign manifests, even if the keys for manifest signing are held in an HSM that is accessed by the server.
+
+Mitigated by: [REQ.SEC.KEY.PROTECTION](#req-sec-key-protection)
+
+### THREAT.MFST.MODIFICATION: Modification of manifest or payload prior to signing {#threat-mfst-modification}
+
+Classification: All Types
+
+If an attacker can alter a manifest or payload before it is signed, they can perform all the same actions as the manifest author. This allows the attacker to deploy firmware updates to any devices that trust the manifest author. If an attacker can modify the code of a payload before the corresponding manifest is created, they can insert their own code. If an attacker can modify the manifest before it is signed, they can redirect the manifest to their own payload.
+
+For example, the attacker deploys malware to the developer's computer or signing service that watches manifest creation activities and inserts code into any binary that is referenced by a manifest.
+
+For example, the attacker deploys malware to the developer's computer or signing service that replaces the referenced binary (digest) and URI with the attacker's binary (digest) and URI.
+
+Mitigated by: [REQ.SEC.MFST.CHECK](#req-sec-mfst-check), [REQ.SEC.MFST.TRUSTED](#req-sec-mfst-trusted)
 
 ## Security Requirements {#security-requirements}
 
@@ -569,9 +599,9 @@ Implemented by: [Expiration Time](#manifest-element-expiration)
 
 ### REQ.SEC.AUTHENTIC: Cryptographic Authenticity {#req-sec-authentic}
 
-The authenticity of an update MUST be demonstrable. Typically, this means that updates must be digitally authenticated. Because the manifest contains information about how to install the update, the manifest's authenticity MUST also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code, the authenticity of the firmware image is tied to the manifest by the use of a digest of the firmware image.
+The authenticity of an update MUST be demonstrable. Typically, this means that updates must be digitally authenticated. Because the manifest contains information about how to install the update, the manifest's authenticity MUST also be demonstrable. To reduce the overhead required for validation, the manifest contains the digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code. The authenticity of the firmware image is tied to the manifest by the use of a digest of the firmware image.
 
-Mitigates: [THREAT.IMG.NON_AUTH](#threat-img-unauthenticated)
+Mitigates: [THREAT.IMG.NON_AUTH](#threat-img-unauthenticated), [THREAT.NET.MITM](#threat-net-mitm)
 
 Implemented by: [Signature](#manifest-element-signature), [Payload Digest](#manifest-element-payload-digest)
 
@@ -595,7 +625,7 @@ Implemented by: [Storage Location](#maniest-element-storage-location)
 
 The location where a target should find a payload MUST be authenticated.
 
-Mitigates: [THREAT.NET.REDIRECT](#threat-net-redirect)
+Mitigates: [THREAT.NET.REDIRECT](#threat-net-redirect), [THREAT.NET.MITM](#threat-net-mitm)
 
 Implemented by: [Resource Indicator](#manifest-element-resource-indicator)
 
@@ -625,7 +655,7 @@ Implemented By: [Vendor ID Condition](#element-vendor-id), [Class ID Condition](
 
 ### REQ.SEC.RIGHTS: Rights Require Authenticity {#req-sec-rights}
 
-If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in [REQ.SEC.AUTHENTIC](#req-sec-authentic) are acceptable but need to follow the end-to-end security model.
+If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in [REQ.SEC.AUTHENTIC](#req-sec-authentic) can be used to prove authenticity.
 
 For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device and the Network Operator.
 
@@ -637,7 +667,7 @@ Implemented by: [Signature](#manifest-element-signature)
 
 The manifest information model MUST enable encrypted payloads. Encryption helps to prevent third parties, including attackers, from reading the content of the firmware image. This can protect against confidential information disclosures and discovery of vulnerabilities through reverse engineering. Therefore the manifest must convey the information required to allow an intended recipient to decrypt an encrypted payload.
 
-Mitigates: [THREAT.IMG.DISCLOSURE](#threat-img-disclosure)
+Mitigates: [THREAT.IMG.DISCLOSURE](#threat-img-disclosure), [THREAT.NET.MITM](#threat-net-mitm)
 
 Implemented by: [Encryption Wrapper](#manifest-element-encryption-wrapper)
 
@@ -656,7 +686,7 @@ Implemented by: Client-side code, not specified in manifest.
 
 It MUST be possible to encrypt part or all of the manifest. This may be accomplished with either transport encryption or with at-rest encryption.
 
-Mitigates: [THREAT.MFST.EXPOSURE](#threat-mfst-exposure)
+Mitigates: [THREAT.MFST.EXPOSURE](#threat-mfst-exposure), [THREAT.NET.MITM](#threat-net-mitm)
 
 Implemented by: External Encryption Wrapper / Transport Security
 
@@ -667,6 +697,32 @@ The digest SHOULD cover all available space in a fixed-size storage location. Va
 Mitigates: [THREAT.IMG.EXTRA](#threat-img-extra)
 
 Implemented by: [Payload Digests](#manifest-element-payload-digest)
+
+### REQ.SEC.REPORTING: Secure Reporting {#req-sec-reporting}
+
+Status reports from the device to any remote system SHOULD be performed over an authenticated, confidential channel in order to prevent modification or spoofing of the reports.
+
+Mitigates: [THREAT.NET.MITM](#threat-net-mitm)
+
+### REQ.SEC.KEY.PROTECTION: Protected storage of signing keys {#req-sec-key-protection}
+
+Cryptographic keys for signing manifests SHOULD be stored in a manner that is inaccessible to networked devices, for example in an HSM, or an air-gapped computer. This protects against an attacker obtaining the keys.
+
+Keys SHOULD be stored in a way that limits the risk of a legitimate, but compromised, entity (such as a server or developer computer) issuing signing requests.
+
+Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
+
+### REQ.SEC.MFST.CHECK: Validate manifests prior to deployment {#req-sec-mfst-check}
+
+Manifests SHOULD be parsed and examined prior to deployment to validate that their contents have not been modified during creation and signing.
+
+Mitigates: [THREAT.MFST.MODIFICATION](#threat-mfst-modification)
+
+### REQ.SEC.MFST.TRUSTED: Construct manifests in a trusted environment {#req-sec-mfst-trusted}
+
+For high risk deployments, such as large numbers of devices or critical function devices, manifests SHOULD be constructed in an environment that is protected from interference, such as an air-gapped computer. Note that a networked computer connected to an HSM does not fulfill this requirement (see [THREAT.MFST.MODIFICATION](#threat-mfst-modification)).
+
+Mitigates: [THREAT.MFST.MODIFICATION](#threat-mfst-modification)
 
 ## User Stories {#user-stories}
 
@@ -694,20 +750,20 @@ Satisfied by: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
 
 ### USER_STORY.OVERRIDE: Override Non-Critical Manifest Elements {#user-story-override}
 
-As a Network Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. The authority to override this information is provided via the installation of a limited trust relationship by another authority.
+As a Device Operator, I would like to be able to override the non-critical information in the manifest so that I can control my devices more precisely. The authority to override this information is provided via the installation of a limited trust anchor by another authority.
 
 Some examples of potentially overridable information:
 
-* [URIs](#manifest-element-resource-indicator): this allows the Network Operator to direct devices to their own infrastructure in order to reduce network load.
-* Conditions: this allows the Network Operator to pose additional constraints on the installation of the manifest.
-* [Directives](#manifest-element-additional-install-info): this allows the Network Operator to add more instructions such as time of installation.
+* [URIs](#manifest-element-resource-indicator): this allows the Device Operator to direct devices to their own infrastructure in order to reduce network load.
+* Conditions: this allows the Device Operator to pose additional constraints on the installation of the manifest.
+* [Directives](#manifest-element-additional-install-info): this allows the Device Operator to add more instructions such as time of installation.
 * [Processing Steps](#manifest-element-processing-steps): If an intermediary performs an action on behalf of a device, it may need to override the processing steps. It is still possible for a device to verify the final content and the result of any processing step that specifies a digest. Some processing steps should be non-overridable.
 
 Satisfied by: [USER_STORY.OVERRIDE](#user-story-override), [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
 ### USER_STORY.COMPONENT: Component Update {#user-story-component}
 
-As an Operator, I want to divide my firmware into components, so that I can reduce the size of updates, make different parties responsible for different components, and divide my firmware into frequently updated and infrequently updated components.
+As a Device Operator, I want to divide my firmware into components, so that I can reduce the size of updates, make different parties responsible for different components, and divide my firmware into frequently updated and infrequently updated components.
 
 Satisfied by: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
@@ -719,13 +775,13 @@ Satisfied by: [REQ.USE.MFST.MULTI_AUTH](#req-use-mfst-multi-auth), [REQ.SEC.ACCE
 
 ### USER_STORY.IMG.FORMAT: Multiple Payload Formats {#user-story-img-format}
 
-As an Operator, I want to be able to send multiple payload formats to suit the needs of my update, so that I can optimise the bandwidth used by my devices.
+As a Device Operator, I want to be able to send multiple payload formats to suit the needs of my update, so that I can optimise the bandwidth used by my devices.
 
 Satisfied by: [REQ.USE.IMG.FORMAT](#req-use-img-format)
 
 ### USER_STORY.IMG.CONFIDENTIALITY: Prevent Confidential Information Disclosures {#user-story-img-confidentiality}
 
-As an firmware author, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security or at-rest encryption is adequate to protect the manifest itself against information disclosure.
+As a firmware author, I want to prevent confidential information from being disclosed during firmware updates. It is assumed that channel security or at-rest encryption is adequate to protect the manifest itself against information disclosure.
 
 Satisfied by: [REQ.SEC.IMG.CONFIDENTIALITY](#req-sec-image-confidentiality)
 
@@ -765,7 +821,7 @@ Satisfied by: [REQ.USE.LOAD](#req-use-load)
 
 ### USER_STORY.MFST.IMG: Payload in Manifest {#user-story-mfst-img}
 
-As an operator of a constrained network, I would like to be able to send a small payload in the same packet as the manifest so that I can reduce network traffic.
+As an operator of devices on a constrained network, I would like the manifest to be able to include a small payload in the same packet so that I can reduce network traffic.
 
 Satisfied by: [REQ.USE.PAYLOAD](#req-use-payload)
 
@@ -777,7 +833,7 @@ Satisfied by: [REQ.USE.PARSE](#req-use-parse)
 
 ### USER_STORY.MFST.DELEGATION: Delegated Authority in Manifest {#user-story-mfst-delegation}
 
-As an operator that rotates delegated authority more often than delivering firmware updates, I would like to delegate a new authority when I deliver a firmware update so that I can accomplish both tasks in a single transmission.
+As a Device Operator that rotates delegated authority more often than delivering firmware updates, I would like to delegate a new authority when I deliver a firmware update so that I can accomplish both tasks in a single transmission.
 
 Satisfied by: [REQ.USE.DELEGATION](#req-use-delegation)
 
@@ -919,15 +975,11 @@ Implemented by: N/A
 
 ### REQ.USE.DELEGATION: Delegation of Authority in Manifest {#req-use-delegation}
 
-Any serialisation MUST enable the delivery of a key claim with, but not authenticated by a manifest. This key claim delivers a new key with which the recipient can verify the manifest.
+Any serialisation MUST enable the delivery of a key claim with, but not authenticated by, a manifest. This key claim delivers a new key with which the recipient can verify the manifest.
 
 Satisfies: [USER_STORY.MFST.DELEGATION](#user-story-mfst-delegation)
 
 Implemented by: [Key Claims](#manifest-element-key-claims)
-
-# Security Considerations
-
-Security considerations for this document are covered in {{design-motivation}}.
 
 #  IANA Considerations
 
@@ -940,7 +992,7 @@ We would like to thank our working group chairs, Dave Thaler, Russ Housley and D
 We would like to thank the participants of the 2018 Berlin SUIT Hackathon and the June 2018 virtual design team meetings for their discussion input.
 In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten Bormann, David Brown, Markus Gueller, Frank Audun Kvamtro, Oyvind Ronningstad, Michael Richardson, Jan-Frederik Rieckers, Francisco Acosta, Anton Gerasimov, Matthias Waehlisch, Max Groening, Daniel Petry, Gaetan Harter, Ralph Hamm, Steve Patrick, Fabio Utzig, Paul Lambert, Benjamin Kaduk, Said Gharout, and Milen Stoychev.  
 
-We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, Gary Thomson.
+We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, and Gary Thomson.
 
 --- back
 
