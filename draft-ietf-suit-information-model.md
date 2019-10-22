@@ -487,11 +487,17 @@ An attacker that can cause a device to install a payload against the wrong precu
 
 Mitigated by: [REQ.SEC.AUTH.PRECURSOR](#req-sec-authentic-precursor)
 
-### THREAT.UPD.INTEROP: Unqualified Firmware {#threat-upd-interop}
+### THREAT.UPD.UNAPPROVED: Unapproved Firmware {#threat-upd-unapproved}
 
 Classification: Denial of Service, Elevation of Privilege
 
-This threat can appear in several ways, however it is ultimately about interoperability of devices with other systems. The owner or operator of a system of two or more interoperating devices needs to approve firmware for their system in order to ensure interoperability with other devices in the system. If the firmware is not qualified, it may not work. Therefore, if a device installs firmware without the approval of the device owner or operator, this is a threat to devices.
+This threat can appear in several ways, however it is ultimately about ensuring that devices retain the behaviour required by their Owner, Device Operator, or Network Operator. The owner or operator of a device typically requires that the device maintain certain features, functions, capabilities, behaviours, or interoperability constraints (more generally, behaviour). If these requirements are broken, then a device will not fulfill its purpose. Therefore, if any party other than the device's Owner or the Owner's contracted Device Operator has the ability to modify device behaviour without approval, then this constitutes an elevation of privilege.
+
+Similarly, a network operator may require that devices behave in a particular way in order to maintain the integrity of the network. If devices behaviour on a network can be modified without the approval of the network operator, then this constitutes an elevation of privilege with respect to the network.
+
+For example, if the owner of a device has purchased that device because of Features A, B, and C, and a firmware update is issued by the manufacturer, which removes Feature A, then the device may not fulfill the owner's requirements any more. In certain circumstances, this can cause significantly greater threats. Suppose that Feature A is used to implement a safety-critical system, whether the manufacturer intended this behaviour or not. When unapproved firmware is installed, the system may become unsafe.
+
+In a second example, the owner or operator of a system of two or more interoperating devices needs to approve firmware for their system in order to ensure interoperability with other devices in the system. If the firmware is not qualified, the system as a whole may not work. Therefore, if a device installs firmware without the approval of the device owner or operator, this is a threat to devices or the system as a whole.
 
 Similarly, the operator of a network may need to approve firmware for devices attached to the network in order to ensure favourable operating conditions within the network. If the firmware is not qualified, it may degrade the performance of the network. Therefore, if a device installs firmware without the approval of the network operator, this is a threat to the network itself.
 
@@ -657,9 +663,9 @@ Implemented By: [Vendor ID Condition](#element-vendor-id), [Class ID Condition](
 
 If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in [REQ.SEC.AUTHENTIC](#req-sec-authentic) can be used to prove authenticity.
 
-For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device and the Network Operator.
+For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device Operator and the Network Operator.
 
-Mitigates: [THREAT.UPD.INTEROP](#threat-upd-interop)
+Mitigates: [THREAT.UPD.UNAPPROVED](#threat-upd-unapproved)
 
 Implemented by: [Signature](#manifest-element-signature)
 
@@ -678,7 +684,7 @@ If a device grants different rights to different actors, then an exercise of tho
 1. An ACL decides which elements of the manifest may be overridden and by which actors.
 2. An ACL decides which component identifier/storage identifier pairs can be written by which actors.
 
-Mitigates: [THREAT.MFST.OVERRIDE](#threat-mfst-override), [THREAT.UPD.INTEROP](#threat-upd-interop)
+Mitigates: [THREAT.MFST.OVERRIDE](#threat-mfst-override), [THREAT.UPD.UNAPPROVED](#threat-upd-unapproved)
 
 Implemented by: Client-side code, not specified in manifest.
 

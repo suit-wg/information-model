@@ -422,7 +422,7 @@
 <link href="#rfc.section.4.2.8" rel="Chapter" title="4.2.8 THREAT.IMG.REPLACE: Payload Replacement">
 <link href="#rfc.section.4.2.9" rel="Chapter" title="4.2.9 THREAT.IMG.NON_AUTH: Unauthenticated Images">
 <link href="#rfc.section.4.2.10" rel="Chapter" title="4.2.10 THREAT.UPD.WRONG_PRECURSOR: Unexpected Precursor images">
-<link href="#rfc.section.4.2.11" rel="Chapter" title="4.2.11 THREAT.UPD.INTEROP: Unqualified Firmware">
+<link href="#rfc.section.4.2.11" rel="Chapter" title="4.2.11 THREAT.UPD.UNAPPROVED: Unapproved Firmware">
 <link href="#rfc.section.4.2.12" rel="Chapter" title="4.2.12 THREAT.IMG.DISCLOSURE: Reverse Engineering Of Firmware Image for Vulnerability Analysis">
 <link href="#rfc.section.4.2.13" rel="Chapter" title="4.2.13 THREAT.MFST.OVERRIDE: Overriding Critical Manifest Elements">
 <link href="#rfc.section.4.2.14" rel="Chapter" title="4.2.14 THREAT.MFST.EXPOSURE: Confidential Manifest Element Exposure">
@@ -494,7 +494,7 @@
 
   <meta name="dct.creator" content="Moran, B., Tschofenig, H., and H. Birkholz" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-suit-information-model-04" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-10-18" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-10-22" />
   <meta name="dct.abstract" content="Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality" />
   <meta name="description" content="Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality" />
 
@@ -518,7 +518,7 @@
 <td class="right">Arm Limited</td>
 </tr>
 <tr>
-<td class="left">Expires: April 20, 2020</td>
+<td class="left">Expires: April 24, 2020</td>
 <td class="right">H. Birkholz</td>
 </tr>
 <tr>
@@ -527,7 +527,7 @@
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">October 18, 2019</td>
+<td class="right">October 22, 2019</td>
 </tr>
 
     	
@@ -544,7 +544,7 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on April 20, 2020.</p>
+<p>This Internet-Draft will expire on April 24, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
@@ -651,7 +651,7 @@
 </li>
 <li>4.2.10.   <a href="#rfc.section.4.2.10">THREAT.UPD.WRONG_PRECURSOR: Unexpected Precursor images</a>
 </li>
-<li>4.2.11.   <a href="#rfc.section.4.2.11">THREAT.UPD.INTEROP: Unqualified Firmware</a>
+<li>4.2.11.   <a href="#rfc.section.4.2.11">THREAT.UPD.UNAPPROVED: Unapproved Firmware</a>
 </li>
 <li>4.2.12.   <a href="#rfc.section.4.2.12">THREAT.IMG.DISCLOSURE: Reverse Engineering Of Firmware Image for Vulnerability Analysis</a>
 </li>
@@ -1130,13 +1130,16 @@
 <p id="rfc.section.4.2.10.p.3">An attacker that can cause a device to install a payload against the wrong precursor image could gain elevation of privilege and potentially expand this to all types of threat. However, it is unlikely that a valid differential update applied to an incorrect precursor would result in a functional, but vulnerable firmware.</p>
 <p id="rfc.section.4.2.10.p.4">Mitigated by: <a href="#req-sec-authentic-precursor" class="xref">REQ.SEC.AUTH.PRECURSOR</a></p>
 <h3 id="rfc.section.4.2.11">
-<a href="#rfc.section.4.2.11">4.2.11.</a> <a href="#threat-upd-interop" id="threat-upd-interop">THREAT.UPD.INTEROP: Unqualified Firmware</a>
+<a href="#rfc.section.4.2.11">4.2.11.</a> <a href="#threat-upd-unapproved" id="threat-upd-unapproved">THREAT.UPD.UNAPPROVED: Unapproved Firmware</a>
 </h3>
 <p id="rfc.section.4.2.11.p.1">Classification: Denial of Service, Elevation of Privilege</p>
-<p id="rfc.section.4.2.11.p.2">This threat can appear in several ways, however it is ultimately about interoperability of devices with other systems. The owner or operator of a system of two or more interoperating devices needs to approve firmware for their system in order to ensure interoperability with other devices in the system. If the firmware is not qualified, it may not work. Therefore, if a device installs firmware without the approval of the device owner or operator, this is a threat to devices.</p>
-<p id="rfc.section.4.2.11.p.3">Similarly, the operator of a network may need to approve firmware for devices attached to the network in order to ensure favourable operating conditions within the network. If the firmware is not qualified, it may degrade the performance of the network. Therefore, if a device installs firmware without the approval of the network operator, this is a threat to the network itself.</p>
-<p id="rfc.section.4.2.11.p.4">Threat Escalation: If the firmware expects configuration that is present in devices deployed in Network A, but not in devices deployed in Network B, then the device may experience degraded security, leading to threats of All Types.</p>
-<p id="rfc.section.4.2.11.p.5">Mitigated by: <a href="#req-sec-rights" class="xref">REQ.SEC.RIGHTS</a>, <a href="#req-sec-access-control" class="xref">REQ.SEC.ACCESS_CONTROL</a></p>
+<p id="rfc.section.4.2.11.p.2">This threat can appear in several ways, however it is ultimately about ensuring that devices retain the behaviour required by their Owner, Device Operator, or Network Operator. The owner or operator of a device typically requires that the device maintain certain features, functions, capabilities, behaviours, or interoperability constraints (more generally, behaviour). If these requirements are broken, then a device will not fulfill its purpose. Therefore, if any party other than the device&#8217;s Owner or the Owner&#8217;s contracted Device Operator has the ability to modify device behaviour without approval, then this constitutes an elevation of privilege.</p>
+<p id="rfc.section.4.2.11.p.3">Similarly, a network operator may require that devices behave in a particular way in order to maintain the integrity of the network. If devices behaviour on a network can be modified without the approval of the network operator, then this constitutes an elevation of privilege with respect to the network.</p>
+<p id="rfc.section.4.2.11.p.4">For example, if the owner of a device has purchased that device because of Features A, B, and C, and a firmware update is issued by the manufacturer, which removes Feature A, then the device may not fulfill the owner&#8217;s requirements any more. In certain circumstances, this can cause significantly greater threats. Suppose that Feature A is used to implement a safety-critical system, whether the manufacturer intended this behaviour or not. When unapproved firmware is installed, the system may become unsafe.</p>
+<p id="rfc.section.4.2.11.p.5">In a second example, the owner or operator of a system of two or more interoperating devices needs to approve firmware for their system in order to ensure interoperability with other devices in the system. If the firmware is not qualified, the system as a whole may not work. Therefore, if a device installs firmware without the approval of the device owner or operator, this is a threat to devices or the system as a whole.</p>
+<p id="rfc.section.4.2.11.p.6">Similarly, the operator of a network may need to approve firmware for devices attached to the network in order to ensure favourable operating conditions within the network. If the firmware is not qualified, it may degrade the performance of the network. Therefore, if a device installs firmware without the approval of the network operator, this is a threat to the network itself.</p>
+<p id="rfc.section.4.2.11.p.7">Threat Escalation: If the firmware expects configuration that is present in devices deployed in Network A, but not in devices deployed in Network B, then the device may experience degraded security, leading to threats of All Types.</p>
+<p id="rfc.section.4.2.11.p.8">Mitigated by: <a href="#req-sec-rights" class="xref">REQ.SEC.RIGHTS</a>, <a href="#req-sec-access-control" class="xref">REQ.SEC.ACCESS_CONTROL</a></p>
 <h4 id="rfc.section.4.2.11.1">
 <a href="#rfc.section.4.2.11.1">4.2.11.1.</a> <a href="#example-1-multiple-network-operators-with-a-single-device-operator" id="example-1-multiple-network-operators-with-a-single-device-operator">Example 1: Multiple Network Operators with a Single Device Operator</a>
 </h4>
@@ -1256,8 +1259,8 @@
 <a href="#rfc.section.4.3.11">4.3.11.</a> <a href="#req-sec-rights" id="req-sec-rights">REQ.SEC.RIGHTS: Rights Require Authenticity</a>
 </h3>
 <p id="rfc.section.4.3.11.p.1">If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in <a href="#req-sec-authentic" class="xref">REQ.SEC.AUTHENTIC</a> can be used to prove authenticity.</p>
-<p id="rfc.section.4.3.11.p.2">For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device and the Network Operator.</p>
-<p id="rfc.section.4.3.11.p.3">Mitigates: <a href="#threat-upd-interop" class="xref">THREAT.UPD.INTEROP</a></p>
+<p id="rfc.section.4.3.11.p.2">For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device Operator and the Network Operator.</p>
+<p id="rfc.section.4.3.11.p.3">Mitigates: <a href="#threat-upd-unapproved" class="xref">THREAT.UPD.UNAPPROVED</a></p>
 <p id="rfc.section.4.3.11.p.4">Implemented by: <a href="#manifest-element-signature" class="xref">Signature</a></p>
 <h3 id="rfc.section.4.3.12">
 <a href="#rfc.section.4.3.12">4.3.12.</a> <a href="#req-sec-image-confidentiality" id="req-sec-image-confidentiality">REQ.SEC.IMG.CONFIDENTIALITY: Payload Encryption</a>
@@ -1275,7 +1278,7 @@
 <li>An ACL decides which elements of the manifest may be overridden and by which actors.</li>
 <li>An ACL decides which component identifier/storage identifier pairs can be written by which actors.</li>
 </ol>
-<p id="rfc.section.4.3.13.p.3">Mitigates: <a href="#threat-mfst-override" class="xref">THREAT.MFST.OVERRIDE</a>, <a href="#threat-upd-interop" class="xref">THREAT.UPD.INTEROP</a></p>
+<p id="rfc.section.4.3.13.p.3">Mitigates: <a href="#threat-mfst-override" class="xref">THREAT.MFST.OVERRIDE</a>, <a href="#threat-upd-unapproved" class="xref">THREAT.UPD.UNAPPROVED</a></p>
 <p id="rfc.section.4.3.13.p.4">Implemented by: Client-side code, not specified in manifest.</p>
 <h3 id="rfc.section.4.3.14">
 <a href="#rfc.section.4.3.14">4.3.14.</a> <a href="#req-sec-mfst-confidentiality" id="req-sec-mfst-confidentiality">REQ.SEC.MFST.CONFIDENTIALITY: Encrypted Manifests</a>
@@ -1546,7 +1549,7 @@
 <tr>
 <td class="reference"><b id="I-D.ietf-suit-architecture">[I-D.ietf-suit-architecture]</b></td>
 <td class="top">
-<a>Moran, B.</a>, <a>Meriac, M.</a>, <a>Tschofenig, H.</a> and <a>D. Brown</a>, "<a href="https://tools.ietf.org/html/draft-ietf-suit-architecture-06">A Firmware Update Architecture for Internet of Things Devices</a>", Internet-Draft draft-ietf-suit-architecture-06, September 2019.</td>
+<a>Moran, B.</a>, <a>Meriac, M.</a>, <a>Tschofenig, H.</a> and <a>D. Brown</a>, "<a href="https://tools.ietf.org/html/draft-ietf-suit-architecture-07">A Firmware Update Architecture for Internet of Things Devices</a>", Internet-Draft draft-ietf-suit-architecture-07, October 2019.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC2119">[RFC2119]</b></td>
