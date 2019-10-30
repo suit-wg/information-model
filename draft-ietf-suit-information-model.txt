@@ -5,9 +5,9 @@
 SUIT                                                            B. Moran
 Internet-Draft                                             H. Tschofenig
 Intended status: Standards Track                             Arm Limited
-Expires: 24 April 2020                                       H. Birkholz
+Expires: 2 May 2020                                          H. Birkholz
                                                           Fraunhofer SIT
-                                                         22 October 2019
+                                                         30 October 2019
 
 
         An Information Model for Firmware Updates in IoT Devices
@@ -42,7 +42,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 April 2020.
+   This Internet-Draft will expire on 2 May 2020.
 
 Copyright Notice
 
