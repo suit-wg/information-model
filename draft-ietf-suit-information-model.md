@@ -307,7 +307,7 @@ This is not strictly a manifest element. Instead, the manifest is wrapped by a s
 
 This element is REQUIRED in non-dependency manifests and represents the foundation of all security properties of the manifest. Manifests which are included as dependencies by another manifest SHOULD include a signature so that the recipient can distinguish between different actors with different permissions.
 
-A manifest MUST NOT be considered authenticated by channel security even if it contains only channel information (such as URIs). If the authenticated remote or channel were compromised, the threat actor could induce recipients to queries traffic over any accessible network.
+A manifest MUST NOT be considered authenticated by channel security even if it contains only channel information (such as URIs). If the authenticated remote or channel were compromised, the threat actor could induce recipients to queries traffic over any accessible network. Lightweight authentication with pre-existing relationships SHOULD be done with MAC.
 
 Implements: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.RIGHTS](#req-sec-rights), [REQ.USE.MFST.MULTI_AUTH](#req-use-mfst-multi-auth)
 
@@ -724,7 +724,7 @@ Mitigates: [THREAT.NET.MITM](#threat-net-mitm)
 
 ### REQ.SEC.KEY.PROTECTION: Protected storage of signing keys {#req-sec-key-protection}
 
-Cryptographic keys for signing manifests SHOULD be stored in a manner that is inaccessible to networked devices, for example in an HSM, or an air-gapped computer. This protects against an attacker obtaining the keys.
+Cryptographic keys for signing/authenticating manifests SHOULD be stored in a manner that is inaccessible to networked devices, for example in an HSM, or an air-gapped computer. This protects against an attacker obtaining the keys.
 
 Keys SHOULD be stored in a way that limits the risk of a legitimate, but compromised, entity (such as a server or developer computer) issuing signing requests.
 
@@ -878,8 +878,6 @@ Implemented by: [Additional installation instructions](#manifest-element-additio
 ### REQ.USE.MFST.OVERRIDE_REMOTE: Override Remote Resource Location {#req-use-mfst-override}
 
 It MUST be possible to redirect payload fetches. This applies where two manifests are used in conjunction. For example, a Device Operator creates a manifest specifying a payload and signs it, and provides a URI for that payload. A Network Operator creates a second manifest, with a dependency on the first. They use this second manifest to override the URIs provided by the Device Operator, directing them into their own infrastructure instead. Some devices may provide this capability, while others may only look at canonical sources of firmware. For this to be possible, the device must fetch the payload, whereas a device that accepts payload pushes will ignore this feature.
-
-N.B. If a manifest is delivered over an authenticated channel and that manifest contains only override information for which the remote is authorised, then it can be considered authenticated by the channel authentication.
 
 Satisfies: [USER_STORY.OVERRIDE](#user-story-override)
 
