@@ -67,7 +67,7 @@ One component of such a firmware update is a concise and machine-processable met
 
 The information model describes all the information elements required to secure firmware updates of IoT devices from the threats described in {{threat-model}} and enables the user stories captured in {{user-stories}}. These threats and user stories are not intended to be an exhaustive list of the threats against IoT devices, nor of the possible user stories that describe how to conduct a firmware update. Instead they are intended to describe the threats against firmware updates in isolation and provide sufficient motivation to specify the information elements that cover a wide range of user stories. The information model does not define the serialization, encoding, ordering, or structure of information elements, only their semantics.
 
-Because the information model covers a wide range of user stories and a wide range of threats, not all information elements apply to all scenarios. As a result, various information elements could be considered optional to implement and optional to use, depending on which threats exist in a particular domain of application and which user stories are required. Elements marked as mandatory provide baseline security and usability properties that are expected to be required for most applications. Those elements are mandatory to implement and mandatory to use. Elements marked as recommended provide important security or usability properties that are needed on most devices. Elements marked as optional enable security or usability properties that are useful in some applications.
+Because the information model covers a wide range of user stories and a wide range of threats, not all information elements apply to all scenarios. As a result, various information elements could be considered optional to implement and optional to use, depending on which threats exist in a particular domain of application and which user stories are required. Elements marked as REQUIRED provide baseline security and usability properties that are expected to be required for most applications. Those elements are REQUIRED to implement and REQUIRED to use. Elements marked as recommended provide important security or usability properties that are needed on most devices. Elements marked as optional enable security or usability properties that are useful in some applications.
 
 The definition of some of the information elements include examples that illustrate their semantics and how they are intended to be used.
 
@@ -90,13 +90,13 @@ Each manifest information element is anchored in a security requirement or a usa
 
 An identifier that describes which iteration of the manifest format is contained in the structure.
 
-This element is MANDATORY and MUST be present in order to allow devices to identify the version of the manifest data model that is in use.
+This element is REQUIRED and MUST be present in order to allow devices to identify the version of the manifest data model that is in use.
 
 ## Manifest Element: Monotonic Sequence Number {#element-sequence-number}
 
 A monotonically increasing sequence number. For convenience, the monotonic sequence number MAY be a UTC timestamp. This allows global synchronisation of sequence numbers without any additional management. This number MUST be easily accessible so that code choosing one out of several manifests can choose which is the latest.
 
-This element is MANDATORY and is necessary to prevent malicious actors from reverting a firmware update against the policies of the relevant authority.
+This element is REQUIRED and is necessary to prevent malicious actors from reverting a firmware update against the policies of the relevant authority.
 
 Implements: [REQ.SEC.SEQUENCE](#req-sec-sequence)
 
@@ -176,6 +176,17 @@ Vendor A produces two products, product X and product Y. These components share 
 
 Product X matches against both XclassId and CommonClassId. Product Y matches against both YclassId and CommonClassId.
 
+### Example 4: White-labelling
+
+Vendor A creates a product A and its firmware. Vendor B sells the product under its own name as Product B with some customised configuration. The vendors create the Class IDs as follows:
+
+* vendorIdA = UUID5(DNS, "vendor-a.com")
+* classIdA = UUID5(vendorIdA, "Product A-Unlabelled")
+* vendorIdB = UUID5(DNS, "vendor-b.com")
+* classIdB = UUID5(vendorIdB, "Product B")
+
+The product will match against each of these class IDs. If Vendor A and Vendor B provide different components for the device, the implementor MAY choose to make ID matching scoped to each component. Then, the vendorIdA, classIdA match the component ID supplied by Vendor A, and the vendorIdB, classIdB match the component ID supplied by Vendor B.
+
 ## Manifest Element: Precursor Image Digest Condition {#element-precursor-digest}
 
 When a precursor image is required by the payload format, a precursor image digest condition MUST be present in the conditions list. The precursor image may be installed or stored as a candidate.
@@ -208,7 +219,7 @@ Implements: [REQ.SEC.EXP](#req-sec-exp)
 
 The format of the payload MUST be indicated to devices in an unambiguous way. This element provides a mechanism to describe the payload format, within the signed metadata.
 
-This element is MANDATORY and MUST be present to enable devices to decode payloads correctly.
+This element is REQUIRED and MUST be present to enable devices to decode payloads correctly.
 
 Implements: [REQ.SEC.AUTH.IMG_TYPE](#req-sec-authentic-image-type), [REQ.USE.IMG.FORMAT](#req-use-img-format)
 
@@ -228,7 +239,7 @@ Implements: [REQ.USE.IMG.NESTED](#req-use-img-nested)
 
 This element tells the device where to store a payload within a given component. The device can use this to establish which permissions are necessary and the physical storage location to use.
 
-This element is MANDATORY and MUST be present to enable devices to store payloads to the correct location.
+This element is REQUIRED and MUST be present to enable devices to store payloads to the correct location.
 
 Implements: [REQ.SEC.AUTH.IMG_LOC](#req-sec-authentic-image-location)
 
@@ -276,7 +287,7 @@ Implements: [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-resource)
 
 This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A serialisation MUST provide a mechanism to select one payload from a list based on system parameters, such as Execute-In-Place Installation Address.
 
-This element is MANDATORY to implement and fundamentally necessary to ensure the authenticity and integrity of the payload. Support for more than one digest is OPTIONAL to implement in a recipient device.
+This element is REQUIRED to implement and fundamentally necessary to ensure the authenticity and integrity of the payload. Support for more than one digest is OPTIONAL to implement in a recipient device.
 
 Implements: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.USE.IMG.SELECT](#req-use-img-select)
 
@@ -286,7 +297,7 @@ The size of the payload in bytes.
 
 Variable-size storage locations MUST be set to exactly the size listed in this element.
 
-This element is MANDATORY and informs the target device how big of a payload to expect. Without it, devices are exposed to some classes of denial of service attack.
+This element is REQUIRED and informs the target device how big of a payload to expect. Without it, devices are exposed to some classes of denial of service attack.
 
 Implements: [REQ.SEC.AUTH.EXEC](#req-sec-authentic-execution)
 
@@ -294,8 +305,9 @@ Implements: [REQ.SEC.AUTH.EXEC](#req-sec-authentic-execution)
 
 This is not strictly a manifest element. Instead, the manifest is wrapped by a standardised authentication container, such as a COSE ({{RFC8152}}) or CMS ({{RFC5652}}) signature object. The authentication container MUST support multiple actors and multiple authentication methods.
 
-This element is MANDATORY and represents the foundation of all security properties of the manifest. There are two exceptions to this requirement: 1) if the manifest is authenticated by a second manifest as a dependency and 2) if the manifest is authenticated by channel security and contains only channel information (such as URIs).
+This element is REQUIRED in non-dependency manifests and represents the foundation of all security properties of the manifest. Manifests which are included as dependencies by another manifest SHOULD include a signature so that the recipient can distinguish between different actors with different permissions.
 
+A manifest MUST NOT be considered authenticated by channel security even if it contains only channel information (such as URIs). If the authenticated remote or channel were compromised, the threat actor could induce recipients to queries traffic over any accessible network.
 
 Implements: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.RIGHTS](#req-sec-rights), [REQ.USE.MFST.MULTI_AUTH](#req-use-mfst-multi-auth)
 
@@ -319,7 +331,7 @@ Implements: [REQ.USE.MFST.OVERRIDE_REMOTE](#req-use-mfst-override)
 
 A list of other manifests that are required by the current manifest. Manifests are identified an unambiguous way, such as a digest.
 
-This element is MANDATORY to use in deployments that include both multiple authorities and multiple payloads.
+This element is REQUIRED to use in deployments that include both multiple authorities and multiple payloads.
 
 Implements: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
@@ -327,7 +339,7 @@ Implements: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
 Encrypting firmware images requires symmetric content encryption keys. The encryption wrapper provides the information needed for a device to obtain or locate a key that it uses to decrypt the firmware. Typical choices for an encryption wrapper include CMS ({{RFC5652}}) or COSE ({{RFC8152}}). This MAY be included in a decryption step contained in [Processing Steps](#manifest-element-processing-steps).
 
-This element is MANDATORY to use for encrypted payloads,
+This element is REQUIRED to use for encrypted payloads,
 
 Implements: [REQ.SEC.IMG.CONFIDENTIALITY](#req-sec-image-confidentiality)
 
@@ -965,7 +977,7 @@ Implemented by: [Load-time metadata](#manifest-element-load-metadata)
 
 ### REQ.USE.PAYLOAD: Payload in Manifest Superstructure {#req-use-payload}
 
-It MUST be possible to place a payload in the same structure as the manifest. This MAY place the payload in the same packet as the manifest.
+It MUST be possible to place a payload in the same structure as the manifest. This MAY place the payload in the same packet as the manifest. The total size of the signed manifest, including the payload (if any) MUST fit inside device memory.
 
 Satisfies: [USER_STORY.MFST.IMG](#user-story-mfst-img)
 
