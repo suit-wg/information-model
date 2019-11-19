@@ -752,7 +752,7 @@ Mitigates: [THREAT.MFST.MODIFICATION](#threat-mfst-modification)
 
 ### REQ.SEC.MFST.CONST: Manifest kept immutable between check and use {#req-sec-mfst-const}
 
-The manifest MUST be held immutable between its time of check and time of use. To make this guarantee, the manifest MUST fit within an internal memory or a secure memory. The recipient SHOULD defend the manifest from tampering by code or hardware resident in the recipient, for example other processes or debuggers.
+Both the manifest and any data extracted from it MUST be held immutable between its authenticity verification (time of check) and its use (time of use). To make this guarantee, the manifest MUST fit within an internal memory or a secure memory, such as encrypted memory. The recipient SHOULD defend the manifest from tampering by code or hardware resident in the recipient, for example other processes or debuggers.
 
 If an application requires that the manifest is verified before storing it, then this means the manifest MUST fit in RAM.
 
