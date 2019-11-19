@@ -585,6 +585,14 @@ For example, the attacker deploys malware to the developer's computer or signing
 
 Mitigated by: [REQ.SEC.MFST.CHECK](#req-sec-mfst-check), [REQ.SEC.MFST.TRUSTED](#req-sec-mfst-trusted)
 
+### THREAT.MFST.TOCTOU: Modification of manifest between authentication and use {#threat-mfst-toctou}
+
+Classification: All Types
+
+If an attacker can modify a manifest after it is authenticated (Time Of Check) but before it is used (Time Of Use), then the attacker can place any content whatsoever in the manifest.
+
+Mitigated by: [REQ.SEC.MFST.CONST](#req-sec-mfst-const)
+
 ## Security Requirements {#security-requirements}
 
 The security requirements here are a set of policies that mitigate the threats described in {{threat-model}}.
@@ -742,6 +750,14 @@ For high risk deployments, such as large numbers of devices or critical function
 
 Mitigates: [THREAT.MFST.MODIFICATION](#threat-mfst-modification)
 
+### REQ.SEC.MFST.CONST: Manifest kept immutable between check and use {#req-sec-mfst-const}
+
+The manifest MUST be held immutable between its time of check and time of use. To make this guarantee, the manifest MUST fit within an internal memory or a secure memory. The recipient SHOULD defend the manifest from tampering by code or hardware resident in the recipient, for example other processes or debuggers.
+
+If an application requires that the manifest is verified before storing it, then this means the manifest MUST fit in RAM.
+
+Mitigates: [THREAT.MFST.TOCTOU](#threat-mfst-toctou)
+
 ## User Stories {#user-stories}
 
 User stories provide expected use cases. These are used to feed into usability requirements.
@@ -840,6 +856,8 @@ Satisfied by: [REQ.USE.LOAD](#req-use-load)
 ### USER_STORY.MFST.IMG: Payload in Manifest {#user-story-mfst-img}
 
 As an operator of devices on a constrained network, I would like the manifest to be able to include a small payload in the same packet so that I can reduce network traffic.
+
+Small payloads may include, for example, wrapped encryption keys, encoded configuration, public keys, {{RFC8392}} CBOR Web Tokens, or X.509 certificates.
 
 Satisfied by: [REQ.USE.PAYLOAD](#req-use-payload)
 
@@ -957,6 +975,7 @@ Implemented by: [XIP Address](#manifest-element-xip-address)
 
 
 ### REQ.USE.EXEC: Executable Manifest {#req-use-exec}
+
 It MUST be possible to describe an executable system with a manifest on both Execute-In-Place microcontrollers and on complex operating systems. This requires the manifest to specify the digest of each statically linked dependency. In addition, the manifest serialisation MUST be able to express metadata, such as a kernel command-line, used by any loader or bootloader.
 
 Satisfies: [USER_STORY.EXEC.MFST](#user-story-exec-mfst)
@@ -975,7 +994,11 @@ Implemented by: [Load-time metadata](#manifest-element-load-metadata)
 
 ### REQ.USE.PAYLOAD: Payload in Manifest Superstructure {#req-use-payload}
 
-It MUST be possible to place a payload in the same structure as the manifest. This MAY place the payload in the same packet as the manifest. The total size of the signed manifest, including the payload (if any) MUST fit inside device memory.
+It MUST be possible to place a payload in the same structure as the manifest. This MAY place the payload in the same packet as the manifest.
+
+Integrated payloads may include, for example, wrapped encryption keys, encoded configuration, public keys, {{RFC8392}} CBOR Web Tokens, or X.509 certificates.
+
+See also: [REQ.SEC.MFST.CONST](#req-sec-mfst-const).
 
 Satisfies: [USER_STORY.MFST.IMG](#user-story-mfst-img)
 
