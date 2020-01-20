@@ -5,13 +5,13 @@
 SUIT                                                            B. Moran
 Internet-Draft                                             H. Tschofenig
 Intended status: Standards Track                             Arm Limited
-Expires: 2 May 2020                                          H. Birkholz
+Expires: 23 July 2020                                        H. Birkholz
                                                           Fraunhofer SIT
-                                                         30 October 2019
+                                                         20 January 2020
 
 
         An Information Model for Firmware Updates in IoT Devices
-                  draft-ietf-suit-information-model-04
+                  draft-ietf-suit-information-model-05
 
 Abstract
 
@@ -42,11 +42,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 May 2020.
+   This Internet-Draft will expire on 23 July 2020.
 
 Copyright Notice
 
-   Copyright (c) 2019 IETF Trust and the persons identified as the
+   Copyright (c) 2020 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -85,6 +85,7 @@ Table of Contents
              3.4.1.  Example 1: Different Classes
              3.4.2.  Example 2: Upgrading Class ID
              3.4.3.  Example 3: Shared Functionality
+             3.4.4.  Example 4: White-labelling
        3.5.  Manifest Element: Precursor Image Digest Condition
        3.6.  Manifest Element: Required Image Version List
        3.7.  Manifest Element: Expiration Time
@@ -140,6 +141,8 @@ Table of Contents
                      keys
              4.2.17.  THREAT.MFST.MODIFICATION: Modification of
                      manifest or payload prior to signing
+             4.2.18.  THREAT.MFST.TOCTOU: Modification of
+                     manifest between authentication and use
        4.3.  Security Requirements
              4.3.1.  REQ.SEC.SEQUENCE: Monotonic Sequence
                      Numbers
@@ -175,6 +178,8 @@ Table of Contents
                      prior to deployment
              4.3.19.  REQ.SEC.MFST.TRUSTED: Construct manifests
                      in a trusted environment
+             4.3.20.  REQ.SEC.MFST.CONST: Manifest kept
+                     immutable between check and use
        4.4.  User Stories
              4.4.1.  USER_STORY.INSTALL.INSTRUCTIONS:
                      Installation Instructions
@@ -252,10 +257,10 @@ Table of Contents
    scenarios.  As a result, various information elements could be
    considered optional to implement and optional to use, depending on
    which threats exist in a particular domain of application and which
-   user stories are required.  Elements marked as mandatory provide
+   user stories are required.  Elements marked as REQUIRED provide
    baseline security and usability properties that are expected to be
-   required for most applications.  Those elements are mandatory to
-   implement and mandatory to use.  Elements marked as recommended
+   required for most applications.  Those elements are REQUIRED to
+   implement and REQUIRED to use.  Elements marked as recommended
    provide important security or usability properties that are needed on
    most devices.  Elements marked as optional enable security or
    usability properties that are useful in some applications.
@@ -291,7 +296,7 @@ Table of Contents
    An identifier that describes which iteration of the manifest format
    is contained in the structure.
 
-   This element is MANDATORY and MUST be present in order to allow
+   This element is REQUIRED and MUST be present in order to allow
    devices to identify the version of the manifest data model that is in
    use.
 
@@ -303,9 +308,9 @@ Table of Contents
    management.  This number MUST be easily accessible so that code
    choosing one out of several manifests can choose which is the latest.
 
-   This element is MANDATORY and is necessary to prevent malicious
-   actors from reverting a firmware update against the policies of the
-   relevant authority.
+   This element is REQUIRED and is necessary to prevent malicious actors
+   from reverting a firmware update against the policies of the relevant
+   authority.
 
    Implements: REQ.SEC.SEQUENCE (Section 4.3.1)
 
@@ -442,6 +447,27 @@ Table of Contents
    Product X matches against both XclassId and CommonClassId.  Product Y
    matches against both YclassId and CommonClassId.
 
+3.4.4.  Example 4: White-labelling
+
+   Vendor A creates a product A and its firmware.  Vendor B sells the
+   product under its own name as Product B with some customised
+   configuration.  The vendors create the Class IDs as follows:
+
+   *  vendorIdA = UUID5(DNS, “vendor-a.com”)
+
+   *  classIdA = UUID5(vendorIdA, “Product A-Unlabelled”)
+
+   *  vendorIdB = UUID5(DNS, “vendor-b.com”)
+
+   *  classIdB = UUID5(vendorIdB, “Product B”)
+
+   The product will match against each of these class IDs.  If Vendor A
+   and Vendor B provide different components for the device, the
+   implementor MAY choose to make ID matching scoped to each component.
+   Then, the vendorIdA, classIdA match the component ID supplied by
+   Vendor A, and the vendorIdB, classIdB match the component ID supplied
+   by Vendor B.
+
 3.5.  Manifest Element: Precursor Image Digest Condition
 
    When a precursor image is required by the payload format, a precursor
@@ -488,7 +514,7 @@ Table of Contents
    unambiguous way.  This element provides a mechanism to describe the
    payload format, within the signed metadata.
 
-   This element is MANDATORY and MUST be present to enable devices to
+   This element is REQUIRED and MUST be present to enable devices to
    decode payloads correctly.
 
    Implements: REQ.SEC.AUTH.IMG_TYPE (Section 4.3.5), REQ.USE.IMG.FORMAT
@@ -517,7 +543,7 @@ Table of Contents
    component.  The device can use this to establish which permissions
    are necessary and the physical storage location to use.
 
-   This element is MANDATORY and MUST be present to enable devices to
+   This element is REQUIRED and MUST be present to enable devices to
    store payloads to the correct location.
 
    Implements: REQ.SEC.AUTH.IMG_LOC (Section 4.3.6)
@@ -589,7 +615,7 @@ Table of Contents
    payload from a list based on system parameters, such as Execute-In-
    Place Installation Address.
 
-   This element is MANDATORY to implement and fundamentally necessary to
+   This element is REQUIRED to implement and fundamentally necessary to
    ensure the authenticity and integrity of the payload.  Support for
    more than one digest is OPTIONAL to implement in a recipient device.
 
@@ -603,7 +629,7 @@ Table of Contents
    Variable-size storage locations MUST be set to exactly the size
    listed in this element.
 
-   This element is MANDATORY and informs the target device how big of a
+   This element is REQUIRED and informs the target device how big of a
    payload to expect.  Without it, devices are exposed to some classes
    of denial of service attack.
 
@@ -617,12 +643,18 @@ Table of Contents
    container MUST support multiple actors and multiple authentication
    methods.
 
-   This element is MANDATORY and represents the foundation of all
-   security properties of the manifest.  There are two exceptions to
-   this requirement: 1) if the manifest is authenticated by a second
-   manifest as a dependency and 2) if the manifest is authenticated by
-   channel security and contains only channel information (such as
-   URIs).
+   This element is REQUIRED in non-dependency manifests and represents
+   the foundation of all security properties of the manifest.  Manifests
+   which are included as dependencies by another manifest SHOULD include
+   a signature so that the recipient can distinguish between different
+   actors with different permissions.
+
+   A manifest MUST NOT be considered authenticated by channel security
+   even if it contains only channel information (such as URIs).  If the
+   authenticated remote or channel were compromised, the threat actor
+   could induce recipients to queries traffic over any accessible
+   network.  Lightweight authentication with pre-existing relationships
+   SHOULD be done with MAC.
 
    Implements: REQ.SEC.AUTHENTIC (Section 4.3.4), REQ.SEC.RIGHTS
    (Section 4.3.11), REQ.USE.MFST.MULTI_AUTH (Section 4.5.4)
@@ -655,7 +687,7 @@ Table of Contents
    A list of other manifests that are required by the current manifest.
    Manifests are identified an unambiguous way, such as a digest.
 
-   This element is MANDATORY to use in deployments that include both
+   This element is REQUIRED to use in deployments that include both
    multiple authorities and multiple payloads.
 
    Implements: REQ.USE.MFST.COMPONENT (Section 4.5.3)
@@ -669,7 +701,7 @@ Table of Contents
    ([RFC5652]) or COSE ([RFC8152]).  This MAY be included in a
    decryption step contained in Processing Steps (Section 3.9).
 
-   This element is MANDATORY to use for encrypted payloads,
+   This element is REQUIRED to use for encrypted payloads,
 
    Implements: REQ.SEC.IMG.CONFIDENTIALITY (Section 4.3.12)
 
@@ -1094,6 +1126,17 @@ signing
    Mitigated by: REQ.SEC.MFST.CHECK (Section 4.3.18),
    REQ.SEC.MFST.TRUSTED (Section 4.3.19)
 
+4.2.18.  THREAT.MFST.TOCTOU: Modification of manifest between authentication and
+use
+
+   Classification: All Types
+
+   If an attacker can modify a manifest after it is authenticated (Time
+   Of Check) but before it is used (Time Of Use), then the attacker can
+   place any content whatsoever in the manifest.
+
+   Mitigated by: REQ.SEC.MFST.CONST (Section 4.3.20)
+
 4.3.  Security Requirements
 
    The security requirements here are a set of policies that mitigate
@@ -1311,10 +1354,10 @@ Location
 
 4.3.17.  REQ.SEC.KEY.PROTECTION: Protected storage of signing keys
 
-   Cryptographic keys for signing manifests SHOULD be stored in a manner
-   that is inaccessible to networked devices, for example in an HSM, or
-   an air-gapped computer.  This protects against an attacker obtaining
-   the keys.
+   Cryptographic keys for signing/authenticating manifests SHOULD be
+   stored in a manner that is inaccessible to networked devices, for
+   example in an HSM, or an air-gapped computer.  This protects against
+   an attacker obtaining the keys.
 
    Keys SHOULD be stored in a way that limits the risk of a legitimate,
    but compromised, entity (such as a server or developer computer)
@@ -1340,6 +1383,21 @@ Location
    (Section 4.2.17)).
 
    Mitigates: THREAT.MFST.MODIFICATION (Section 4.2.17)
+
+4.3.20.  REQ.SEC.MFST.CONST: Manifest kept immutable between check and use
+
+   Both the manifest and any data extracted from it MUST be held
+   immutable between its authenticity verification (time of check) and
+   its use (time of use).  To make this guarantee, the manifest MUST fit
+   within an internal memory or a secure memory, such as encrypted
+   memory.  The recipient SHOULD defend the manifest from tampering by
+   code or hardware resident in the recipient, for example other
+   processes or debuggers.
+
+   If an application requires that the manifest is verified before
+   storing it, then this means the manifest MUST fit in RAM.
+
+   Mitigates: THREAT.MFST.TOCTOU (Section 4.2.18)
 
 4.4.  User Stories
 
@@ -1501,6 +1559,10 @@ Firmware
    manifest to be able to include a small payload in the same packet so
    that I can reduce network traffic.
 
+   Small payloads may include, for example, wrapped encryption keys,
+   encoded configuration, public keys, [RFC8392] CBOR Web Tokens, or
+   X.509 certificates.
+
    Satisfied by: REQ.USE.PAYLOAD (Section 4.5.11)
 
 4.4.14.  USER_STORY.MFST.PARSE: Simple Parsing
@@ -1561,11 +1623,6 @@ Firmware
    sources of firmware.  For this to be possible, the device must fetch
    the payload, whereas a device that accepts payload pushes will ignore
    this feature.
-
-   N.B.  If a manifest is delivered over an authenticated channel and
-   that manifest contains only override information for which the remote
-   is authorised, then it can be considered authenticated by the channel
-   authentication.
 
    Satisfies: USER_STORY.OVERRIDE (Section 4.4.3)
 
@@ -1712,6 +1769,40 @@ Firmware
    manifest.  This MAY place the payload in the same packet as the
    manifest.
 
+   Integrated payloads may include, for example, wrapped encryption
+   keys, encoded configuration, public keys, [RFC8392] CBOR Web Tokens,
+   or X.509 certificates.
+
+   When an integrated payload is provided, this increases the size of
+   the manifest.  Manifest size can cause several processing and storage
+   concerns that require careful consideration.  The payload can prevent
+   the whole manifest from being contained in a single network packet,
+   which can cause fragmentation and the loss of portions of the
+   manifest in lossy networks.  This causes the need for reassembly and
+   retransmission logic.  The manifest must be held immutable between
+   verification and processing (see REQ.SEC.MFST.CONST
+   (Section 4.3.20)), so a larger manifest will consume more memory with
+   immutability guarantees, for example internal RAM or NVRAM, or
+   external secure memory.  If the manifest exceeds the available
+   immutable memory, then it must be processed modularly, evaluating
+   each of: delegation chains, the security container, and the actual
+   manifest, which includes verifying the integrated payload.  If the
+   security model calls for downloading the manifest and validating it
+   before storing to NVRAM in order to prevent wear to NVRAM and energy
+   expenditure in NVRAM, then either increasing memory allocated to
+   manifest storage or modular processing of the received manifest may
+   be required.  While the manifest has been organised to enable this
+   type of processing, it creates additional complexity in the parser.
+   If the manifest is stored in NVRAM prior to processing, the
+   integrated payload may cause the manifest to exceed the available
+   storage.  Because the manifest is received prior to validation of
+   applicability, authority, or correctness, integrated payloads cause
+   the recipient to expend network bandwidth and energy that may not be
+   required if the manifest is discarded and these costs vary with the
+   size of the integrated payload.
+
+   See also: REQ.SEC.MFST.CONST (Section 4.3.20).
+
    Satisfies: USER_STORY.MFST.IMG (Section 4.4.13)
 
    Implemented by: Payload (Section 3.23)
@@ -1765,12 +1856,12 @@ Firmware
 7.1.  Normative References
 
    [I-D.ietf-suit-architecture]
-              Moran, B., Meriac, M., Tschofenig, H., and D. Brown, "A
-              Firmware Update Architecture for Internet of Things
-              Devices", draft-ietf-suit-architecture-07 (work in
-              progress), 21 October 2019,
+              Moran, B., Tschofenig, H., Brown, D., and M. Meriac, "A
+              Firmware Update Architecture for Internet of Things",
+              draft-ietf-suit-architecture-08 (work in progress), 19
+              November 2019,
               <http://www.ietf.org/internet-drafts/draft-ietf-suit-
-              architecture-07.txt>.
+              architecture-08.txt>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -1795,6 +1886,10 @@ Firmware
    [RFC8152]  Schaad, J., "CBOR Object Signing and Encryption (COSE)",
               RFC 8152, DOI 10.17487/RFC8152, July 2017,
               <https://www.rfc-editor.org/info/rfc8152>.
+
+   [RFC8392]  Jones, M., Wahlstroem, E., Erdtman, S., and H. Tschofenig,
+              "CBOR Web Token (CWT)", RFC 8392, DOI 10.17487/RFC8392,
+              May 2018, <https://www.rfc-editor.org/info/rfc8392>.
 
    [STRIDE]   Microsoft, "The STRIDE Threat Model", May 2018,
               <https://msdn.microsoft.com/en-us/library/
