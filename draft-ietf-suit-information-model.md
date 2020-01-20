@@ -1,7 +1,7 @@
 ---
 title: An Information Model for Firmware Updates in IoT Devices
 abbrev: A Firmware Manifest Information Model
-docname: draft-ietf-suit-information-model-04
+docname: draft-ietf-suit-information-model-05
 category: std
 
 ipr: pre5378Trust200902
@@ -54,6 +54,7 @@ informative:
       HTML:  https://msdn.microsoft.com/en-us/library/ee823878(v=cs.20).aspx
   RFC5652:
   RFC8152:
+  RFC8392:
 
 --- abstract
 
@@ -997,6 +998,8 @@ Implemented by: [Load-time metadata](#manifest-element-load-metadata)
 It MUST be possible to place a payload in the same structure as the manifest. This MAY place the payload in the same packet as the manifest.
 
 Integrated payloads may include, for example, wrapped encryption keys, encoded configuration, public keys, {{RFC8392}} CBOR Web Tokens, or X.509 certificates.
+
+When an integrated payload is provided, this increases the size of the manifest. Manifest size can cause several processing and storage concerns that require careful consideration. The payload can prevent the whole manifest from being contained in a single network packet, which can cause fragmentation and the loss of portions of the manifest in lossy networks. This causes the need for reassembly and retransmission logic. The manifest must be held immutable between verification and processing (see [REQ.SEC.MFST.CONST](#req-sec-mfst-const)), so a larger manifest will consume more memory with immutability guarantees, for example internal RAM or NVRAM, or external secure memory. If the manifest exceeds the available immutable memory, then it must be processed modularly, evaluating each of: delegation chains, the security container, and the actual manifest, which includes verifying the integrated payload. If the security model calls for downloading the manifest and validating it before storing to NVRAM in order to prevent wear to NVRAM and energy expenditure in NVRAM, then either increasing memory allocated to manifest storage or modular processing of the received manifest may be required. While the manifest has been organised to enable this type of processing, it creates additional complexity in the parser. If the manifest is stored in NVRAM prior to processing, the integrated payload may cause the manifest to exceed the available storage. Because the manifest is received prior to validation of applicability, authority, or correctness, integrated payloads cause the recipient to expend network bandwidth and energy that may not be required if the manifest is discarded and these costs vary with the size of the integrated payload.
 
 See also: [REQ.SEC.MFST.CONST](#req-sec-mfst-const).
 
