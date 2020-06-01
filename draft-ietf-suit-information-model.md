@@ -1,10 +1,10 @@
 ---
 title: An Information Model for Firmware Updates in IoT Devices
 abbrev: A Firmware Manifest Information Model
-docname: draft-ietf-suit-information-model-05
-category: std
+docname: draft-ietf-suit-information-model-06
+category: info
 
-ipr: pre5378Trust200902
+ipr: trust200902
 area: Security
 workgroup: SUIT
 keyword: Internet-Draft
@@ -308,7 +308,7 @@ This is not strictly a manifest element. Instead, the manifest is wrapped by a s
 
 This element is REQUIRED in non-dependency manifests and represents the foundation of all security properties of the manifest. Manifests which are included as dependencies by another manifest SHOULD include a signature so that the recipient can distinguish between different actors with different permissions.
 
-A manifest MUST NOT be considered authenticated by channel security even if it contains only channel information (such as URIs). If the authenticated remote or channel were compromised, the threat actor could induce recipients to queries traffic over any accessible network. Lightweight authentication with pre-existing relationships SHOULD be done with MAC.
+A manifest MUST NOT be considered authenticated by channel security even if it contains only channel information (such as URIs). If the authenticated remote or channel were compromised, the threat actor could induce recipients to query traffic over any accessible network. Lightweight authentication with pre-existing relationships SHOULD be done with MAC.
 
 Implements: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.RIGHTS](#req-sec-rights), [REQ.USE.MFST.MULTI_AUTH](#req-use-mfst-multi-auth)
 
@@ -939,12 +939,12 @@ Implemented by: [Signature](#manifest-element-signature)
 The manifest serialisation MUST accommodate any payload format that an Operator wishes to use. This enables the recipient to detect which format the Operator has chosen. Some examples of payload format are:
 
 * Binary
-* Elf
+* Executable and Linkable Format (ELF)
 * Differential
 * Compressed
 * Packed configuration
 * Intel HEX
-* S-Record
+* Motorola S-Record
 
 Satisfies: [USER_STORY.IMG.FORMAT](#user-story-img-format) [USER_STORY.IMG.UNKNOWN_FORMAT](#user-story-img-unknown-format)
 
@@ -997,7 +997,7 @@ Implemented by: [Load-time metadata](#manifest-element-load-metadata)
 
 It MUST be possible to place a payload in the same structure as the manifest. This MAY place the payload in the same packet as the manifest.
 
-Integrated payloads may include, for example, wrapped encryption keys, encoded configuration, public keys, {{RFC8392}} CBOR Web Tokens, or X.509 certificates.
+Integrated payloads may include, for example, wrapped encryption keys, configuration data, public keys, CBOR Web Tokens {{RFC8392}}, or X.509 certificates.
 
 When an integrated payload is provided, this increases the size of the manifest. Manifest size can cause several processing and storage concerns that require careful consideration. The payload can prevent the whole manifest from being contained in a single network packet, which can cause fragmentation and the loss of portions of the manifest in lossy networks. This causes the need for reassembly and retransmission logic. The manifest must be held immutable between verification and processing (see [REQ.SEC.MFST.CONST](#req-sec-mfst-const)), so a larger manifest will consume more memory with immutability guarantees, for example internal RAM or NVRAM, or external secure memory. If the manifest exceeds the available immutable memory, then it must be processed modularly, evaluating each of: delegation chains, the security container, and the actual manifest, which includes verifying the integrated payload. If the security model calls for downloading the manifest and validating it before storing to NVRAM in order to prevent wear to NVRAM and energy expenditure in NVRAM, then either increasing memory allocated to manifest storage or modular processing of the received manifest may be required. While the manifest has been organised to enable this type of processing, it creates additional complexity in the parser. If the manifest is stored in NVRAM prior to processing, the integrated payload may cause the manifest to exceed the available storage. Because the manifest is received prior to validation of applicability, authority, or correctness, integrated payloads cause the recipient to expend network bandwidth and energy that may not be required if the manifest is discarded and these costs vary with the size of the integrated payload.
 
@@ -1038,11 +1038,3 @@ We would like to thank those who contributed to the development of this informat
 
 --- back
 
-# Mailing List Information
-
-The discussion list for this document is located at the e-mail
-address <suit@ietf.org>. Information on the group and information on how to
-subscribe to the list is at <https://www1.ietf.org/mailman/listinfo/suit>
-
-Archives of the list can be found at:
-<https://www.ietf.org/mail-archive/web/suit/current/index.html>
