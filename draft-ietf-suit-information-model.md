@@ -307,7 +307,7 @@ Implements: [REQ.SEC.AUTH.EXEC](#req-sec-authentic-execution)
 
 The Signature element MUST contain all the information necessary to cryptographically verify the contents of the manifest against a root of trust. Because the Signature element authenticates the manifest, it cannot be contained within the manifest. Instead, the manifest is either contained within the signature element, or the signature element is a member of the Manifest Envelope and bundled with the manifest.
 
-This element MAY be provided either by the manifest envelope serialization or by another serialization of authentication objects, such as a COSE ({{RFC8152}}) or CMS ({{RFC5652}}) signature object. The Signature element MUST support multiple actors and multiple authentication methods. It is NOT REQUIRED for a serialization to authenticate multiple manifests with a single Signature element.
+This element MAY be provided either by the manifest envelope serialization or by another serialization of authentication objects, such as a COSE ({{RFC8152}}) or CMS ({{RFC5652}}) signature object. The Signature element MUST support multiple actors and multiple authentication methods. It is OPTIONAL for a serialization to authenticate multiple manifests with a single Signature element.
 
 This element is REQUIRED in non-dependency manifests and represents the foundation of all security properties of the manifest. Manifests which are included as dependencies by another manifest SHOULD include a signature so that the recipient can distinguish between different actors with different permissions.
 
@@ -393,7 +393,7 @@ Implements: [REQ.USE.PAYLOAD](#req-use-payload)
 
 ## Manifest Envelope Element: Delegation Chain {#manifest-element-key-claims}
 
-The [Signature](#manifest-element-signature) is NOT REQUIRED to cover the delegation chain. The delegation chain offers enhanced authorization functionality via authorization tokens. Each token itself is protected and does not require another layer of protection and because the delegation chain is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.
+It is OPTIONAL for the [Signature](#manifest-element-signature) to cover the delegation chain. The delegation chain offers enhanced authorization functionality via authorization tokens. Each token itself is protected and does not require another layer of protection. Because the delegation chain is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.
 
 This element is OPTIONAL to implement.
 
