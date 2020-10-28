@@ -1,10 +1,10 @@
 ---
 title: An Information Model for Firmware Updates in IoT Devices
 abbrev: A Firmware Manifest Information Model
-docname: draft-ietf-suit-information-model-05
-category: std
+docname: draft-ietf-suit-information-model-07
+category: info
 
-ipr: pre5378Trust200902
+ipr: trust200902
 area: Security
 workgroup: SUIT
 keyword: Internet-Draft
@@ -52,13 +52,10 @@ informative:
     date: May 2018
     format:
       HTML:  https://msdn.microsoft.com/en-us/library/ee823878(v=cs.20).aspx
-  RFC5652:
-  RFC8152:
-  RFC8392:
 
 --- abstract
 
-Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality
+Vulnerabilities with Internet of Things (IoT) devices have raised the need for a solid and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality.
 
 One component of such a firmware update is a concise and machine-processable meta-data document, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes the information that must be present in the manifest.
 
@@ -68,7 +65,7 @@ One component of such a firmware update is a concise and machine-processable met
 
 The information model describes all the information elements required to secure firmware updates of IoT devices from the threats described in {{threat-model}} and enables the user stories captured in {{user-stories}}. These threats and user stories are not intended to be an exhaustive list of the threats against IoT devices, nor of the possible user stories that describe how to conduct a firmware update. Instead they are intended to describe the threats against firmware updates in isolation and provide sufficient motivation to specify the information elements that cover a wide range of user stories. The information model does not define the serialization, encoding, ordering, or structure of information elements, only their semantics.
 
-Because the information model covers a wide range of user stories and a wide range of threats, not all information elements apply to all scenarios. As a result, various information elements could be considered optional to implement and optional to use, depending on which threats exist in a particular domain of application and which user stories are required. Elements marked as REQUIRED provide baseline security and usability properties that are expected to be required for most applications. Those elements are REQUIRED to implement and REQUIRED to use. Elements marked as recommended provide important security or usability properties that are needed on most devices. Elements marked as optional enable security or usability properties that are useful in some applications.
+Because the information model covers a wide range of user stories and a wide range of threats, not all information elements apply to all scenarios. As a result, various information elements could be considered optional to implement and optional to use, depending on which threats exist in a particular domain of application and which user stories are required. Elements marked as REQUIRED provide baseline security and usability properties that are expected to be required for most applications. Those elements are required to be implemented and used. Elements marked as RECOMMENDED provide important security or usability properties that are needed on most devices. Elements marked as OPTIONAL enable security or usability properties that are useful in some applications.
 
 The definition of some of the information elements include examples that illustrate their semantics and how they are intended to be used.
 
@@ -91,7 +88,7 @@ Each manifest information element is anchored in a security requirement or a usa
 
 An identifier that describes which iteration of the manifest format is contained in the structure.
 
-This element is REQUIRED and MUST be present in order to allow devices to identify the version of the manifest data model that is in use.
+This element is REQUIRED in order to allow devices to identify the version of the manifest data model that is in use.
 
 ## Manifest Element: Monotonic Sequence Number {#element-sequence-number}
 
@@ -212,7 +209,7 @@ Implements: [REQ.USE.IMG.VERSIONS](#req-use-img-versions)
 
 This element tells a device the time at which the manifest expires and should no longer be used. This is only usable in conjunction with a secure source of time.
 
-This element is OPTIONAL and MAY enable user stories where a secure source of time is provided and firmware is intended to expire predictably.
+This element is OPTIONAL and may enable user stories where a secure source of time is provided and firmware is intended to expire predictably.
 
 Implements: [REQ.SEC.EXP](#req-sec-exp)
 
@@ -265,7 +262,7 @@ In a heterogeneous storage architecture, a storage identifier is insufficient to
 
 This element is OPTIONAL and only necessary in heterogeneous storage architecture devices.
 
-N.B. A serialisation MAY choose to combine Component Identifier and [Storage Location](#maniest-element-storage-location)
+N.B. A manifest format MAY choose to combine Component Identifier and [Storage Location](#maniest-element-storage-location)
 
 Implements: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
@@ -286,7 +283,7 @@ Implements: [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-resource)
 
 ## Manifest Element: Payload Digests {#manifest-element-payload-digest}
 
-This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A serialisation MUST provide a mechanism to select one payload from a list based on system parameters, such as Execute-In-Place Installation Address.
+This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A manifest format MUST provide a mechanism to select one payload from a list based on system parameters, such as Execute-In-Place Installation Address.
 
 This element is REQUIRED to implement and fundamentally necessary to ensure the authenticity and integrity of the payload. Support for more than one digest is OPTIONAL to implement in a recipient device.
 
@@ -304,11 +301,11 @@ Implements: [REQ.SEC.AUTH.EXEC](#req-sec-authentic-execution)
 
 ## Manifest Element: Signature {#manifest-element-signature}
 
-This is not strictly a manifest element. Instead, the manifest is wrapped by a standardised authentication container, such as a COSE ({{RFC8152}}) or CMS ({{RFC5652}}) signature object. The authentication container MUST support multiple actors and multiple authentication methods.
+This is not strictly a manifest element. Instead, the manifest is wrapped by a standardised authentication container. The authentication container MUST support multiple signers and multiple signature algorithms.
 
 This element is REQUIRED in non-dependency manifests and represents the foundation of all security properties of the manifest. Manifests which are included as dependencies by another manifest SHOULD include a signature so that the recipient can distinguish between different actors with different permissions.
 
-A manifest MUST NOT be considered authenticated by channel security even if it contains only channel information (such as URIs). If the authenticated remote or channel were compromised, the threat actor could induce recipients to queries traffic over any accessible network. Lightweight authentication with pre-existing relationships SHOULD be done with MAC.
+A manifest MUST NOT be considered authenticated by channel security even if it contains only channel information (such as URIs). If the authenticated remote or channel were compromised, the threat actor could induce recipients to query traffic over any accessible network. Lightweight authentication with pre-existing relationships SHOULD be done with MAC.
 
 Implements: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.RIGHTS](#req-sec-rights), [REQ.USE.MFST.MULTI_AUTH](#req-use-mfst-multi-auth)
 
@@ -338,7 +335,7 @@ Implements: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
 ## Manifest Element: Encryption Wrapper {#manifest-element-encryption-wrapper}
 
-Encrypting firmware images requires symmetric content encryption keys. The encryption wrapper provides the information needed for a device to obtain or locate a key that it uses to decrypt the firmware. Typical choices for an encryption wrapper include CMS ({{RFC5652}}) or COSE ({{RFC8152}}). This MAY be included in a decryption step contained in [Processing Steps](#manifest-element-processing-steps).
+Encrypting firmware images requires symmetric content encryption keys. The encryption wrapper provides the information needed for a device to obtain or locate a key that it uses to decrypt the firmware. This MAY be included in a decryption step contained in [Processing Steps](#manifest-element-processing-steps).
 
 This element is REQUIRED to use for encrypted payloads,
 
@@ -618,7 +615,7 @@ Implemented by: [Vendor ID Condition](#element-vendor-id), [Class ID Condition](
 
 ### REQ.SEC.EXP: Expiration Time {#req-sec-exp}
 
-Firmware MAY expire after a given time. Devices MAY provide a secure clock (local or remote). If a secure clock is provided and the Firmware manifest has an expiration timestamp, the device MUST reject the manifest if current time is later than the expiration time.
+A firmware manifest MAY expire after a given time. Devices MAY provide a secure clock (local or remote). If a secure clock is provided and the Firmware manifest has an expiration timestamp, the device MUST reject the manifest if current time is later than the expiration time.
 
 Mitigates: [THREAT.IMG.EXPIRED.ROLLBACK ](#threat-expired-rollback)
 
@@ -634,7 +631,7 @@ Implemented by: [Signature](#manifest-element-signature), [Payload Digest](#mani
 
 ### REQ.SEC.AUTH.IMG_TYPE: Authenticated Payload Type {#req-sec-authentic-image-type}
 
-The type of payload (which may be independent of format) MUST be authenticated. For example, the target must know whether the payload is XIP firmware, a loadable module, or serialized configuration data.
+The type of payload (which may be independent of format) MUST be authenticated. For example, the target must know whether the payload is XIP firmware, a loadable module, or configuration data.
 
 Mitigates: [THREAT.IMG.FORMAT](#threat-img-format)
 
@@ -858,7 +855,7 @@ Satisfied by: [REQ.USE.LOAD](#req-use-load)
 
 As an operator of devices on a constrained network, I would like the manifest to be able to include a small payload in the same packet so that I can reduce network traffic.
 
-Small payloads may include, for example, wrapped encryption keys, encoded configuration, public keys, {{RFC8392}} CBOR Web Tokens, or X.509 certificates.
+Small payloads may include, for example, wrapped encryption keys, configuration information, public keys, authorization tokens, or X.509 certificates.
 
 Satisfied by: [REQ.USE.PAYLOAD](#req-use-payload)
 
@@ -904,7 +901,7 @@ Implemented by: [Aliases](#manifest-element-aliases)
 
 ### REQ.USE.MFST.COMPONENT: Component Updates {#req-use-mfst-component}
 
-It MUST be possible express the requirement to install one or more payloads from one or more authorities so that a multi-payload update can be described. This allows multiple parties with different permissions to collaborate in creating a single update for the IoT device, across multiple components.
+It MUST be possible to express the requirement to install one or more payloads from one or more authorities so that a multi-payload update can be described. This allows multiple parties with different permissions to collaborate in creating a single update for the IoT device, across multiple components.
 
 This requirement effectively means that it must be possible to construct a tree of manifests on a multi-image target.
 
@@ -936,15 +933,15 @@ Implemented by: [Signature](#manifest-element-signature)
 
 ### REQ.USE.IMG.FORMAT: Format Usability {#req-use-img-format}
 
-The manifest serialisation MUST accommodate any payload format that an Operator wishes to use. This enables the recipient to detect which format the Operator has chosen. Some examples of payload format are:
+The manifest format MUST accommodate any payload format that an Operator wishes to use. This enables the recipient to detect which format the Operator has chosen. Some examples of payload format are:
 
 * Binary
-* Elf
+* Executable and Linkable Format (ELF)
 * Differential
 * Compressed
 * Packed configuration
 * Intel HEX
-* S-Record
+* Motorola S-Record
 
 Satisfies: [USER_STORY.IMG.FORMAT](#user-story-img-format) [USER_STORY.IMG.UNKNOWN_FORMAT](#user-story-img-unknown-format)
 
@@ -952,7 +949,7 @@ Implemented by: [Payload Format](#manifest-element-format)
 
 ### REQ.USE.IMG.NESTED: Nested Formats {#req-use-img-nested}
 
-The manifest serialisation MUST accommodate nested formats, announcing to the target device all the nesting steps and any parameters used by those steps.
+The manifest format MUST accommodate nested formats, announcing to the target device all the nesting steps and any parameters used by those steps.
 
 Satisfies: [USER_STORY.IMG.CONFIDENTIALITY](#user-story-img-confidentiality)
 
@@ -960,7 +957,7 @@ Implemented by: [Processing Steps](#manifest-element-processing-steps)
 
 ### REQ.USE.IMG.VERSIONS: Target Version Matching {#req-use-img-versions}
 
-The manifest serialisation MUST provide a method to specify multiple version numbers of firmware to which the manifest applies, either with a list or with range matching.
+The manifest format MUST provide a method to specify multiple version numbers of firmware to which the manifest applies, either with a list or with range matching.
 
 Satisfies: [USER_STORY.IMG.CURRENT_VERSION](#user-story-img-current-version)
 
@@ -968,7 +965,7 @@ Implemented by: [Required Image Version List](#element-required-version)
 
 ### REQ.USE.IMG.SELECT: Select Image by Destination {#req-use-img-select}
 
-The manifest serialisation MUST provide a mechanism to list multiple equivalent payloads by Execute-In-Place Installation Address, including the payload digest and, optionally, payload URIs.
+The manifest format MUST provide a mechanism to list multiple equivalent payloads by Execute-In-Place Installation Address, including the payload digest and, optionally, payload URIs.
 
 Satisfies: [USER_STORY.IMG.SELECT](#user-story-img-select)
 
@@ -977,7 +974,7 @@ Implemented by: [XIP Address](#manifest-element-xip-address)
 
 ### REQ.USE.EXEC: Executable Manifest {#req-use-exec}
 
-It MUST be possible to describe an executable system with a manifest on both Execute-In-Place microcontrollers and on complex operating systems. This requires the manifest to specify the digest of each statically linked dependency. In addition, the manifest serialisation MUST be able to express metadata, such as a kernel command-line, used by any loader or bootloader.
+It MUST be possible to describe an executable system with a manifest on both Execute-In-Place microcontrollers and on complex operating systems. This requires the manifest to specify the digest of each statically linked dependency. In addition, the manifest format MUST be able to express metadata, such as a kernel command-line, used by any loader or bootloader.
 
 Satisfies: [USER_STORY.EXEC.MFST](#user-story-exec-mfst)
 
@@ -997,9 +994,9 @@ Implemented by: [Load-time metadata](#manifest-element-load-metadata)
 
 It MUST be possible to place a payload in the same structure as the manifest. This MAY place the payload in the same packet as the manifest.
 
-Integrated payloads may include, for example, wrapped encryption keys, encoded configuration, public keys, {{RFC8392}} CBOR Web Tokens, or X.509 certificates.
+Integrated payloads may include, for example, wrapped encryption keys, configuration information, public keys, authorization tokens, or X.509 certificates.
 
-When an integrated payload is provided, this increases the size of the manifest. Manifest size can cause several processing and storage concerns that require careful consideration. The payload can prevent the whole manifest from being contained in a single network packet, which can cause fragmentation and the loss of portions of the manifest in lossy networks. This causes the need for reassembly and retransmission logic. The manifest must be held immutable between verification and processing (see [REQ.SEC.MFST.CONST](#req-sec-mfst-const)), so a larger manifest will consume more memory with immutability guarantees, for example internal RAM or NVRAM, or external secure memory. If the manifest exceeds the available immutable memory, then it must be processed modularly, evaluating each of: delegation chains, the security container, and the actual manifest, which includes verifying the integrated payload. If the security model calls for downloading the manifest and validating it before storing to NVRAM in order to prevent wear to NVRAM and energy expenditure in NVRAM, then either increasing memory allocated to manifest storage or modular processing of the received manifest may be required. While the manifest has been organised to enable this type of processing, it creates additional complexity in the parser. If the manifest is stored in NVRAM prior to processing, the integrated payload may cause the manifest to exceed the available storage. Because the manifest is received prior to validation of applicability, authority, or correctness, integrated payloads cause the recipient to expend network bandwidth and energy that may not be required if the manifest is discarded and these costs vary with the size of the integrated payload.
+When an integrated payload is provided, this increases the size of the manifest. Manifest size can cause several processing and storage concerns that require careful consideration. The payload can prevent the whole manifest from being contained in a single network packet, which can cause fragmentation and the loss of portions of the manifest in lossy networks. This causes the need for reassembly and retransmission logic. The manifest MUST be held immutable between verification and processing (see [REQ.SEC.MFST.CONST](#req-sec-mfst-const)), so a larger manifest will consume more memory with immutability guarantees, for example internal RAM or NVRAM, or external secure memory. If the manifest exceeds the available immutable memory, then it MUST be processed modularly, evaluating each of: delegation chains, the security container, and the actual manifest, which includes verifying the integrated payload. If the security model calls for downloading the manifest and validating it before storing to NVRAM in order to prevent wear to NVRAM and energy expenditure in NVRAM, then either increasing memory allocated to manifest storage or modular processing of the received manifest may be required. While the manifest has been organised to enable this type of processing, it creates additional complexity in the parser. If the manifest is stored in NVRAM prior to processing, the integrated payload may cause the manifest to exceed the available storage. Because the manifest is received prior to validation of applicability, authority, or correctness, integrated payloads cause the recipient to expend network bandwidth and energy that may not be required if the manifest is discarded and these costs vary with the size of the integrated payload.
 
 See also: [REQ.SEC.MFST.CONST](#req-sec-mfst-const).
 
@@ -1017,7 +1014,7 @@ Implemented by: N/A
 
 ### REQ.USE.DELEGATION: Delegation of Authority in Manifest {#req-use-delegation}
 
-Any serialisation MUST enable the delivery of a key claim with, but not authenticated by, a manifest. This key claim delivers a new key with which the recipient can verify the manifest.
+Any manifest format MUST enable the delivery of a key claim with, but not authenticated by, a manifest. This key claim delivers a new key with which the recipient can verify the manifest.
 
 Satisfies: [USER_STORY.MFST.DELEGATION](#user-story-mfst-delegation)
 
@@ -1037,12 +1034,3 @@ In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten 
 We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, and Gary Thomson.
 
 --- back
-
-# Mailing List Information
-
-The discussion list for this document is located at the e-mail
-address <suit@ietf.org>. Information on the group and information on how to
-subscribe to the list is at <https://www1.ietf.org/mailman/listinfo/suit>
-
-Archives of the list can be found at:
-<https://www.ietf.org/mail-archive/web/suit/current/index.html>
