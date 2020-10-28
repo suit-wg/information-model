@@ -9,7 +9,7 @@
 <meta content="Hannes Tschofenig" name="author">
 <meta content="Henk Birkholz" name="author">
 <meta content="
-       Vulnerabilities with Internet of Things (IoT) devices have raised the need for a reliable and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality 
+       Vulnerabilities with Internet of Things (IoT) devices have raised the need for a reliable and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality. 
        One component of such a firmware update is a concise and machine-processable meta-data document, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes the information that must be present in the manifest. 
     " name="description">
 <meta content="xml2rfc 3.0.0" name="generator">
@@ -1190,7 +1190,7 @@ dd > ul:first-child {
 <h1 id="title">An Information Model for Firmware Updates in IoT Devices</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
-<p id="section-abstract-1">Vulnerabilities with Internet of Things (IoT) devices have raised the need for a reliable and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-1">Vulnerabilities with Internet of Things (IoT) devices have raised the need for a reliable and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <p id="section-abstract-2">One component of such a firmware update is a concise and machine-processable meta-data document, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes the information that must be present in the manifest.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
@@ -1240,372 +1240,372 @@ dd > ul:first-child {
         <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents-2">
 <a href="#name-table-of-contents-2" class="section-name selfRef">Table of Contents</a>
         </h2>
-<nav class="toc"><ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.1">
+<nav class="toc"><ul class="toc ulEmpty compact">
+<li class="toc ulEmpty compact" id="section-toc.1-1.1">
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction-2" class="xref">Introduction</a><a href="#section-toc.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact toc ulEmpty" id="section-toc.1-1.2">
+          <li class="toc ulEmpty compact" id="section-toc.1-1.2">
             <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="xref">2</a>.  <a href="#name-conventions-and-terminology-2" class="xref">Conventions and Terminology</a><a href="#section-toc.1-1.2.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.2.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.2.2.1">
                 <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="xref">2.1</a>.  <a href="#name-requirements-notation-2" class="xref">Requirements Notation</a><a href="#section-toc.1-1.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulEmpty" id="section-toc.1-1.3">
+          <li class="toc ulEmpty compact" id="section-toc.1-1.3">
             <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-manifest-information-element" class="xref">Manifest Information Elements</a><a href="#section-toc.1-1.3.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.3.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.3.2.1">
                 <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="xref">3.1</a>.  <a href="#name-manifest-element-version-id-" class="xref">Manifest Element: Version ID of the manifest structure</a><a href="#section-toc.1-1.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.2">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.2">
                 <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="xref">3.2</a>.  <a href="#name-manifest-element-monotonic-s" class="xref">Manifest Element: Monotonic Sequence Number</a><a href="#section-toc.1-1.3.2.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.3">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.3">
                 <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="xref">3.3</a>.  <a href="#name-manifest-element-vendor-id-2" class="xref">Manifest Element: Vendor ID</a><a href="#section-toc.1-1.3.2.3.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.3.2.3.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.3.2.3.2.1">
                     <p id="section-toc.1-1.3.2.3.2.1.1"><a href="#section-3.3.1" class="xref">3.3.1</a>.  <a href="#name-example-domain-name-based-uu" class="xref">Example: Domain Name-based UUIDs</a><a href="#section-toc.1-1.3.2.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.4">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.4">
                 <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="xref">3.4</a>.  <a href="#name-manifest-element-class-id-2" class="xref">Manifest Element: Class ID</a><a href="#section-toc.1-1.3.2.4.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.3.2.4.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.3.2.4.2.1">
                     <p id="section-toc.1-1.3.2.4.2.1.1"><a href="#section-3.4.1" class="xref">3.4.1</a>.  <a href="#name-example-1-different-classes-2" class="xref">Example 1: Different Classes</a><a href="#section-toc.1-1.3.2.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.4.2.2">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.4.2.2">
                     <p id="section-toc.1-1.3.2.4.2.2.1"><a href="#section-3.4.2" class="xref">3.4.2</a>.  <a href="#name-example-2-upgrading-class-id" class="xref">Example 2: Upgrading Class ID</a><a href="#section-toc.1-1.3.2.4.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.4.2.3">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.4.2.3">
                     <p id="section-toc.1-1.3.2.4.2.3.1"><a href="#section-3.4.3" class="xref">3.4.3</a>.  <a href="#name-example-3-shared-functionali" class="xref">Example 3: Shared Functionality</a><a href="#section-toc.1-1.3.2.4.2.3.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.4.2.4">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.4.2.4">
                     <p id="section-toc.1-1.3.2.4.2.4.1"><a href="#section-3.4.4" class="xref">3.4.4</a>.  <a href="#name-example-4-white-labelling-2" class="xref">Example 4: White-labelling</a><a href="#section-toc.1-1.3.2.4.2.4.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.5">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.5">
                 <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="xref">3.5</a>.  <a href="#name-manifest-element-precursor-i" class="xref">Manifest Element: Precursor Image Digest Condition</a><a href="#section-toc.1-1.3.2.5.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.6">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.6">
                 <p id="section-toc.1-1.3.2.6.1"><a href="#section-3.6" class="xref">3.6</a>.  <a href="#name-manifest-element-required-im" class="xref">Manifest Element: Required Image Version List</a><a href="#section-toc.1-1.3.2.6.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.7">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.7">
                 <p id="section-toc.1-1.3.2.7.1"><a href="#section-3.7" class="xref">3.7</a>.  <a href="#name-manifest-element-expiration-" class="xref">Manifest Element: Expiration Time</a><a href="#section-toc.1-1.3.2.7.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.8">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.8">
                 <p id="section-toc.1-1.3.2.8.1"><a href="#section-3.8" class="xref">3.8</a>.  <a href="#name-manifest-element-payload-for" class="xref">Manifest Element: Payload Format</a><a href="#section-toc.1-1.3.2.8.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.9">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.9">
                 <p id="section-toc.1-1.3.2.9.1"><a href="#section-3.9" class="xref">3.9</a>.  <a href="#name-manifest-element-processing-" class="xref">Manifest Element: Processing Steps</a><a href="#section-toc.1-1.3.2.9.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.10">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.10">
                 <p id="section-toc.1-1.3.2.10.1"><a href="#section-3.10" class="xref">3.10</a>. <a href="#name-manifest-element-storage-loc" class="xref">Manifest Element: Storage Location</a><a href="#section-toc.1-1.3.2.10.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.3.2.10.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.3.2.10.2.1">
                     <p id="section-toc.1-1.3.2.10.2.1.1"><a href="#section-3.10.1" class="xref">3.10.1</a>.  <a href="#name-example-1-two-storage-locati" class="xref">Example 1: Two Storage Locations</a><a href="#section-toc.1-1.3.2.10.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.10.2.2">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.10.2.2">
                     <p id="section-toc.1-1.3.2.10.2.2.1"><a href="#section-3.10.2" class="xref">3.10.2</a>.  <a href="#name-example-2-file-system-2" class="xref">Example 2: File System</a><a href="#section-toc.1-1.3.2.10.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.10.2.3">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.10.2.3">
                     <p id="section-toc.1-1.3.2.10.2.3.1"><a href="#section-3.10.3" class="xref">3.10.3</a>.  <a href="#name-example-3-flash-memory-2" class="xref">Example 3: Flash Memory</a><a href="#section-toc.1-1.3.2.10.2.3.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.11">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.11">
                 <p id="section-toc.1-1.3.2.11.1"><a href="#section-3.11" class="xref">3.11</a>. <a href="#name-manifest-element-component-i" class="xref">Manifest Element: Component Identifier</a><a href="#section-toc.1-1.3.2.11.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.12">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.12">
                 <p id="section-toc.1-1.3.2.12.1"><a href="#section-3.12" class="xref">3.12</a>. <a href="#name-manifest-element-resource-in" class="xref">Manifest Element: Resource Indicator</a><a href="#section-toc.1-1.3.2.12.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.13">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.13">
                 <p id="section-toc.1-1.3.2.13.1"><a href="#section-3.13" class="xref">3.13</a>. <a href="#name-manifest-element-payload-dig" class="xref">Manifest Element: Payload Digests</a><a href="#section-toc.1-1.3.2.13.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.14">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.14">
                 <p id="section-toc.1-1.3.2.14.1"><a href="#section-3.14" class="xref">3.14</a>. <a href="#name-manifest-element-size-2" class="xref">Manifest Element: Size</a><a href="#section-toc.1-1.3.2.14.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.15">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.15">
                 <p id="section-toc.1-1.3.2.15.1"><a href="#section-3.15" class="xref">3.15</a>. <a href="#name-manifest-envelope-element-si" class="xref">Manifest Envelope Element: Signature</a><a href="#section-toc.1-1.3.2.15.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.16">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.16">
                 <p id="section-toc.1-1.3.2.16.1"><a href="#section-3.16" class="xref">3.16</a>. <a href="#name-manifest-element-additional-" class="xref">Manifest Element: Additional installation instructions</a><a href="#section-toc.1-1.3.2.16.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.17">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.17">
                 <p id="section-toc.1-1.3.2.17.1"><a href="#section-3.17" class="xref">3.17</a>. <a href="#name-manifest-element-aliases-2" class="xref">Manifest Element: Aliases</a><a href="#section-toc.1-1.3.2.17.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.18">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.18">
                 <p id="section-toc.1-1.3.2.18.1"><a href="#section-3.18" class="xref">3.18</a>. <a href="#name-manifest-element-dependencie" class="xref">Manifest Element: Dependencies</a><a href="#section-toc.1-1.3.2.18.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.19">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.19">
                 <p id="section-toc.1-1.3.2.19.1"><a href="#section-3.19" class="xref">3.19</a>. <a href="#name-manifest-element-encryption-" class="xref">Manifest Element: Encryption Wrapper</a><a href="#section-toc.1-1.3.2.19.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.20">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.20">
                 <p id="section-toc.1-1.3.2.20.1"><a href="#section-3.20" class="xref">3.20</a>. <a href="#name-manifest-element-xip-address" class="xref">Manifest Element: XIP Address</a><a href="#section-toc.1-1.3.2.20.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.21">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.21">
                 <p id="section-toc.1-1.3.2.21.1"><a href="#section-3.21" class="xref">3.21</a>. <a href="#name-manifest-element-load-time-m" class="xref">Manifest Element: Load-time metadata</a><a href="#section-toc.1-1.3.2.21.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.22">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.22">
                 <p id="section-toc.1-1.3.2.22.1"><a href="#section-3.22" class="xref">3.22</a>. <a href="#name-manifest-element-run-time-me" class="xref">Manifest Element: Run-time metadata</a><a href="#section-toc.1-1.3.2.22.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.23">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.23">
                 <p id="section-toc.1-1.3.2.23.1"><a href="#section-3.23" class="xref">3.23</a>. <a href="#name-manifest-element-payload-2" class="xref">Manifest Element: Payload</a><a href="#section-toc.1-1.3.2.23.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.3.2.24">
-                <p id="section-toc.1-1.3.2.24.1"><a href="#section-3.24" class="xref">3.24</a>. <a href="#name-manifest-envelope-element-ke" class="xref">Manifest Envelope Element: Key Claims</a><a href="#section-toc.1-1.3.2.24.1" class="pilcrow">¶</a></p>
+              <li class="toc compact ulEmpty" id="section-toc.1-1.3.2.24">
+                <p id="section-toc.1-1.3.2.24.1"><a href="#section-3.24" class="xref">3.24</a>. <a href="#name-manifest-envelope-element-de" class="xref">Manifest Envelope Element: Delegation Chain</a><a href="#section-toc.1-1.3.2.24.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulEmpty" id="section-toc.1-1.4">
+          <li class="toc ulEmpty compact" id="section-toc.1-1.4">
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-security-considerations-2" class="xref">Security Considerations</a><a href="#section-toc.1-1.4.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.4.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.4.2.1">
                 <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-threat-model-2" class="xref">Threat Model</a><a href="#section-toc.1-1.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2">
                 <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="xref">4.2</a>.  <a href="#name-threat-descriptions-2" class="xref">Threat Descriptions</a><a href="#section-toc.1-1.4.2.2.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.1">
                     <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="xref">4.2.1</a>.  <a href="#name-threatimgexpired-old-firmwar" class="xref">THREAT.IMG.EXPIRED: Old Firmware</a><a href="#section-toc.1-1.4.2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.2">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.2">
                     <p id="section-toc.1-1.4.2.2.2.2.1"><a href="#section-4.2.2" class="xref">4.2.2</a>.  <a href="#name-threatimgexpiredoffline-offl" class="xref">THREAT.IMG.EXPIRED.OFFLINE : Offline device + Old Firmware</a><a href="#section-toc.1-1.4.2.2.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.3">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.3">
                     <p id="section-toc.1-1.4.2.2.2.3.1"><a href="#section-4.2.3" class="xref">4.2.3</a>.  <a href="#name-threatimgincompatible-mismat" class="xref">THREAT.IMG.INCOMPATIBLE: Mismatched Firmware</a><a href="#section-toc.1-1.4.2.2.2.3.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.4">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.4">
                     <p id="section-toc.1-1.4.2.2.2.4.1"><a href="#section-4.2.4" class="xref">4.2.4</a>.  <a href="#name-threatimgformat-the-target-d" class="xref">THREAT.IMG.FORMAT: The target device misinterprets the type of payload</a><a href="#section-toc.1-1.4.2.2.2.4.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.5">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.5">
                     <p id="section-toc.1-1.4.2.2.2.5.1"><a href="#section-4.2.5" class="xref">4.2.5</a>.  <a href="#name-threatimglocation-the-target" class="xref">THREAT.IMG.LOCATION: The target device installs the payload to the wrong location</a><a href="#section-toc.1-1.4.2.2.2.5.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.6">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.6">
                     <p id="section-toc.1-1.4.2.2.2.6.1"><a href="#section-4.2.6" class="xref">4.2.6</a>.  <a href="#name-threatnetredirect-redirectio" class="xref">THREAT.NET.REDIRECT: Redirection to inauthentic payload hosting</a><a href="#section-toc.1-1.4.2.2.2.6.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.7">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.7">
                     <p id="section-toc.1-1.4.2.2.2.7.1"><a href="#section-4.2.7" class="xref">4.2.7</a>.  <a href="#name-threatnetonpath-traffic-inte" class="xref">THREAT.NET.ONPATH: Traffic interception</a><a href="#section-toc.1-1.4.2.2.2.7.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.8">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.8">
                     <p id="section-toc.1-1.4.2.2.2.8.1"><a href="#section-4.2.8" class="xref">4.2.8</a>.  <a href="#name-threatimgreplace-payload-rep" class="xref">THREAT.IMG.REPLACE: Payload Replacement</a><a href="#section-toc.1-1.4.2.2.2.8.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.9">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.9">
                     <p id="section-toc.1-1.4.2.2.2.9.1"><a href="#section-4.2.9" class="xref">4.2.9</a>.  <a href="#name-threatimgnon_auth-unauthenti" class="xref">THREAT.IMG.NON_AUTH: Unauthenticated Images</a><a href="#section-toc.1-1.4.2.2.2.9.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.10">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.10">
                     <p id="section-toc.1-1.4.2.2.2.10.1"><a href="#section-4.2.10" class="xref">4.2.10</a>. <a href="#name-threatupdwrong_precursor-une" class="xref">THREAT.UPD.WRONG_PRECURSOR: Unexpected Precursor images</a><a href="#section-toc.1-1.4.2.2.2.10.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.11">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.11">
                     <p id="section-toc.1-1.4.2.2.2.11.1"><a href="#section-4.2.11" class="xref">4.2.11</a>. <a href="#name-threatupdunapproved-unapprov" class="xref">THREAT.UPD.UNAPPROVED: Unapproved Firmware</a><a href="#section-toc.1-1.4.2.2.2.11.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.12">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.12">
                     <p id="section-toc.1-1.4.2.2.2.12.1"><a href="#section-4.2.12" class="xref">4.2.12</a>. <a href="#name-threatimgdisclosure-reverse-" class="xref">THREAT.IMG.DISCLOSURE: Reverse Engineering Of Firmware Image for Vulnerability Analysis</a><a href="#section-toc.1-1.4.2.2.2.12.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.13">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.13">
                     <p id="section-toc.1-1.4.2.2.2.13.1"><a href="#section-4.2.13" class="xref">4.2.13</a>. <a href="#name-threatmfstoverride-overridin" class="xref">THREAT.MFST.OVERRIDE: Overriding Critical Manifest Elements</a><a href="#section-toc.1-1.4.2.2.2.13.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.14">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.14">
                     <p id="section-toc.1-1.4.2.2.2.14.1"><a href="#section-4.2.14" class="xref">4.2.14</a>. <a href="#name-threatmfstexposure-confident" class="xref">THREAT.MFST.EXPOSURE: Confidential Manifest Element Exposure</a><a href="#section-toc.1-1.4.2.2.2.14.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.15">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.15">
                     <p id="section-toc.1-1.4.2.2.2.15.1"><a href="#section-4.2.15" class="xref">4.2.15</a>. <a href="#name-threatimgextra-extra-data-af" class="xref">THREAT.IMG.EXTRA: Extra data after image</a><a href="#section-toc.1-1.4.2.2.2.15.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.16">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.16">
                     <p id="section-toc.1-1.4.2.2.2.16.1"><a href="#section-4.2.16" class="xref">4.2.16</a>. <a href="#name-threatkeyexposure-exposure-o" class="xref">THREAT.KEY.EXPOSURE: Exposure of signing keys</a><a href="#section-toc.1-1.4.2.2.2.16.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.17">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.17">
                     <p id="section-toc.1-1.4.2.2.2.17.1"><a href="#section-4.2.17" class="xref">4.2.17</a>. <a href="#name-threatmfstmodification-modif" class="xref">THREAT.MFST.MODIFICATION: Modification of manifest or payload prior to signing</a><a href="#section-toc.1-1.4.2.2.2.17.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.2.2.18">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.2.2.18">
                     <p id="section-toc.1-1.4.2.2.2.18.1"><a href="#section-4.2.18" class="xref">4.2.18</a>. <a href="#name-threatmfsttoctou-modificatio" class="xref">THREAT.MFST.TOCTOU: Modification of manifest between authentication and use</a><a href="#section-toc.1-1.4.2.2.2.18.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3">
                 <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="xref">4.3</a>.  <a href="#name-security-requirements-2" class="xref">Security Requirements</a><a href="#section-toc.1-1.4.2.3.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.1">
                     <p id="section-toc.1-1.4.2.3.2.1.1"><a href="#section-4.3.1" class="xref">4.3.1</a>.  <a href="#name-reqsecsequence-monotonic-seq" class="xref">REQ.SEC.SEQUENCE: Monotonic Sequence Numbers</a><a href="#section-toc.1-1.4.2.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.2">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.2">
                     <p id="section-toc.1-1.4.2.3.2.2.1"><a href="#section-4.3.2" class="xref">4.3.2</a>.  <a href="#name-reqseccompatible-vendor-devi" class="xref">REQ.SEC.COMPATIBLE: Vendor, Device-type Identifiers</a><a href="#section-toc.1-1.4.2.3.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.3">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.3">
                     <p id="section-toc.1-1.4.2.3.2.3.1"><a href="#section-4.3.3" class="xref">4.3.3</a>.  <a href="#name-reqsecexp-expiration-time-2" class="xref">REQ.SEC.EXP: Expiration Time</a><a href="#section-toc.1-1.4.2.3.2.3.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.4">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.4">
                     <p id="section-toc.1-1.4.2.3.2.4.1"><a href="#section-4.3.4" class="xref">4.3.4</a>.  <a href="#name-reqsecauthentic-cryptographi" class="xref">REQ.SEC.AUTHENTIC: Cryptographic Authenticity</a><a href="#section-toc.1-1.4.2.3.2.4.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.5">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.5">
                     <p id="section-toc.1-1.4.2.3.2.5.1"><a href="#section-4.3.5" class="xref">4.3.5</a>.  <a href="#name-reqsecauthimg_type-authentic" class="xref">REQ.SEC.AUTH.IMG_TYPE: Authenticated Payload Type</a><a href="#section-toc.1-1.4.2.3.2.5.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.6">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.6">
                     <p id="section-toc.1-1.4.2.3.2.6.1"><a href="#section-4.3.6" class="xref">4.3.6</a>.  <a href="#name-security-requirement-reqseca" class="xref">Security Requirement REQ.SEC.AUTH.IMG_LOC: Authenticated Storage Location</a><a href="#section-toc.1-1.4.2.3.2.6.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.7">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.7">
                     <p id="section-toc.1-1.4.2.3.2.7.1"><a href="#section-4.3.7" class="xref">4.3.7</a>.  <a href="#name-reqsecauthremote_loc-authent" class="xref">REQ.SEC.AUTH.REMOTE_LOC: Authenticated Remote Resource Location</a><a href="#section-toc.1-1.4.2.3.2.7.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.8">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.8">
                     <p id="section-toc.1-1.4.2.3.2.8.1"><a href="#section-4.3.8" class="xref">4.3.8</a>.  <a href="#name-reqsecauthexec-secure-execut" class="xref">REQ.SEC.AUTH.EXEC: Secure Execution</a><a href="#section-toc.1-1.4.2.3.2.8.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.9">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.9">
                     <p id="section-toc.1-1.4.2.3.2.9.1"><a href="#section-4.3.9" class="xref">4.3.9</a>.  <a href="#name-reqsecauthprecursor-authenti" class="xref">REQ.SEC.AUTH.PRECURSOR: Authenticated precursor images</a><a href="#section-toc.1-1.4.2.3.2.9.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.10">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.10">
                     <p id="section-toc.1-1.4.2.3.2.10.1"><a href="#section-4.3.10" class="xref">4.3.10</a>. <a href="#name-reqsecauthcompatibility-auth" class="xref">REQ.SEC.AUTH.COMPATIBILITY: Authenticated Vendor and Class IDs</a><a href="#section-toc.1-1.4.2.3.2.10.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.11">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.11">
                     <p id="section-toc.1-1.4.2.3.2.11.1"><a href="#section-4.3.11" class="xref">4.3.11</a>. <a href="#name-reqsecrights-rights-require-" class="xref">REQ.SEC.RIGHTS: Rights Require Authenticity</a><a href="#section-toc.1-1.4.2.3.2.11.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.12">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.12">
                     <p id="section-toc.1-1.4.2.3.2.12.1"><a href="#section-4.3.12" class="xref">4.3.12</a>. <a href="#name-reqsecimgconfidentiality-pay" class="xref">REQ.SEC.IMG.CONFIDENTIALITY: Payload Encryption</a><a href="#section-toc.1-1.4.2.3.2.12.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.13">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.13">
                     <p id="section-toc.1-1.4.2.3.2.13.1"><a href="#section-4.3.13" class="xref">4.3.13</a>. <a href="#name-reqsecaccess_control-access-" class="xref">REQ.SEC.ACCESS_CONTROL: Access Control</a><a href="#section-toc.1-1.4.2.3.2.13.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.14">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.14">
                     <p id="section-toc.1-1.4.2.3.2.14.1"><a href="#section-4.3.14" class="xref">4.3.14</a>. <a href="#name-reqsecmfstconfidentiality-en" class="xref">REQ.SEC.MFST.CONFIDENTIALITY: Encrypted Manifests</a><a href="#section-toc.1-1.4.2.3.2.14.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.15">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.15">
                     <p id="section-toc.1-1.4.2.3.2.15.1"><a href="#section-4.3.15" class="xref">4.3.15</a>. <a href="#name-reqsecimgcomplete_digest-who" class="xref">REQ.SEC.IMG.COMPLETE_DIGEST: Whole Image Digest</a><a href="#section-toc.1-1.4.2.3.2.15.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.16">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.16">
                     <p id="section-toc.1-1.4.2.3.2.16.1"><a href="#section-4.3.16" class="xref">4.3.16</a>. <a href="#name-reqsecreporting-secure-repor" class="xref">REQ.SEC.REPORTING: Secure Reporting</a><a href="#section-toc.1-1.4.2.3.2.16.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.17">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.17">
                     <p id="section-toc.1-1.4.2.3.2.17.1"><a href="#section-4.3.17" class="xref">4.3.17</a>. <a href="#name-reqseckeyprotection-protecte" class="xref">REQ.SEC.KEY.PROTECTION: Protected storage of signing keys</a><a href="#section-toc.1-1.4.2.3.2.17.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.18">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.18">
                     <p id="section-toc.1-1.4.2.3.2.18.1"><a href="#section-4.3.18" class="xref">4.3.18</a>. <a href="#name-reqsecmfstcheck-validate-man" class="xref">REQ.SEC.MFST.CHECK: Validate manifests prior to deployment</a><a href="#section-toc.1-1.4.2.3.2.18.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.19">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.19">
                     <p id="section-toc.1-1.4.2.3.2.19.1"><a href="#section-4.3.19" class="xref">4.3.19</a>. <a href="#name-reqsecmfsttrusted-construct-" class="xref">REQ.SEC.MFST.TRUSTED: Construct manifests in a trusted environment</a><a href="#section-toc.1-1.4.2.3.2.19.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.3.2.20">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.3.2.20">
                     <p id="section-toc.1-1.4.2.3.2.20.1"><a href="#section-4.3.20" class="xref">4.3.20</a>. <a href="#name-reqsecmfstconst-manifest-kep" class="xref">REQ.SEC.MFST.CONST: Manifest kept immutable between check and use</a><a href="#section-toc.1-1.4.2.3.2.20.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4">
                 <p id="section-toc.1-1.4.2.4.1"><a href="#section-4.4" class="xref">4.4</a>.  <a href="#name-user-stories-2" class="xref">User Stories</a><a href="#section-toc.1-1.4.2.4.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.1">
                     <p id="section-toc.1-1.4.2.4.2.1.1"><a href="#section-4.4.1" class="xref">4.4.1</a>.  <a href="#name-user_storyinstallinstruction" class="xref">USER_STORY.INSTALL.INSTRUCTIONS: Installation Instructions</a><a href="#section-toc.1-1.4.2.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.2">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.2">
                     <p id="section-toc.1-1.4.2.4.2.2.1"><a href="#section-4.4.2" class="xref">4.4.2</a>.  <a href="#name-user_storymfstfail_early-fai" class="xref">USER_STORY.MFST.FAIL_EARLY: Fail Early</a><a href="#section-toc.1-1.4.2.4.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.3">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.3">
                     <p id="section-toc.1-1.4.2.4.2.3.1"><a href="#section-4.4.3" class="xref">4.4.3</a>.  <a href="#name-user_storyoverride-override-" class="xref">USER_STORY.OVERRIDE: Override Non-Critical Manifest Elements</a><a href="#section-toc.1-1.4.2.4.2.3.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.4">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.4">
                     <p id="section-toc.1-1.4.2.4.2.4.1"><a href="#section-4.4.4" class="xref">4.4.4</a>.  <a href="#name-user_storycomponent-componen" class="xref">USER_STORY.COMPONENT: Component Update</a><a href="#section-toc.1-1.4.2.4.2.4.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.5">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.5">
                     <p id="section-toc.1-1.4.2.4.2.5.1"><a href="#section-4.4.5" class="xref">4.4.5</a>.  <a href="#name-user_storymulti_auth-multipl" class="xref">USER_STORY.MULTI_AUTH: Multiple Authorizations</a><a href="#section-toc.1-1.4.2.4.2.5.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.6">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.6">
                     <p id="section-toc.1-1.4.2.4.2.6.1"><a href="#section-4.4.6" class="xref">4.4.6</a>.  <a href="#name-user_storyimgformat-multiple" class="xref">USER_STORY.IMG.FORMAT: Multiple Payload Formats</a><a href="#section-toc.1-1.4.2.4.2.6.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.7">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.7">
                     <p id="section-toc.1-1.4.2.4.2.7.1"><a href="#section-4.4.7" class="xref">4.4.7</a>.  <a href="#name-user_storyimgconfidentiality" class="xref">USER_STORY.IMG.CONFIDENTIALITY: Prevent Confidential Information Disclosures</a><a href="#section-toc.1-1.4.2.4.2.7.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.8">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.8">
                     <p id="section-toc.1-1.4.2.4.2.8.1"><a href="#section-4.4.8" class="xref">4.4.8</a>.  <a href="#name-user_storyimgunknown_format-" class="xref">USER_STORY.IMG.UNKNOWN_FORMAT: Prevent Devices from Unpacking Unknown Formats</a><a href="#section-toc.1-1.4.2.4.2.8.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.9">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.9">
                     <p id="section-toc.1-1.4.2.4.2.9.1"><a href="#section-4.4.9" class="xref">4.4.9</a>.  <a href="#name-user_storyimgcurrent_version" class="xref">USER_STORY.IMG.CURRENT_VERSION: Specify Version Numbers of Target Firmware</a><a href="#section-toc.1-1.4.2.4.2.9.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.10">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.10">
                     <p id="section-toc.1-1.4.2.4.2.10.1"><a href="#section-4.4.10" class="xref">4.4.10</a>. <a href="#name-user_storyimgselect-enable-d" class="xref">USER_STORY.IMG.SELECT: Enable Devices to Choose Between Images</a><a href="#section-toc.1-1.4.2.4.2.10.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.11">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.11">
                     <p id="section-toc.1-1.4.2.4.2.11.1"><a href="#section-4.4.11" class="xref">4.4.11</a>. <a href="#name-user_storyexecmfst-secure-ex" class="xref">USER_STORY.EXEC.MFST: Secure Execution Using Manifests</a><a href="#section-toc.1-1.4.2.4.2.11.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.12">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.12">
                     <p id="section-toc.1-1.4.2.4.2.12.1"><a href="#section-4.4.12" class="xref">4.4.12</a>. <a href="#name-user_storyexecdecompress-dec" class="xref">USER_STORY.EXEC.DECOMPRESS: Decompress on Load</a><a href="#section-toc.1-1.4.2.4.2.12.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.13">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.13">
                     <p id="section-toc.1-1.4.2.4.2.13.1"><a href="#section-4.4.13" class="xref">4.4.13</a>. <a href="#name-user_storymfstimg-payload-in" class="xref">USER_STORY.MFST.IMG: Payload in Manifest</a><a href="#section-toc.1-1.4.2.4.2.13.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.14">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.14">
                     <p id="section-toc.1-1.4.2.4.2.14.1"><a href="#section-4.4.14" class="xref">4.4.14</a>. <a href="#name-user_storymfstparse-simple-p" class="xref">USER_STORY.MFST.PARSE: Simple Parsing</a><a href="#section-toc.1-1.4.2.4.2.14.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.15">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.15">
                     <p id="section-toc.1-1.4.2.4.2.15.1"><a href="#section-4.4.15" class="xref">4.4.15</a>. <a href="#name-user_storymfstdelegation-del" class="xref">USER_STORY.MFST.DELEGATION: Delegated Authority in Manifest</a><a href="#section-toc.1-1.4.2.4.2.15.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.4.2.16">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.4.2.16">
                     <p id="section-toc.1-1.4.2.4.2.16.1"><a href="#section-4.4.16" class="xref">4.4.16</a>. <a href="#name-user_storymfstpre_check-upda" class="xref">USER_STORY.MFST.PRE_CHECK: Update Evaluation</a><a href="#section-toc.1-1.4.2.4.2.16.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5">
                 <p id="section-toc.1-1.4.2.5.1"><a href="#section-4.5" class="xref">4.5</a>.  <a href="#name-usability-requirements-2" class="xref">Usability Requirements</a><a href="#section-toc.1-1.4.2.5.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.1">
                     <p id="section-toc.1-1.4.2.5.2.1.1"><a href="#section-4.5.1" class="xref">4.5.1</a>.  <a href="#name-requsemfstpre_check-pre-inst" class="xref">REQ.USE.MFST.PRE_CHECK: Pre-Installation Checks</a><a href="#section-toc.1-1.4.2.5.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.2">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.2">
                     <p id="section-toc.1-1.4.2.5.2.2.1"><a href="#section-4.5.2" class="xref">4.5.2</a>.  <a href="#name-requsemfstoverride_remote-ov" class="xref">REQ.USE.MFST.OVERRIDE_REMOTE: Override Remote Resource Location</a><a href="#section-toc.1-1.4.2.5.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.3">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.3">
                     <p id="section-toc.1-1.4.2.5.2.3.1"><a href="#section-4.5.3" class="xref">4.5.3</a>.  <a href="#name-requsemfstcomponent-componen" class="xref">REQ.USE.MFST.COMPONENT: Component Updates</a><a href="#section-toc.1-1.4.2.5.2.3.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.4">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.4">
                     <p id="section-toc.1-1.4.2.5.2.4.1"><a href="#section-4.5.4" class="xref">4.5.4</a>.  <a href="#name-requsemfstmulti_auth-multipl" class="xref">REQ.USE.MFST.MULTI_AUTH: Multiple authentications</a><a href="#section-toc.1-1.4.2.5.2.4.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.5">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.5">
                     <p id="section-toc.1-1.4.2.5.2.5.1"><a href="#section-4.5.5" class="xref">4.5.5</a>.  <a href="#name-requseimgformat-format-usabi" class="xref">REQ.USE.IMG.FORMAT: Format Usability</a><a href="#section-toc.1-1.4.2.5.2.5.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.6">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.6">
                     <p id="section-toc.1-1.4.2.5.2.6.1"><a href="#section-4.5.6" class="xref">4.5.6</a>.  <a href="#name-requseimgnested-nested-forma" class="xref">REQ.USE.IMG.NESTED: Nested Formats</a><a href="#section-toc.1-1.4.2.5.2.6.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.7">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.7">
                     <p id="section-toc.1-1.4.2.5.2.7.1"><a href="#section-4.5.7" class="xref">4.5.7</a>.  <a href="#name-requseimgversions-target-ver" class="xref">REQ.USE.IMG.VERSIONS: Target Version Matching</a><a href="#section-toc.1-1.4.2.5.2.7.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.8">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.8">
                     <p id="section-toc.1-1.4.2.5.2.8.1"><a href="#section-4.5.8" class="xref">4.5.8</a>.  <a href="#name-requseimgselect-select-image" class="xref">REQ.USE.IMG.SELECT: Select Image by Destination</a><a href="#section-toc.1-1.4.2.5.2.8.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.9">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.9">
                     <p id="section-toc.1-1.4.2.5.2.9.1"><a href="#section-4.5.9" class="xref">4.5.9</a>.  <a href="#name-requseexec-executable-manife" class="xref">REQ.USE.EXEC: Executable Manifest</a><a href="#section-toc.1-1.4.2.5.2.9.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.10">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.10">
                     <p id="section-toc.1-1.4.2.5.2.10.1"><a href="#section-4.5.10" class="xref">4.5.10</a>. <a href="#name-requseload-load-time-informa" class="xref">REQ.USE.LOAD: Load-Time Information</a><a href="#section-toc.1-1.4.2.5.2.10.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.11">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.11">
                     <p id="section-toc.1-1.4.2.5.2.11.1"><a href="#section-4.5.11" class="xref">4.5.11</a>. <a href="#name-requsepayload-payload-in-man" class="xref">REQ.USE.PAYLOAD: Payload in Manifest Envelope</a><a href="#section-toc.1-1.4.2.5.2.11.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.12">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.12">
                     <p id="section-toc.1-1.4.2.5.2.12.1"><a href="#section-4.5.12" class="xref">4.5.12</a>. <a href="#name-requseparse-simple-parsing-2" class="xref">REQ.USE.PARSE: Simple Parsing</a><a href="#section-toc.1-1.4.2.5.2.12.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="compact toc ulEmpty" id="section-toc.1-1.4.2.5.2.13">
+                  <li class="toc compact ulEmpty" id="section-toc.1-1.4.2.5.2.13">
                     <p id="section-toc.1-1.4.2.5.2.13.1"><a href="#section-4.5.13" class="xref">4.5.13</a>. <a href="#name-requsedelegation-delegation-" class="xref">REQ.USE.DELEGATION: Delegation of Authority in Manifest</a><a href="#section-toc.1-1.4.2.5.2.13.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulEmpty" id="section-toc.1-1.5">
+          <li class="toc ulEmpty compact" id="section-toc.1-1.5">
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-iana-considerations-2" class="xref">IANA Considerations</a><a href="#section-toc.1-1.5.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact toc ulEmpty" id="section-toc.1-1.6">
+          <li class="toc ulEmpty compact" id="section-toc.1-1.6">
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-acknowledgements-2" class="xref">Acknowledgements</a><a href="#section-toc.1-1.6.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="compact toc ulEmpty" id="section-toc.1-1.7">
+          <li class="toc ulEmpty compact" id="section-toc.1-1.7">
             <p id="section-toc.1-1.7.1"><a href="#section-7" class="xref">7</a>.  <a href="#name-references-2" class="xref">References</a><a href="#section-toc.1-1.7.1" class="pilcrow">¶</a></p>
-<ul class="compact toc ulEmpty">
-<li class="compact toc ulEmpty" id="section-toc.1-1.7.2.1">
+<ul class="toc compact ulEmpty">
+<li class="toc compact ulEmpty" id="section-toc.1-1.7.2.1">
                 <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="xref">7.1</a>.  <a href="#name-normative-references-2" class="xref">Normative References</a><a href="#section-toc.1-1.7.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="compact toc ulEmpty" id="section-toc.1-1.7.2.2">
+              <li class="toc compact ulEmpty" id="section-toc.1-1.7.2.2">
                 <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="xref">7.2</a>.  <a href="#name-informative-references-2" class="xref">Informative References</a><a href="#section-toc.1-1.7.2.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="compact toc ulEmpty" id="section-toc.1-1.8">
+          <li class="toc ulEmpty compact" id="section-toc.1-1.8">
             <p id="section-toc.1-1.8.1"><a href="#section-appendix.a" class="xref"></a><a href="#name-authors-addresses-2" class="xref">Authors' Addresses</a><a href="#section-toc.1-1.8.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
@@ -2050,10 +2050,10 @@ appear in all capitals, as shown here.<a href="#section-2.1-1" class="pilcrow">�
 </div>
 <div id="manifest-element-key-claims">
 <section id="section-3.24">
-        <h3 id="name-manifest-envelope-element-ke">
-<a href="#section-3.24" class="section-number selfRef">3.24. </a><a href="#name-manifest-envelope-element-ke" class="section-name selfRef">Manifest Envelope Element: Key Claims</a>
+        <h3 id="name-manifest-envelope-element-de">
+<a href="#section-3.24" class="section-number selfRef">3.24. </a><a href="#name-manifest-envelope-element-de" class="section-name selfRef">Manifest Envelope Element: Delegation Chain</a>
         </h3>
-<p id="section-3.24-1">The <span><a href="#manifest-element-signature" class="xref">Signature</a> (<a href="#manifest-element-signature" class="xref">Section 3.15</a>)</span> is NOT REQUIRED to cover the Key Claims element. The Key Claims element provides a chain of key delegations (or references to them) for the device to follow in order to verify the key that authenticated the manifest using a trusted key. Because this element is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.<a href="#section-3.24-1" class="pilcrow">¶</a></p>
+<p id="section-3.24-1">The <span><a href="#manifest-element-signature" class="xref">Signature</a> (<a href="#manifest-element-signature" class="xref">Section 3.15</a>)</span> is NOT REQUIRED to cover the delegation chain. The delegation chain offers enhanced authorization functionality via authorization tokens. Each token itself is protected and does not require another layer of protection and because the delegation chain is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.<a href="#section-3.24-1" class="pilcrow">¶</a></p>
 <p id="section-3.24-2">This element is OPTIONAL to implement.<a href="#section-3.24-2" class="pilcrow">¶</a></p>
 <p id="section-3.24-3">Implements: <span><a href="#req-use-delegation" class="xref">REQ.USE.DELEGATION</a> (<a href="#req-use-delegation" class="xref">Section 4.5.13</a>)</span><a href="#section-3.24-3" class="pilcrow">¶</a></p>
 </section>
@@ -2897,7 +2897,7 @@ vulnerability, or if the attacker can supply their own firmware, then this threa
           </h4>
 <p id="section-4.5.13-1">Any manifest format MUST enable the delivery of a key claim with, but not authenticated by, a manifest. This key claim delivers a new key with which the recipient can verify the manifest.<a href="#section-4.5.13-1" class="pilcrow">¶</a></p>
 <p id="section-4.5.13-2">Satisfies: <span><a href="#user-story-mfst-delegation" class="xref">USER_STORY.MFST.DELEGATION</a> (<a href="#user-story-mfst-delegation" class="xref">Section 4.4.15</a>)</span><a href="#section-4.5.13-2" class="pilcrow">¶</a></p>
-<p id="section-4.5.13-3">Implemented by: <span><a href="#manifest-element-key-claims" class="xref">Key Claims</a> (<a href="#manifest-element-key-claims" class="xref">Section 3.24</a>)</span><a href="#section-4.5.13-3" class="pilcrow">¶</a></p>
+<p id="section-4.5.13-3">Implemented by: <span><a href="#manifest-element-key-claims" class="xref">Delegation Chain</a> (<a href="#manifest-element-key-claims" class="xref">Section 3.24</a>)</span><a href="#section-4.5.13-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>

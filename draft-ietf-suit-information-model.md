@@ -57,7 +57,7 @@ informative:
 
 --- abstract
 
-Vulnerabilities with Internet of Things (IoT) devices have raised the need for a reliable and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality
+Vulnerabilities with Internet of Things (IoT) devices have raised the need for a reliable and secure firmware update mechanism that is also suitable for constrained devices. Ensuring that devices function and remain secure over their service life requires such an update mechanism to fix vulnerabilities, to update configuration settings, as well as adding new functionality.
 
 One component of such a firmware update is a concise and machine-processable meta-data document, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes the information that must be present in the manifest.
 
@@ -391,9 +391,9 @@ This element is OPTIONAL to implement.
 
 Implements: [REQ.USE.PAYLOAD](#req-use-payload)
 
-## Manifest Envelope Element: Key Claims {#manifest-element-key-claims}
+## Manifest Envelope Element: Delegation Chain {#manifest-element-key-claims}
 
-The [Signature](#manifest-element-signature) is NOT REQUIRED to cover the Key Claims element. The Key Claims element provides a chain of key delegations (or references to them) for the device to follow in order to verify the key that authenticated the manifest using a trusted key. Because this element is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.
+The [Signature](#manifest-element-signature) is NOT REQUIRED to cover the delegation chain. The delegation chain offers enhanced authorization functionality via authorization tokens. Each token itself is protected and does not require another layer of protection and because the delegation chain is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.
 
 This element is OPTIONAL to implement.
 
@@ -1049,7 +1049,7 @@ Any manifest format MUST enable the delivery of a key claim with, but not authen
 
 Satisfies: [USER_STORY.MFST.DELEGATION](#user-story-mfst-delegation)
 
-Implemented by: [Key Claims](#manifest-element-key-claims)
+Implemented by: [Delegation Chain](#manifest-element-key-claims)
 
 #  IANA Considerations
 
