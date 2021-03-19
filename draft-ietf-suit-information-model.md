@@ -1041,7 +1041,7 @@ Implemented by: [Payload](#manifest-element-payload)
 
 ### REQ.USE.PARSE: Simple Parsing {#req-use-parse}
 
-The structure of the manifest MUST be simple to parse, without need for a general-purpose parser.
+The structure of the manifest MUST be simple to parse.
 
 Satisfies: [USER_STORY.MFST.PARSE](#user-story-mfst-parse)
 
@@ -1068,6 +1068,6 @@ In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten 
 
 We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, and Gary Thomson.
 
-Finally, we would like to thank the following IESG members for their review feedback: Erik Kline, Murray Kucherawy, Barry Leiba, Alissa Cooper, and Benjamin Kaduk.
+Finally, we would like to thank the following IESG members for their review feedback: Erik Kline, Murray Kucherawy, Barry Leiba, Alissa Cooper, Stephen Farrell and Benjamin Kaduk.
 
 --- back
