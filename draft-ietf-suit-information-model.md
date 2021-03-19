@@ -456,12 +456,9 @@ An attacker sends a valid firmware image, for the wrong type of device, signed b
 
 Mitigated by: [REQ.SEC.COMPATIBLE](#req-sec-compatible)
 
-#### Example:
-
-Suppose that two vendors, Vendor A and Vendor B, adopt the same trade name in different geographic regions, and they both make products with the same names, or product name matching is not used. This causes firmware from Vendor A to match devices from Vendor B.
+For example, suppose that two vendors, Vendor A and Vendor B, adopt the same trade name in different geographic regions, and they both make products with the same names, or product name matching is not used. This causes firmware from Vendor A to match devices from Vendor B.
 
 If the vendors are the firmware authorities, then devices from Vendor A will reject images signed by Vendor B since they use different credentials. However, if both devices trust the same Author, then, devices from Vendor A could install firmware intended for devices from Vendor B.
-
 
 ### THREAT.IMG.FORMAT: The target device misinterprets the type of payload {#threat-img-format}
 
@@ -487,7 +484,7 @@ Mitigated by: [REQ.SEC.AUTH.IMG_LOC](#req-sec-authentic-image-location)
 
 Classification: Denial of Service
 
-If a device does not know where to obtain the payload for an update, it may be redirected to an attacker's server. This would allow an attacker to provide broken payloads to devices.
+If a device is tricked into fetching a payload for an attacker controlled site, the attacker may send corrupted payloads to devices.
 
 Mitigated by: [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-payload)
 
@@ -503,10 +500,9 @@ Mitigated by: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.IMG.CONFIDENTIAL
 
 Classification: Elevation of Privilege
 
-An attacker replaces a newly downloaded firmware after a device finishes verifying a manifest. This could cause the device to execute the attacker's code. This attack likely requires physical access to the device. However, it is possible that this attack is carried out in combination with another threat that allows remote execution. This is a typical Time Of Check/Time Of Use threat.
+An attacker replaces a newly downloaded firmware after a device finishes verifying a manifest. This could cause the device to execute the attacker's code. This attack likely requires physical access to the device. However, it is possible that this attack is carried out in combination with another threat that allows remote execution. This is a typical Time Of Check/Time Of Use (TICTOC) attack.
 
-Threat Escalation: If the attacker is able to exploit a known
-vulnerability, or if the attacker can supply their own firmware, then this threat can be escalated to ALL TYPES.
+Threat Escalation: If the attacker is able to exploit a known vulnerability, or if the attacker can supply their own firmware, then this threat can be escalated to ALL TYPES.
 
 Mitigated by: [REQ.SEC.AUTH.EXEC](#req-sec-authentic-execution)
 
@@ -538,7 +534,7 @@ This threat can appear in several ways, however it is ultimately about ensuring 
 
 Similarly, a Network Operator may require that devices behave in a particular way in order to maintain the integrity of the network. If devices behaviour on a network can be modified without the approval of the Network Operator, then this constitutes an elevation of privilege with respect to the network.
 
-For example, if the owner of a device has purchased that device because of Features A, B, and C, and a firmware update is issued by the manufacturer, which removes Feature A, then the device may not fulfill the owner's requirements any more. In certain circumstances, this can cause significantly greater threats. Suppose that Feature A is used to implement a safety-critical system, whether the manufacturer intended this behaviour or not. When unapproved firmware is installed, the system may become unsafe.
+For example, if the owner of a device has purchased that device because of features A, B, and C, and a firmware update is issued by the manufacturer, which removes feature A, then the device may not fulfill the owner's requirements any more. In certain circumstances, this can cause significantly greater threats. Suppose that feature A is used to implement a safety-critical system, whether the manufacturer intended this behaviour or not. When unapproved firmware is installed, the system may become unsafe.
 
 In a second example, the owner or operator of a system of two or more interoperating devices needs to approve firmware for their system in order to ensure interoperability with other devices in the system. If the firmware is not qualified, the system as a whole may not work. Therefore, if a device installs firmware without the approval of the device owner or operator, this is a threat to devices or the system as a whole.
 
@@ -598,7 +594,7 @@ Mitigated by: [REQ.SEC.IMG.COMPLETE_DIGEST](#req-sec-img-complete-digest)
 
 Classification: All Types
 
-If a third party obtains a key or even indirect access to a key, for example in an HSM, then they can perform the same actions as the legitimate owner of the key. If the key is trusted for firmware update, then the third party can perform firmware updates as though they were the legitimate owner of the key.
+If a third party obtains a key or even indirect access to a key, for example in an hardware security module (HSM), then they can perform the same actions as the legitimate owner of the key. If the key is trusted for firmware update, then the third party can perform firmware updates as though they were the legitimate owner of the key.
 
 For example, if manifest signing is performed on a server connected to the internet, an attacker may compromise the server and then be able to sign manifests, even if the keys for manifest signing are held in an HSM that is accessed by the server.
 
@@ -666,7 +662,7 @@ Implemented by: [Signature](#manifest-element-signature), [Payload Digest](#mani
 
 ### REQ.SEC.AUTH.IMG_TYPE: Authenticated Payload Type {#req-sec-authentic-image-type}
 
-The type of payload (which may be independent of format) MUST be authenticated. For example, the target must know whether the payload is XIP firmware, a loadable module, or configuration data.
+The type of payload MUST be authenticated. For example, the target must know whether the payload is XIP firmware, a loadable module, or configuration data.
 
 Mitigates: [THREAT.IMG.FORMAT](#threat-img-format)
 
@@ -714,7 +710,7 @@ Implemented By: [Vendor ID Condition](#element-vendor-id), [Class ID Condition](
 
 ### REQ.SEC.RIGHTS: Rights Require Authenticity {#req-sec-rights}
 
-If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms such as those required in [REQ.SEC.AUTHENTIC](#req-sec-authentic) can be used to prove authenticity.
+If a device grants different rights to different actors, exercising those rights MUST be accompanied by proof of those rights, in the form of proof of authenticity. Authenticity mechanisms, such as those required in [REQ.SEC.AUTHENTIC](#req-sec-authentic), can be used to prove authenticity.
 
 For example, if a device has a policy that requires that firmware have both an Authorship right and a Qualification right and if that device grants Authorship and Qualification rights to different parties, such as a Device Operator and a Network Operator, respectively, then the firmware cannot be installed without proof of rights from both the Device Operator and the Network Operator.
 
@@ -743,11 +739,11 @@ Implemented by: Client-side code, not specified in manifest.
 
 ### REQ.SEC.MFST.CONFIDENTIALITY: Encrypted Manifests {#req-sec-mfst-confidentiality}
 
-It MUST be possible to encrypt part or all of the manifest. This may be accomplished with either transport encryption or with at-rest encryption.
+A manifest format MUST allow encryption of selected parts of the manifest or encryption of the entire manifest to prevent sensitive content of the firmware metadata to be leaked.
 
 Mitigates: [THREAT.MFST.EXPOSURE](#threat-mfst-exposure), [THREAT.NET.ONPATH](#threat-net-onpath)
 
-Implemented by: External Encryption Wrapper / Transport Security
+Implemented by: Manifest Encryption Wrapper / Transport Security
 
 ### REQ.SEC.IMG.COMPLETE_DIGEST: Whole Image Digest {#req-sec-img-complete-digest}
 
@@ -773,7 +769,7 @@ Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
 
 ### REQ.SEC.MFST.CHECK: Validate manifests prior to deployment {#req-sec-mfst-check}
 
-Manifests SHOULD be parsed and examined prior to deployment to validate that their contents have not been modified during creation and signing.
+Manifests SHOULD be verified prior to deployment. This reduces problems that may arise with devices installing firmware images that damage devices unintentionally.
 
 Mitigates: [THREAT.MFST.MODIFICATION](#threat-mfst-modification)
 
@@ -890,7 +886,7 @@ Satisfied by: [REQ.USE.LOAD](#req-use-load)
 
 As an operator of devices on a constrained network, I would like the manifest to be able to include a small payload in the same packet so that I can reduce network traffic.
 
-Small payloads may include, for example, wrapped encryption keys, configuration information, public keys, authorization tokens, or X.509 certificates.
+Small payloads may include, for example, wrapped content encryption keys, configuration information, public keys, authorization tokens, or X.509 certificates.
 
 Satisfied by: [REQ.USE.PAYLOAD](#req-use-payload)
 
@@ -918,11 +914,9 @@ The following usability requirements satisfy the user stories listed above.
 
 ### REQ.USE.MFST.PRE_CHECK: Pre-Installation Checks {#req-use-mfst-pre-check}
 
-It MUST be possible for a manifest author to place ALL information required to process an update in the manifest.
+A manifest format MUST be able to carry all information required to process an update.
 
-For example: Information about which precursor image is required for a differential update MUST be placed in the manifest, not in the differential compression header.
-
-For example: Information about an installation-time confirmation system that must be used to allow the installation to proceed.
+For example: Information about which precursor image is required for a differential update must be placed in the manifest.
 
 Satisfies: [USER_STORY.MFST.PRE_CHECK(#user-story-mfst-pre-check), [USER_STORY.INSTALL.INSTRUCTIONS](#user-story-install-instructions)
 
@@ -930,7 +924,7 @@ Implemented by: [Additional installation instructions](#manifest-element-additio
 
 ### REQ.USE.MFST.OVERRIDE_REMOTE: Override Remote Resource Location {#req-use-mfst-override}
 
-It MUST be possible to redirect payload fetches. This applies where two manifests are used in conjunction. For example, a Device Operator creates a manifest specifying a payload and signs it, and provides a URI for that payload. A Network Operator creates a second manifest, with a dependency on the first. They use this second manifest to override the URIs provided by the Device Operator, directing them into their own infrastructure instead. Some devices may provide this capability, while others may only look at canonical sources of firmware. For this to be possible, the device must fetch the payload, whereas a device that accepts payload pushes will ignore this feature.
+A manifest format MUST be able to redirect payload fetches. This applies where two manifests are used in conjunction. For example, a Device Operator creates a manifest specifying a payload and signs it, and provides a URI for that payload. A Network Operator creates a second manifest, with a dependency on the first. They use this second manifest to override the URIs provided by the Device Operator, directing them into their own infrastructure instead. Some devices may provide this capability, while others may only look at canonical sources of firmware. For this to be possible, the device must fetch the payload, whereas a device that accepts payload pushes will ignore this feature.
 
 Satisfies: [USER_STORY.OVERRIDE](#user-story-override)
 
@@ -938,9 +932,9 @@ Implemented by: [Aliases](#manifest-element-aliases)
 
 ### REQ.USE.MFST.COMPONENT: Component Updates {#req-use-mfst-component}
 
-It MUST be possible to express the requirement to install one or more payloads from one or more authorities so that a multi-payload update can be described. This allows multiple parties with different permissions to collaborate in creating a single update for the IoT device, across multiple components.
+A manifest format MUST be able to express the requirement to install one or more payloads from one or more authorities so that a multi-payload update can be described. This allows multiple parties with different permissions to collaborate in creating a single update for the IoT device, across multiple components.
 
-This requirement effectively means that it must be possible to construct a tree of manifests on a multi-image target.
+This requirement implies that it must be possible to construct a tree of manifests on a multi-image target.
 
 In order to enable devices with a heterogeneous storage architecture, the manifest must enable specification of both storage system and the storage location within that storage system.
 
@@ -962,7 +956,7 @@ A firmware image can be divided into multiple functional blocks for separate tes
 
 ### REQ.USE.MFST.MULTI_AUTH: Multiple authentications {#req-use-mfst-multi-auth}
 
-It MUST be possible to authenticate a manifest multiple times so that authorizations from multiple parties with different permissions can be required in order to authorize installation of a manifest.
+A manifest format MUST be able to carry multiple signatures so that authorizations from multiple parties with different permissions can be required in order to authorize installation of a manifest.
 
 Satisfies: [USER_STORY.MULTI_AUTH](#user-story-multi-auth)
 
@@ -1008,10 +1002,9 @@ Satisfies: [USER_STORY.IMG.SELECT](#user-story-img-select)
 
 Implemented by: [XIP Address](#manifest-element-xip-address)
 
-
 ### REQ.USE.EXEC: Executable Manifest {#req-use-exec}
 
-It MUST be possible to describe an executable system with a manifest on both Execute-In-Place microcontrollers and on complex operating systems. In addition, the manifest format MUST be able to express metadata, such as a kernel command-line, used by any loader or bootloader.
+The manifest format MUST allow to describe an executable system with a manifest on both Execute-In-Place microcontrollers and on complex operating systems. In addition, the manifest format MUST be able to express metadata, such as a kernel command-line, used by any loader or bootloader.
 
 Satisfies: [USER_STORY.EXEC.MFST](#user-story-exec-mfst)
 
@@ -1019,9 +1012,7 @@ Implemented by: [Run-time metadata](#manifest-element-exec-metadata)
 
 ### REQ.USE.LOAD: Load-Time Information {#req-use-load}
 
-It MUST be possible to specify additional metadata for load time processing of a payload, such as cryptographic information, load-address, and compression algorithm.
-
-N.B. load comes before exec/boot.
+The manifest format MUST enable carrying additional metadata for load time processing of a payload, such as cryptographic information, load-address, and compression algorithm. Note that load comes before execution/boot.
 
 Satisfies: [USER_STORY.EXEC.DECOMPRESS](#user-story-exec-decompress)
 
@@ -1029,9 +1020,9 @@ Implemented by: [Load-time metadata](#manifest-element-load-metadata)
 
 ### REQ.USE.PAYLOAD: Payload in Manifest Envelope {#req-use-payload}
 
-It MUST be possible to place a payload in the same structure as the manifest. This may place the payload in the same packet as the manifest.
+The manifest format MUST allow placing a payload in the same structure as the manifest. This may place the payload in the same packet as the manifest.
 
-Integrated payloads may include, for example, wrapped encryption keys, configuration information, public keys, authorization tokens, or X.509 certificates.
+Integrated payloads may include, for example, binaries as well as configuration information, and keying material. 
 
 When an integrated payload is provided, this increases the size of the manifest. Manifest size can cause several processing and storage concerns that require careful consideration. The payload can prevent the whole manifest from being contained in a single network packet, which can cause fragmentation and the loss of portions of the manifest in lossy networks. This causes the need for reassembly and retransmission logic. The manifest MUST be held immutable between verification and processing (see [REQ.SEC.MFST.CONST](#req-sec-mfst-const)), so a larger manifest will consume more memory with immutability guarantees, for example internal RAM or NVRAM, or external secure memory. If the manifest exceeds the available immutable memory, then it MUST be processed modularly, evaluating each of: delegation chains, the security container, and the actual manifest, which includes verifying the integrated payload. If the security model calls for downloading the manifest and validating it before storing to NVRAM in order to prevent wear to NVRAM and energy expenditure in NVRAM, then either increasing memory allocated to manifest storage or modular processing of the received manifest may be required. While the manifest has been organised to enable this type of processing, it creates additional complexity in the parser. If the manifest is stored in NVRAM prior to processing, the integrated payload may cause the manifest to exceed the available storage. Because the manifest is received prior to validation of applicability, authority, or correctness, integrated payloads cause the recipient to expend network bandwidth and energy that may not be required if the manifest is discarded and these costs vary with the size of the integrated payload.
 
@@ -1043,7 +1034,7 @@ Implemented by: [Payload](#manifest-element-payload)
 
 ### REQ.USE.PARSE: Simple Parsing {#req-use-parse}
 
-The structure of the manifest MUST be simple to parse.
+The structure of the manifest MUST be simple to parse to reduce the attack vectors against manifest parsers.
 
 Satisfies: [USER_STORY.MFST.PARSE](#user-story-mfst-parse)
 
@@ -1051,7 +1042,7 @@ Implemented by: N/A
 
 ### REQ.USE.DELEGATION: Delegation of Authority in Manifest {#req-use-delegation}
 
-Any manifest format MUST enable the delivery of a key claim with, but not authenticated by, a manifest. This key claim delivers a new key with which the recipient can verify the manifest.
+A manifest format MUST enable the delivery of delegation information. This information delivers a new key with which the recipient can verify the manifest.
 
 Satisfies: [USER_STORY.MFST.DELEGATION](#user-story-mfst-delegation)
 
