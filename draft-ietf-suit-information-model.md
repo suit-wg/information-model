@@ -196,11 +196,11 @@ Vendor A creates a product A and its firmware. Vendor B sells the product under 
 * vendorIdB = UUID5(DNS, "vendor-b.com")
 * classIdB = UUID5(vendorIdB, "Product B")
 
-The product will match against each of these class IDs. If Vendor A and Vendor B provide different components for the device, the implementor MAY choose to make ID matching scoped to each component. Then, the vendorIdA, classIdA match the component ID supplied by Vendor A, and the vendorIdB, classIdB match the component ID supplied by Vendor B.
+The product will match against each of these class IDs. If Vendor A and Vendor B provide different components for the device, the implementor may choose to make ID matching scoped to each component. Then, the vendorIdA, classIdA match the component ID supplied by Vendor A, and the vendorIdB, classIdB match the component ID supplied by Vendor B.
 
 ## Precursor Image Digest Condition {#element-precursor-digest}
 
-When a precursor image is required by the payload format (for example, differential updates), a precursor image digest condition MUST be present. The precursor image MAY be installed or stored as a candidate.
+This element provides information about the payload that needs to be present on the device for an update to apply. This may, for example, be the case with differential updates.
 
 This element is OPTIONAL.
 
@@ -294,7 +294,7 @@ Implements: [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-payload)
 
 ## Payload Digests {#manifest-element-payload-digest}
 
-This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s). A manifest format must provide a mechanism to select one payload from a list based on system parameters, such as Execute-In-Place Installation Address.
+This element contains one or more digests of one or more payloads. This allows the target device to ensure authenticity of the payload(s) when combined with the [Signature](#manifest-element-signature) element. A manifest format must provide a mechanism to select one payload from a list based on system parameters, such as Execute-In-Place Installation Address.
 
 This element is REQUIRED. Support for more than one digest is OPTIONAL.
 
@@ -628,9 +628,9 @@ The security requirements here are a set of policies that mitigate the threats d
 
 ### REQ.SEC.SEQUENCE: Monotonic Sequence Numbers {#req-sec-sequence}
 
-Only an actor with firmware installation authority is permitted to decide when device firmware can be installed. To enforce this rule, manifests MUST contain monotonically increasing sequence numbers. Manifests MAY use UTC epoch timestamps to coordinate monotonically increasing sequence numbers across many actors in many locations. If UTC epoch timestamps are used, they MUST NOT be treated as times, they MUST be treated only as sequence numbers. Devices MUST reject manifests with sequence numbers smaller than any onboard sequence number.
+Only an actor with firmware installation authority is permitted to decide when device firmware can be installed. To enforce this rule, manifests MUST contain monotonically increasing sequence numbers. Manifests may use UTC epoch timestamps to coordinate monotonically increasing sequence numbers across many actors in many locations. If UTC epoch timestamps are used, they must not be treated as times, they must be treated only as sequence numbers. Devices must reject manifests with sequence numbers smaller than any onboard sequence number, i.e. there is no sequence number roll over.
 
-Note: This is not a firmware version. It is a manifest sequence number. A firmware version may be rolled back by creating a new manifest for the old firmware version with a later sequence number.
+Note: This is not a firmware version field. It is a manifest sequence number. A firmware version may be rolled back by creating a new manifest for the old firmware version with a later sequence number.
 
 Mitigates: [THREAT.IMG.EXPIRED](#threat-expired)
 
@@ -638,7 +638,7 @@ Implemented by: [Monotonic Sequence Number](#element-sequence-number)
 
 ### REQ.SEC.COMPATIBLE: Vendor, Device-type Identifiers {#req-sec-compatible}
 
-Devices MUST only apply firmware that is intended for them. Devices must know that a given update applies to their vendor, model, hardware revision, and software revision. Human-readable identifiers are often error-prone in this regard, so unique identifiers SHOULD be used instead.
+Devices MUST only apply firmware that is intended for them. Devices must know that a given update applies to their vendor, model, hardware revision, and software revision. Human-readable identifiers are often error-prone in this regard, so unique identifiers should be used instead.
 
 Mitigates: [THREAT.IMG.INCOMPATIBLE](#threat-incompatible)
 
@@ -646,9 +646,9 @@ Implemented by: [Vendor ID Condition](#element-vendor-id), [Class ID Condition](
 
 ### REQ.SEC.EXP: Expiration Time {#req-sec-exp}
 
-A firmware manifest MAY expire after a given time. Devices MAY provide a secure clock (local or remote). If a secure clock is provided and the Firmware manifest has an expiration timestamp, the device MUST reject the manifest if current time is later than the expiration time.
+A firmware manifest MAY expire after a given time and devices may have a secure clock (local or remote). If a secure clock is provided and the Firmware manifest has an expiration timestamp, the device must reject the manifest if current time is later than the expiration time.
 
-Special consideration is required for end-of-life: if a firmware will not be updated again, for example if a business stops issuing updates to a device. The last valid firmware should not have an expiration time.
+Special consideration is required for end-of-life in case device will not be updated again, for example if a business stops issuing updates for a device. The last valid firmware should not have an expiration time.
 
 Mitigates: [THREAT.IMG.EXPIRED.OFFLINE ](#threat-expired-offline)
 
@@ -656,7 +656,7 @@ Implemented by: [Expiration Time](#manifest-element-expiration)
 
 ### REQ.SEC.AUTHENTIC: Cryptographic Authenticity {#req-sec-authentic}
 
-The authenticity of an update MUST be demonstrable. Typically, this means that updates must be digitally signed. Because the manifest contains information about how to install the update, the manifest's authenticity MUST also be demonstrable. To reduce the overhead required for validation, the manifest contains the cryptographic digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code. The authenticity of the firmware image is tied to the manifest by the use of a cryptographic digest of the firmware image.
+The authenticity of an update MUST be demonstrable. Typically, this means that updates must be digitally signed. Because the manifest contains information about how to install the update, the manifest's authenticity must also be demonstrable. To reduce the overhead required for validation, the manifest contains the cryptographic digest of the firmware image, rather than a second digital signature. The authenticity of the manifest can be verified with a digital signature or Message Authentication Code. The authenticity of the firmware image is tied to the manifest by the use of a cryptographic digest of the firmware image.
 
 Mitigates: [THREAT.IMG.NON_AUTH](#threat-img-unauthenticated), [THREAT.NET.ONPATH](#threat-net-onpath)
 
