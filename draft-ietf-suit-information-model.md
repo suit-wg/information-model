@@ -522,6 +522,8 @@ Mitigated by: [REQ.SEC.AUTHENTIC](#req-sec-authentic)
 
 Classification: Denial of Service / All Types
 
+Modifications of payloads and metadata allow an attacker to introduce a number of denial of service attacks. Below are some examples.
+
 An attacker sends a valid, current manifest to a device that has an unexpected precursor image. If a payload format requires a precursor image (for example, delta updates) and that precursor image is not available on the target device, it could cause the update to break.
 
 An attacker that can cause a device to install a payload against the wrong precursor image could gain elevation of privilege and potentially expand this to all types of threat. However, it is unlikely that a valid differential update applied to an incorrect precursor would result in a functional, but vulnerable firmware.
@@ -1009,7 +1011,7 @@ Implemented by: [XIP Address](#manifest-element-xip-address)
 
 ### REQ.USE.EXEC: Executable Manifest {#req-use-exec}
 
-It MUST be possible to describe an executable system with a manifest on both Execute-In-Place microcontrollers and on complex operating systems. This requires the manifest to specify the digest of each statically linked dependency. In addition, the manifest format MUST be able to express metadata, such as a kernel command-line, used by any loader or bootloader.
+It MUST be possible to describe an executable system with a manifest on both Execute-In-Place microcontrollers and on complex operating systems. In addition, the manifest format MUST be able to express metadata, such as a kernel command-line, used by any loader or bootloader.
 
 Satisfies: [USER_STORY.EXEC.MFST](#user-story-exec-mfst)
 
