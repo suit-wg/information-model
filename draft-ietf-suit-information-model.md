@@ -1,7 +1,7 @@
 ---
 title: A Manifest Information Model for Firmware Updates in IoT Devices
 abbrev: A Firmware Manifest Information Model
-docname: draft-ietf-suit-information-model-10
+docname: draft-ietf-suit-information-model-11
 category: info
 
 ipr: trust200902
@@ -404,7 +404,9 @@ Implements: [REQ.USE.DELEGATION](#req-use-delegation)
 
 # Security Considerations {#design-motivation}
 
-The following sub-sections describe the threat model, user stories, security requirements, and usability requirements. This section also provides the motivations for each of the manifest information elements.
+The following sub-sections describe the threat model, user stories, security requirements, and usability requirements. This section also provides the motivations for each of the manifest information elements. 
+
+Before going into the details it is worthwhile to keep in mind that a firmware update is, by definition, remote code execution. Hence, if a device is configured to trust an entity to provide firmware, it trusts this entity to do the "right thing". Many classes of attacks can be mitigated by verifying that a firmware update came from a trusted party and that no rollback is taking place. However, if the trusted entity has been compromised and distributes attacker-provided software to devices then there is no defence from an device point of view.
 
 ## Threat Model {#threat-model}
 
@@ -678,7 +680,7 @@ Implemented by: [Storage Location](#maniest-element-storage-location)
 
 ### REQ.SEC.AUTH.REMOTE_LOC: Authenticated Remote Payload {#req-sec-authenticated-remote-payload}
 
-The location where a target should find a payload MUST be authenticated.
+The location where a target should find a payload MUST be authenticated. Remote resources need to receive an equal amount of cryptographic protection as the manifest itself, when dereferencing URIs. The security considerations of Uniform Resource Identifiers (URIs) are applicable {{?RFC3986}}.
 
 Mitigates: [THREAT.NET.REDIRECT](#threat-net-redirect), [THREAT.NET.ONPATH](#threat-net-onpath)
 
