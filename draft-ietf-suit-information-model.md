@@ -406,7 +406,7 @@ Implements: [REQ.USE.DELEGATION](#req-use-delegation)
 
 The following sub-sections describe the threat model, user stories, security requirements, and usability requirements. This section also provides the motivations for each of the manifest information elements. 
 
-Before going into the details it is worthwhile to keep in mind that a firmware update is, by definition, remote code execution. Hence, if a device is configured to trust an entity to provide firmware, it trusts this entity to do the "right thing". Many classes of attacks can be mitigated by verifying that a firmware update came from a trusted party and that no rollback is taking place. However, if the trusted entity has been compromised and distributes attacker-provided software to devices then there is no defence from an device point of view.
+Note that it is worthwhile to recall that a firmware update is, by definition, remote code execution. Hence, if a device is configured to trust an entity to provide firmware, it trusts this entity to do the "right thing". Many classes of attacks can be mitigated by verifying that a firmware update came from a trusted party and that no rollback is taking place. However, if the trusted entity has been compromised and distributes attacker-provided firmwware to devices then the possibilities for deference are limited.
 
 ## Threat Model {#threat-model}
 
