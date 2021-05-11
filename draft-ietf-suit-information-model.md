@@ -121,7 +121,11 @@ The Vendor ID element helps to distinguish between identically named products fr
 
 Recommended practice is to use {{RFC4122}} version 5 UUIDs with the vendor's domain name and the DNS name space ID. Other options include type 1 and type 4 UUIDs.
 
-This element is RECOMMENDED. 
+Fixed-size binary identifiers are preferred because they are simple to match, unambiguous in length, explicitly non-parsable, and require no issuing authority. Guaranteed unique integers are preferred because they are small and simple to match, however they may not be fixed length and they may require an issuing authority to ensure uniqueness. Free-form text is avoided because it is variable-length, prone to error, and often requires parsing outside the scope of the manifest serialization.
+
+If human-readable content is required, it SHOULD be contained in a separate manifest information element: [Manifest text information](#manifest-element-text)
+
+This element is RECOMMENDED.
 
 Implements: [REQ.SEC.COMPATIBLE](#req-sec-compatible), [REQ.SEC.AUTH.COMPATIBILITY](#req-sec-authentic-compatibility).
 
@@ -146,7 +150,11 @@ Recommended practice is to use {{RFC4122}} version 5 UUIDs with as much informat
 
 The Class ID UUID should use the Vendor ID as the name space identifier. Other options include version 1 and 4 UUIDs. Classes may be more fine-grained granular than is required to identify firmware compatibility. Classes must not be less granular than is required to identify firmware compatibility. Devices may have multiple Class IDs.
 
-Class ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only.
+Class ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only. A manifest serialization SHOULD NOT permit free-form text content to be used for Class ID. A fixed-size binary identifier SHOULD be used.
+
+Some organizations desire to keep the same product naming across multiple, incompatible hardware revisions for ease of user experience. If this naming is propagated into the firmware, then matching a specific hardware version becomes a challenge. An opaque, non-readable binary identifier has no naming implications and so is more likely to be usable for distinguishing among incompatible device groupings, regardless of naming.
+
+Fixed-size binary identifiers are preferred because they are simple to match, unambiguous in length, opaque and free from naming implications, and explicitly non-parsable. Free-form text is avoided because it is variable-length, prone to error, often requires parsing outside the scope of the manifest serialization, and may be homogenized across incompatible device groupings.
 
 If Class ID is not implemented, then each logical device class must use a unique trust anchor for authorization.
 
@@ -327,6 +335,12 @@ Additional installation instructions are machine-readable commands the device sh
 This element is OPTIONAL.
 
 Implements: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
+
+## Manifest text information {#manifest-element-text}
+
+Textual information pertaining to the update described by the manifest. This information is for human consumption only. It MUST NOT be the basis of any decision made by the recipient.
+
+Implements: [REQ.USE.MFST.TEXT](#req-use-mfst-text)
 
 ## Aliases {#manifest-element-aliases}
 
@@ -910,6 +924,12 @@ As an operator of a constrained network, I would like devices on my network to b
 
 Satisfied by: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
 
+### USER_STORY.MFST.ADMINISTRATION: Administration of manifests {#user-story-mfst-admin}
+
+As a Device Operator, I want to understand what an update will do and to which devices it applies so that I can make informed choices about which updates to apply, when to apply them, and which devices should be updated.
+
+Satisfied by [REQ.USE.MFST.TEXT](#req-use-mfst-text)
+
 ## Usability Requirements
 
 The following usability requirements satisfy the user stories listed above.
@@ -923,6 +943,14 @@ For example: Information about which precursor image is required for a different
 Satisfies: [USER_STORY.MFST.PRE_CHECK(#user-story-mfst-pre-check), [USER_STORY.INSTALL.INSTRUCTIONS](#user-story-install-instructions)
 
 Implemented by: [Additional installation instructions](#manifest-element-additional-install-info)
+
+### REQ.USE.MFST.TEXT: Descriptive Manifest Information {#req-use-mfst-text}
+
+It MUST be possible for a Device Operator to determine what a manifest will do and which devices will accept it prior to distribution.
+
+Satisfies: [USER_STORY.MFST.ADMINISTRATION](#user-story-mfst-admin)
+
+Implemented by: [Manifest text information](#manifest-element-text)
 
 ### REQ.USE.MFST.OVERRIDE_REMOTE: Override Remote Resource Location {#req-use-mfst-override}
 
