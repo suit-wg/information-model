@@ -396,7 +396,9 @@ Implements: [REQ.USE.PAYLOAD](#req-use-payload)
 
 ## Manifest Envelope Element: Delegation Chain {#manifest-element-key-claims}
 
-The delegation chain offers enhanced authorization functionality via authorization tokens. Each token itself is protected and does not require another layer of protection. Because the delegation chain is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.
+The delegation chain offers enhanced authorization functionality via authorization tokens, such as CBOR Web Tokens {{RFC8392}} with Proof of Possession Key Semantics {{RFC8747}}. Each token itself is protected and does not require another layer of protection. Each authorization token typically includes a public key or a public key fingerprint, however this is dependent on the tokens used. Each token MAY include additional metadata, such as key usage information. Because the delegation chain is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.
+
+The first token in any delegation chain MUST be autheticated by the recipient's Trust Anchor. Each subsequent token MUST be authenticated using the previous token. This allows a recipient to discard each antecedent token after it has authenticated the subsequent token. The final token MUST enable authentication of the manifest. More than one delegation chain MAY be used if more than one signature is used. Note that no restriction is placed on the encoding order of these tokens, the order of elements is logical only.
 
 This element is OPTIONAL.
 
