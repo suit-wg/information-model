@@ -68,11 +68,11 @@ Vulnerabilities with Internet of Things (IoT) devices have raised the need for a
 
 One component of such a firmware update is a concise and machine-processable meta-data document, or manifest, that describes the firmware image(s) and offers appropriate protection. This document describes the information that must be present in the manifest.
 
-This document describes all the information elements required in a manifest to secure firmware updates of IoT devices. Each information element is motiviated by user stories and threats it aims to mitigate. These threats and user stories are not intended to be an exhaustive list of the threats against IoT devices, nor of the possible user stories that describe how to conduct a firmware update. Instead they are intended to describe the threats against firmware updates in isolation and provide sufficient motivation to specify the information elements that cover a wide range of user stories. 
+This document describes all the information elements required in a manifest to secure firmware updates of IoT devices. Each information element is motiviated by user stories and threats it aims to mitigate. These threats and user stories are not intended to be an exhaustive list of the threats against IoT devices, nor of the possible user stories that describe how to conduct a firmware update. Instead they are intended to describe the threats against firmware updates in isolation and provide sufficient motivation to specify the information elements that cover a wide range of user stories.
 
-To distinguish information elements from their encoding and serialization over the wire this document presents an information model. RFC 3444 {{RFC3444}} describes the differences between information and data models. 
+To distinguish information elements from their encoding and serialization over the wire this document presents an information model. RFC 3444 {{RFC3444}} describes the differences between information and data models.
 
-Because this document covers a wide range of user stories and a wide range of threats, not all information elements apply to all scenarios. As a result, various information elements are optional to implement and optional to use, depending on which threats exist in a particular domain of application and which user stories are important for deployments. 
+Because this document covers a wide range of user stories and a wide range of threats, not all information elements apply to all scenarios. As a result, various information elements are optional to implement and optional to use, depending on which threats exist in a particular domain of application and which user stories are important for deployments.
 
 #  Requirements and Terminology
 
@@ -80,13 +80,13 @@ Because this document covers a wide range of user stories and a wide range of th
 
 {::boilerplate bcp14}
 
-Unless otherwise stated these words apply to the design of the manifest format, not its implementation or application. Hence, whenever an information is declared as "REQUIRED" this implies that the manifest format document has to include support for it. 
+Unless otherwise stated these words apply to the design of the manifest format, not its implementation or application. Hence, whenever an information is declared as "REQUIRED" this implies that the manifest format document has to include support for it.
 
 
 ## Terminology
 
 This document uses terms defined in {{I-D.ietf-suit-architecture}}.
-The term 'Operator' refers to both Device and Network Operator. 
+The term 'Operator' refers to both Device and Network Operator.
 
 Secure time and secure clock refer to a set of requirements on time sources. For local time sources, this primarily means that the clock must be monotonically increasing, including across power cycles, firmware updates, etc. For remote time sources, the provided time must be guaranteed to be correct to within some predetermined bounds, whenever the time source is accessible.
 
@@ -107,7 +107,7 @@ This element is REQUIRED.
 
 ## Monotonic Sequence Number {#element-sequence-number}
 
-A monotonically increasing sequence number to prevent malicious actors from reverting a firmware update against the policies of the relevant authority. 
+A monotonically increasing sequence number to prevent malicious actors from reverting a firmware update against the policies of the relevant authority.
 
 For convenience, the monotonic sequence number may be a UTC timestamp. This allows global synchronisation of sequence numbers without any additional management.
 
@@ -230,7 +230,7 @@ Implements: [REQ.SEC.EXP](#req-sec-exp)
 
 This element describes the payload format within the signed metadata. It is used to enable devices to decode payloads correctly.
 
-This element is REQUIRED. 
+This element is REQUIRED.
 
 Implements: [REQ.SEC.AUTH.IMG_TYPE](#req-sec-authentic-image-type), [REQ.USE.IMG.FORMAT](#req-use-img-format)
 
@@ -279,7 +279,7 @@ Implements: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
 ## Payload Indicator {#manifest-element-payload-indicator}
 
-This element provides the information required for the device to acquire the payload. This functionality is only needed when the target device does not intrinsically know where to find the payload. 
+This element provides the information required for the device to acquire the payload. This functionality is only needed when the target device does not intrinsically know where to find the payload.
 
 This can be encoded in several ways:
 
@@ -288,7 +288,7 @@ This can be encoded in several ways:
 * A prioritised list of URIs
 * A list of signed URIs
 
-This element is OPTIONAL. 
+This element is OPTIONAL.
 
 Implements: [REQ.SEC.AUTH.REMOTE_LOC](#req-sec-authenticated-remote-payload)
 
@@ -316,7 +316,7 @@ The Signature element represents the foundation of all security properties of th
 
 The Signature element must support multiple signers and multiple signing algorithms. A manifest format may allow multiple manifests to be covered by a single Signature element.
 
-This element is REQUIRED in non-dependency manifests. 
+This element is REQUIRED in non-dependency manifests.
 
 Implements: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.RIGHTS](#req-sec-rights), [REQ.USE.MFST.MULTI_AUTH](#req-use-mfst-multi-auth)
 
@@ -404,7 +404,7 @@ Implements: [REQ.USE.DELEGATION](#req-use-delegation)
 
 # Security Considerations {#design-motivation}
 
-The following sub-sections describe the threat model, user stories, security requirements, and usability requirements. This section also provides the motivations for each of the manifest information elements. 
+The following sub-sections describe the threat model, user stories, security requirements, and usability requirements. This section also provides the motivations for each of the manifest information elements.
 
 Note that it is worthwhile to recall that a firmware update is, by definition, remote code execution. Hence, if a device is configured to trust an entity to provide firmware, it trusts this entity to do the "right thing". Many classes of attacks can be mitigated by verifying that a firmware update came from a trusted party and that no rollback is taking place. However, if the trusted entity has been compromised and distributes attacker-provided firmware to devices then the possibilities for deference are limited.
 
@@ -502,7 +502,7 @@ Mitigated by: [REQ.SEC.AUTHENTIC](#req-sec-authentic), [REQ.SEC.IMG.CONFIDENTIAL
 
 Classification: Elevation of Privilege
 
-An attacker replaces a newly downloaded firmware after a device finishes verifying a manifest. This could cause the device to execute the attacker's code. This attack likely requires physical access to the device. However, it is possible that this attack is carried out in combination with another threat that allows remote execution. This is a typical Time Of Check/Time Of Use (TICTOC) attack.
+An attacker replaces a newly downloaded firmware after a device finishes verifying a manifest. This could cause the device to execute the attacker's code. This attack likely requires physical access to the device. However, it is possible that this attack is carried out in combination with another threat that allows remote execution. This is a typical Time Of Check/Time Of Use (TOCTOU) attack.
 
 Threat Escalation: If the attacker is able to exploit a known vulnerability, or if the attacker can supply their own firmware, then this threat can be escalated to ALL TYPES.
 
@@ -824,7 +824,7 @@ Some examples of potentially overridable information:
 * [Directives](#manifest-element-additional-install-info): this allows the Device Operator to add more instructions such as time of installation.
 * [Processing Steps](#manifest-element-processing-steps): If an intermediary performs an action on behalf of a device, it may need to override the processing steps. It is still possible for a device to verify the final content and the result of any processing step that specifies a digest. Some processing steps should be non-overridable.
 
-Satisfied by: [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
+Satisfied by: [REQ.USE.MFST.OVERRIDE_REMOTE](#req-use-mfst-override), [REQ.USE.MFST.COMPONENT](#req-use-mfst-component)
 
 ### USER_STORY.COMPONENT: Component Update {#user-story-component}
 
@@ -846,7 +846,7 @@ Satisfied by: [REQ.USE.IMG.FORMAT](#req-use-img-format)
 
 ### USER_STORY.IMG.CONFIDENTIALITY: Prevent Confidential Information Disclosures {#user-story-img-confidentiality}
 
-As a firmware author, I want to prevent confidential information in the manifest from being disclosed when distributing manifests and firmware images. Confidential information may include information about the device these updates are being applied to as well as information in the firmware image itself. 
+As a firmware author, I want to prevent confidential information in the manifest from being disclosed when distributing manifests and firmware images. Confidential information may include information about the device these updates are being applied to as well as information in the firmware image itself.
 
 Satisfied by: [REQ.SEC.IMG.CONFIDENTIALITY](#req-sec-image-confidentiality)
 
@@ -1024,7 +1024,7 @@ Implemented by: [Load-time metadata](#manifest-element-load-metadata)
 
 The manifest format MUST allow placing a payload in the same structure as the manifest. This may place the payload in the same packet as the manifest.
 
-Integrated payloads may include, for example, binaries as well as configuration information, and keying material. 
+Integrated payloads may include, for example, binaries as well as configuration information, and keying material.
 
 When an integrated payload is provided, this increases the size of the manifest. Manifest size can cause several processing and storage concerns that require careful consideration. The payload can prevent the whole manifest from being contained in a single network packet, which can cause fragmentation and the loss of portions of the manifest in lossy networks. This causes the need for reassembly and retransmission logic. The manifest MUST be held immutable between verification and processing (see [REQ.SEC.MFST.CONST](#req-sec-mfst-const)), so a larger manifest will consume more memory with immutability guarantees, for example internal RAM or NVRAM, or external secure memory. If the manifest exceeds the available immutable memory, then it MUST be processed modularly, evaluating each of: delegation chains, the security container, and the actual manifest, which includes verifying the integrated payload. If the security model calls for downloading the manifest and validating it before storing to NVRAM in order to prevent wear to NVRAM and energy expenditure in NVRAM, then either increasing memory allocated to manifest storage or modular processing of the received manifest may be required. While the manifest has been organised to enable this type of processing, it creates additional complexity in the parser. If the manifest is stored in NVRAM prior to processing, the integrated payload may cause the manifest to exceed the available storage. Because the manifest is received prior to validation of applicability, authority, or correctness, integrated payloads cause the recipient to expend network bandwidth and energy that may not be required if the manifest is discarded and these costs vary with the size of the integrated payload.
 
