@@ -428,6 +428,7 @@ This threat model only covers elements related to the transport of firmware upda
 
 ## Threat Descriptions
 
+Many of the threats detailed in this section contain a "threat escalation" description. This explains how the described threat might fit together with other threats and produce a high severity threat. This is important because some of the described threats may seem low severity but could be used with others to construct a high severity compromise.
 ### THREAT.IMG.EXPIRED: Old Firmware {#threat-expired}
 
 Classification: Elevation of Privilege
