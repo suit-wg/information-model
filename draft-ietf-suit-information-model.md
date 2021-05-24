@@ -88,7 +88,7 @@ Unless otherwise stated these words apply to the design of the manifest format, 
 This document uses terms defined in {{I-D.ietf-suit-architecture}}.
 The term 'Operator' refers to both Device and Network Operator. 
 
-Secure time and secure clock refer to a set of requirements on time sources. For local time sources, this primarily means that the clock must be monotonically increasing, including across power cycles, firmware updates, etc. For remote time sources, the provided time must be guaranteed to be correct to within some predetermined bounds, whenever the time source is accessible.
+Secure time and secure clock refer to a set of requirements on time sources. For local time sources, this primarily means that the clock must be monotonically increasing, including across power cycles, firmware updates, etc. For remote time sources, the provided time must be both authenticated and guaranteed to be correct to within some predetermined bounds, whenever the time source is accessible.
 
 The term Envelope is used to describe an encoding that allows the bundling of a manifest with related information elements that are not directly contained within the manifest.
 
@@ -400,7 +400,7 @@ The delegation chain offers enhanced authorization functionality via authorizati
 
 This element is OPTIONAL.
 
-Implements: [REQ.USE.DELEGATION](#req-use-delegation)
+Implements: [REQ.USE.DELEGATION](#req-use-delegation), [REQ.SEC.KEY.ROTATION](#req-sec-key-rotation)
 
 # Security Considerations {#design-motivation}
 
@@ -600,7 +600,7 @@ If a third party obtains a key or even indirect access to a key, for example in 
 
 For example, if manifest signing is performed on a server connected to the internet, an attacker may compromise the server and then be able to sign manifests, even if the keys for manifest signing are held in an HSM that is accessed by the server.
 
-Mitigated by: [REQ.SEC.KEY.PROTECTION](#req-sec-key-protection)
+Mitigated by: [REQ.SEC.KEY.PROTECTION](#req-sec-key-protection), [REQ.SEC.KEY.ROTATION](#req-sec-key-rotation)
 
 ### THREAT.MFST.MODIFICATION: Modification of manifest or payload prior to signing {#threat-mfst-modification}
 
@@ -650,7 +650,9 @@ A firmware manifest MAY expire after a given time and devices may have a secure 
 
 Special consideration is required for end-of-life in case device will not be updated again, for example if a business stops issuing updates for a device. The last valid firmware should not have an expiration time.
 
-Mitigates: [THREAT.IMG.EXPIRED.OFFLINE ](#threat-expired-offline)
+If a device has a flawed time source (either local or remote), an old update can be deployed as new.
+
+Mitigates: [THREAT.IMG.EXPIRED.OFFLINE](#threat-expired-offline)
 
 Implemented by: [Expiration Time](#manifest-element-expiration)
 
@@ -766,6 +768,14 @@ Mitigates: [THREAT.NET.ONPATH](#threat-net-onpath)
 Cryptographic keys for signing/authenticating manifests SHOULD be stored in a manner that is inaccessible to networked devices, for example in an HSM, or an air-gapped computer. This protects against an attacker obtaining the keys.
 
 Keys SHOULD be stored in a way that limits the risk of a legitimate, but compromised, entity (such as a server or developer computer) issuing signing requests.
+
+Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
+
+### REQ.SEC.KEY.ROTATION: Protected storage of signing keys {#req-sec-key-rotation}
+
+Cryptographic keys for signing/authenticating manifests SHOULD be replaced from time to time. Because it is difficult and risky to replace a Trust Anchor, keys used for signing updates SHOULD be delegates of that Trust Anchor.
+
+If key expiration is performed based on time, then a secure clock is needed. If the time source used by a recipient to check for expiration is flawed, an old signing key can be used as current, which compounds [THREAT.KEY.EXPOSURE](#threat-key-exposure).
 
 Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
 
