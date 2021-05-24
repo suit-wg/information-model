@@ -88,7 +88,7 @@ Unless otherwise stated these words apply to the design of the manifest format, 
 This document uses terms defined in {{I-D.ietf-suit-architecture}}.
 The term 'Operator' refers to both Device and Network Operator.
 
-Secure time and secure clock refer to a set of requirements on time sources. For local time sources, this primarily means that the clock must be monotonically increasing, including across power cycles, firmware updates, etc. For remote time sources, the provided time must be guaranteed to be correct to within some predetermined bounds, whenever the time source is accessible.
+Secure time and secure clock refer to a set of requirements on time sources. For local time sources, this primarily means that the clock must be monotonically increasing, including across power cycles, firmware updates, etc. For remote time sources, the provided time must be both authenticated and guaranteed to be correct to within some predetermined bounds, whenever the time source is accessible.
 
 The term Envelope is used to describe an encoding that allows the bundling of a manifest with related information elements that are not directly contained within the manifest.
 
@@ -121,6 +121,10 @@ The Vendor ID element helps to distinguish between identically named products fr
 
 Recommended practice is to use {{RFC4122}} version 5 UUIDs with the vendor's domain name and the DNS name space ID. Other options include type 1 and type 4 UUIDs.
 
+Fixed-size binary identifiers are preferred because they are simple to match, unambiguous in length, explicitly non-parsable, and require no issuing authority. Guaranteed unique integers are preferred because they are small and simple to match, however they may not be fixed length and they may require an issuing authority to ensure uniqueness. Free-form text is avoided because it is variable-length, prone to error, and often requires parsing outside the scope of the manifest serialization.
+
+If human-readable content is required, it SHOULD be contained in a separate manifest information element: [Manifest text information](#manifest-element-text)
+
 This element is RECOMMENDED.
 
 Implements: [REQ.SEC.COMPATIBLE](#req-sec-compatible), [REQ.SEC.AUTH.COMPATIBILITY](#req-sec-authentic-compatibility).
@@ -146,7 +150,11 @@ Recommended practice is to use {{RFC4122}} version 5 UUIDs with as much informat
 
 The Class ID UUID should use the Vendor ID as the name space identifier. Other options include version 1 and 4 UUIDs. Classes may be more fine-grained granular than is required to identify firmware compatibility. Classes must not be less granular than is required to identify firmware compatibility. Devices may have multiple Class IDs.
 
-Class ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only.
+Class ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only. A manifest serialization SHOULD NOT permit free-form text content to be used for Class ID. A fixed-size binary identifier SHOULD be used.
+
+Some organizations desire to keep the same product naming across multiple, incompatible hardware revisions for ease of user experience. If this naming is propagated into the firmware, then matching a specific hardware version becomes a challenge. An opaque, non-readable binary identifier has no naming implications and so is more likely to be usable for distinguishing among incompatible device groupings, regardless of naming.
+
+Fixed-size binary identifiers are preferred because they are simple to match, unambiguous in length, opaque and free from naming implications, and explicitly non-parsable. Free-form text is avoided because it is variable-length, prone to error, often requires parsing outside the scope of the manifest serialization, and may be homogenized across incompatible device groupings.
 
 If Class ID is not implemented, then each logical device class must use a unique trust anchor for authorization.
 
@@ -328,6 +336,12 @@ This element is OPTIONAL.
 
 Implements: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
 
+## Manifest text information {#manifest-element-text}
+
+Textual information pertaining to the update described by the manifest. This information is for human consumption only. It MUST NOT be the basis of any decision made by the recipient.
+
+Implements: [REQ.USE.MFST.TEXT](#req-use-mfst-text)
+
 ## Aliases {#manifest-element-aliases}
 
 A mechanism for a manifest to augment or replace URIs or URI lists defined by one or more of its dependencies.
@@ -396,11 +410,13 @@ Implements: [REQ.USE.PAYLOAD](#req-use-payload)
 
 ## Manifest Envelope Element: Delegation Chain {#manifest-element-key-claims}
 
-The delegation chain offers enhanced authorization functionality via authorization tokens. Each token itself is protected and does not require another layer of protection. Because the delegation chain is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.
+The delegation chain offers enhanced authorization functionality via authorization tokens, such as CBOR Web Tokens {{RFC8392}} with Proof of Possession Key Semantics {{RFC8747}}. Each token itself is protected and does not require another layer of protection. Each authorization token typically includes a public key or a public key fingerprint, however this is dependent on the tokens used. Each token MAY include additional metadata, such as key usage information. Because the delegation chain is needed to verify the signature, it must be placed in the Manifest Envelope, rather than the Manifest.
+
+The first token in any delegation chain MUST be autheticated by the recipient's Trust Anchor. Each subsequent token MUST be authenticated using the previous token. This allows a recipient to discard each antecedent token after it has authenticated the subsequent token. The final token MUST enable authentication of the manifest. More than one delegation chain MAY be used if more than one signature is used. Note that no restriction is placed on the encoding order of these tokens, the order of elements is logical only.
 
 This element is OPTIONAL.
 
-Implements: [REQ.USE.DELEGATION](#req-use-delegation)
+Implements: [REQ.USE.DELEGATION](#req-use-delegation), [REQ.SEC.KEY.ROTATION](#req-sec-key-rotation)
 
 # Security Considerations {#design-motivation}
 
@@ -428,6 +444,7 @@ This threat model only covers elements related to the transport of firmware upda
 
 ## Threat Descriptions
 
+Many of the threats detailed in this section contain a "threat escalation" description. This explains how the described threat might fit together with other threats and produce a high severity threat. This is important because some of the described threats may seem low severity but could be used with others to construct a high severity compromise.
 ### THREAT.IMG.EXPIRED: Old Firmware {#threat-expired}
 
 Classification: Elevation of Privilege
@@ -600,7 +617,7 @@ If a third party obtains a key or even indirect access to a key, for example in 
 
 For example, if manifest signing is performed on a server connected to the internet, an attacker may compromise the server and then be able to sign manifests, even if the keys for manifest signing are held in an HSM that is accessed by the server.
 
-Mitigated by: [REQ.SEC.KEY.PROTECTION](#req-sec-key-protection)
+Mitigated by: [REQ.SEC.KEY.PROTECTION](#req-sec-key-protection), [REQ.SEC.KEY.ROTATION](#req-sec-key-rotation)
 
 ### THREAT.MFST.MODIFICATION: Modification of manifest or payload prior to signing {#threat-mfst-modification}
 
@@ -650,7 +667,9 @@ A firmware manifest MAY expire after a given time and devices may have a secure 
 
 Special consideration is required for end-of-life in case device will not be updated again, for example if a business stops issuing updates for a device. The last valid firmware should not have an expiration time.
 
-Mitigates: [THREAT.IMG.EXPIRED.OFFLINE ](#threat-expired-offline)
+If a device has a flawed time source (either local or remote), an old update can be deployed as new.
+
+Mitigates: [THREAT.IMG.EXPIRED.OFFLINE](#threat-expired-offline)
 
 Implemented by: [Expiration Time](#manifest-element-expiration)
 
@@ -766,6 +785,14 @@ Mitigates: [THREAT.NET.ONPATH](#threat-net-onpath)
 Cryptographic keys for signing/authenticating manifests SHOULD be stored in a manner that is inaccessible to networked devices, for example in an HSM, or an air-gapped computer. This protects against an attacker obtaining the keys.
 
 Keys SHOULD be stored in a way that limits the risk of a legitimate, but compromised, entity (such as a server or developer computer) issuing signing requests.
+
+Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
+
+### REQ.SEC.KEY.ROTATION: Protected storage of signing keys {#req-sec-key-rotation}
+
+Cryptographic keys for signing/authenticating manifests SHOULD be replaced from time to time. Because it is difficult and risky to replace a Trust Anchor, keys used for signing updates SHOULD be delegates of that Trust Anchor.
+
+If key expiration is performed based on time, then a secure clock is needed. If the time source used by a recipient to check for expiration is flawed, an old signing key can be used as current, which compounds [THREAT.KEY.EXPOSURE](#threat-key-exposure).
 
 Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
 
@@ -910,6 +937,12 @@ As an operator of a constrained network, I would like devices on my network to b
 
 Satisfied by: [REQ.USE.MFST.PRE_CHECK](#req-use-mfst-pre-check)
 
+### USER_STORY.MFST.ADMINISTRATION: Administration of manifests {#user-story-mfst-admin}
+
+As a Device Operator, I want to understand what an update will do and to which devices it applies so that I can make informed choices about which updates to apply, when to apply them, and which devices should be updated.
+
+Satisfied by [REQ.USE.MFST.TEXT](#req-use-mfst-text)
+
 ## Usability Requirements
 
 The following usability requirements satisfy the user stories listed above.
@@ -923,6 +956,14 @@ For example: Information about which precursor image is required for a different
 Satisfies: [USER_STORY.MFST.PRE_CHECK(#user-story-mfst-pre-check), [USER_STORY.INSTALL.INSTRUCTIONS](#user-story-install-instructions)
 
 Implemented by: [Additional installation instructions](#manifest-element-additional-install-info)
+
+### REQ.USE.MFST.TEXT: Descriptive Manifest Information {#req-use-mfst-text}
+
+It MUST be possible for a Device Operator to determine what a manifest will do and which devices will accept it prior to distribution.
+
+Satisfies: [USER_STORY.MFST.ADMINISTRATION](#user-story-mfst-admin)
+
+Implemented by: [Manifest text information](#manifest-element-text)
 
 ### REQ.USE.MFST.OVERRIDE_REMOTE: Override Remote Resource Location {#req-use-mfst-override}
 
