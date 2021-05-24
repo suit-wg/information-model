@@ -1,7 +1,7 @@
 ---
 title: A Manifest Information Model for Firmware Updates in IoT Devices
 abbrev: A Firmware Manifest Information Model
-docname: draft-ietf-suit-information-model-11
+docname: draft-ietf-suit-information-model-12
 category: info
 
 ipr: trust200902
@@ -42,6 +42,8 @@ author:
 normative:
   RFC2119:
   RFC4122:
+  RFC8747:
+  RFC8392:
   I-D.ietf-suit-architecture:
 informative:
   RFC3444:
@@ -445,6 +447,7 @@ This threat model only covers elements related to the transport of firmware upda
 ## Threat Descriptions
 
 Many of the threats detailed in this section contain a "threat escalation" description. This explains how the described threat might fit together with other threats and produce a high severity threat. This is important because some of the described threats may seem low severity but could be used with others to construct a high severity compromise.
+
 ### THREAT.IMG.EXPIRED: Old Firmware {#threat-expired}
 
 Classification: Elevation of Privilege
