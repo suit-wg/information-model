@@ -109,7 +109,7 @@ This element is REQUIRED.
 
 ## Monotonic Sequence Number {#element-sequence-number}
 
-A monotonically increasing (unsigned) sequence number to prevent malicious actors from reverting a firmware update against the policies of the relevant authority. This number must not wrap around. 
+A monotonically increasing (unsigned) sequence number to prevent malicious actors from reverting a firmware update against the policies of the relevant authority. This number must not wrap around.
 
 For convenience, the monotonic sequence number may be a UTC timestamp. This allows global synchronisation of sequence numbers without any additional management.
 
@@ -793,7 +793,7 @@ Keys SHOULD be stored in a way that limits the risk of a legitimate, but comprom
 
 Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
 
-Implemented by: Hardware-assisted isolation technologies, which are outside the scope of the manifest format. 
+Implemented by: Hardware-assisted isolation technologies, which are outside the scope of the manifest format.
 
 ### REQ.SEC.KEY.ROTATION: Protected storage of signing keys {#req-sec-key-rotation}
 
@@ -803,7 +803,7 @@ If key expiration is performed based on time, then a secure clock is needed. If 
 
 Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
 
-Implemented by: Secure storage technology, which is a system design/implementation aspect outside the scope of the manifest format. 
+Implemented by: Secure storage technology, which is a system design/implementation aspect outside the scope of the manifest format.
 
 
 ### REQ.SEC.MFST.CHECK: Validate manifests prior to deployment {#req-sec-mfst-check}
@@ -812,7 +812,7 @@ Manifests SHOULD be verified prior to deployment. This reduces problems that may
 
 Mitigates: [THREAT.MFST.MODIFICATION](#threat-mfst-modification)
 
-Implemented by: Testing infrastructure. While outside the scope of the manifest format, proper testing of low-level software is essential for avoiding unnecessary down-time or worse situations. 
+Implemented by: Testing and distribution infrastructure. While outside the scope of the manifest format, proper testing of low-level software is essential for avoiding unnecessary down-time or worse situations. Distribution infrastructure can reduce bandwidth, save battery power, and avoid unnecessary down-time by validating manifests before sending them to recipient devices.
 
 ### REQ.SEC.MFST.TRUSTED: Construct manifests in a trusted environment {#req-sec-mfst-trusted}
 
@@ -820,7 +820,7 @@ For high risk deployments, such as large numbers of devices or critical function
 
 Mitigates: [THREAT.MFST.MODIFICATION](#threat-mfst-modification)
 
-Implemented by: Physical and network security for protecting the environment where firmware updates are prepared to avoid unauthorized access to this infrastructure. 
+Implemented by: Physical and network security for protecting the environment where firmware updates are prepared to avoid unauthorized access to this infrastructure.
 
 ### REQ.SEC.MFST.CONST: Manifest kept immutable between check and use {#req-sec-mfst-const}
 
