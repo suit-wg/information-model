@@ -1,7 +1,7 @@
 ---
 title: A Manifest Information Model for Firmware Updates in IoT Devices
 abbrev: A Firmware Manifest Information Model
-docname: draft-ietf-suit-information-model-12
+docname: draft-ietf-suit-information-model-13
 category: info
 
 ipr: trust200902
@@ -109,7 +109,7 @@ This element is REQUIRED.
 
 ## Monotonic Sequence Number {#element-sequence-number}
 
-A monotonically increasing sequence number to prevent malicious actors from reverting a firmware update against the policies of the relevant authority.
+A monotonically increasing (unsigned) sequence number to prevent malicious actors from reverting a firmware update against the policies of the relevant authority. This number must not wrap around. 
 
 For convenience, the monotonic sequence number may be a UTC timestamp. This allows global synchronisation of sequence numbers without any additional management.
 
@@ -150,7 +150,7 @@ Recommended practice is to use {{RFC4122}} version 5 UUIDs with as much informat
 * ROM revision
 * silicon batch number
 
-The Class ID UUID should use the Vendor ID as the name space identifier. Other options include version 1 and 4 UUIDs. Classes may be more fine-grained granular than is required to identify firmware compatibility. Classes must not be less granular than is required to identify firmware compatibility. Devices may have multiple Class IDs.
+The Class ID UUID should use the Vendor ID as the name space identifier. Classes may be more fine-grained granular than is required to identify firmware compatibility. Classes must not be less granular than is required to identify firmware compatibility. Devices may have multiple Class IDs.
 
 Class ID is not intended to be a human-readable element. It is intended for binary match/mismatch comparison only. A manifest serialization SHOULD NOT permit free-form text content to be used for Class ID. A fixed-size binary identifier SHOULD be used.
 
@@ -168,7 +168,7 @@ Implements: Security Requirement [REQ.SEC.COMPATIBLE](#req-sec-compatible), [REQ
 
 Vendor A creates product Z and product Y. The firmware images of products Z and Y are not interchangeable. Vendor A creates UUIDs as follows:
 
-* vendorId = UUID5(DNS, "vendor-a.com")
+* vendorId = UUID5(DNS, "vendor-a.example")
 * ZclassId = UUID5(vendorId, "Product Z")
 * YclassId = UUID5(vendorId, "Product Y")
 
@@ -180,7 +180,7 @@ Vendor A creates product X. Later, Vendor A adds a new feature to product X, cre
 
 Vendor A creates UUIDs as follows:
 
-* vendorId = UUID5(DNS, "vendor-a.com")
+* vendorId = UUID5(DNS, "vendor-a.example")
 * XclassId = UUID5(vendorId, "Product X")
 * Xv2classId = UUID5(vendorId, "Product X v2")
 
@@ -190,7 +190,7 @@ When product X receives the firmware update necessary to be compatible with prod
 
 Vendor A produces two products, product X and product Y. These components share a common core (such as an operating system), but have different applications. The common core and the applications can be updated independently. To enable X and Y to receive the same common core update, they require the same class ID. To ensure that only product X receives application X and only product Y receives application Y, product X and product Y must have different class IDs. The vendor creates Class IDs as follows:
 
-* vendorId = UUID5(DNS, "vendor-a.com")
+* vendorId = UUID5(DNS, "vendor-a.example")
 * XclassId = UUID5(vendorId, "Product X")
 * YclassId = UUID5(vendorId, "Product Y")
 * CommonClassId = UUID5(vendorId, "common core")
@@ -201,9 +201,9 @@ Product X matches against both XclassId and CommonClassId. Product Y matches aga
 
 Vendor A creates a product A and its firmware. Vendor B sells the product under its own name as Product B with some customised configuration. The vendors create the Class IDs as follows:
 
-* vendorIdA = UUID5(DNS, "vendor-a.com")
+* vendorIdA = UUID5(DNS, "vendor-a.example")
 * classIdA = UUID5(vendorIdA, "Product A-Unlabelled")
-* vendorIdB = UUID5(DNS, "vendor-b.com")
+* vendorIdB = UUID5(DNS, "vendor-b.example")
 * classIdB = UUID5(vendorIdB, "Product B")
 
 The product will match against each of these class IDs. If Vendor A and Vendor B provide different components for the device, the implementor may choose to make ID matching scoped to each component. Then, the vendorIdA, classIdA match the component ID supplied by Vendor A, and the vendorIdB, classIdB match the component ID supplied by Vendor B.
@@ -783,6 +783,8 @@ Status reports from the device to any remote system MUST be performed over an au
 
 Mitigates: [THREAT.NET.ONPATH](#threat-net-onpath)
 
+Implemented by: Transport Security / Manifest format triggering generation of reports
+
 ### REQ.SEC.KEY.PROTECTION: Protected storage of signing keys {#req-sec-key-protection}
 
 Cryptographic keys for signing/authenticating manifests SHOULD be stored in a manner that is inaccessible to networked devices, for example in an HSM, or an air-gapped computer. This protects against an attacker obtaining the keys.
@@ -790,6 +792,8 @@ Cryptographic keys for signing/authenticating manifests SHOULD be stored in a ma
 Keys SHOULD be stored in a way that limits the risk of a legitimate, but compromised, entity (such as a server or developer computer) issuing signing requests.
 
 Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
+
+Implemented by: Hardware-assisted isolation technologies, which are outside the scope of the manifest format. 
 
 ### REQ.SEC.KEY.ROTATION: Protected storage of signing keys {#req-sec-key-rotation}
 
@@ -799,17 +803,24 @@ If key expiration is performed based on time, then a secure clock is needed. If 
 
 Mitigates: [THREAT.KEY.EXPOSURE](#threat-key-exposure)
 
+Implemented by: Secure storage technology, which is a system design/implementation aspect outside the scope of the manifest format. 
+
+
 ### REQ.SEC.MFST.CHECK: Validate manifests prior to deployment {#req-sec-mfst-check}
 
 Manifests SHOULD be verified prior to deployment. This reduces problems that may arise with devices installing firmware images that damage devices unintentionally.
 
 Mitigates: [THREAT.MFST.MODIFICATION](#threat-mfst-modification)
 
+Implemented by: Testing infrastructure. While outside the scope of the manifest format, proper testing of low-level software is essential for avoiding unnecessary down-time or worse situations. 
+
 ### REQ.SEC.MFST.TRUSTED: Construct manifests in a trusted environment {#req-sec-mfst-trusted}
 
 For high risk deployments, such as large numbers of devices or critical function devices, manifests SHOULD be constructed in an environment that is protected from interference, such as an air-gapped computer. Note that a networked computer connected to an HSM does not fulfill this requirement (see [THREAT.MFST.MODIFICATION](#threat-mfst-modification)).
 
 Mitigates: [THREAT.MFST.MODIFICATION](#threat-mfst-modification)
+
+Implemented by: Physical and network security for protecting the environment where firmware updates are prepared to avoid unauthorized access to this infrastructure. 
 
 ### REQ.SEC.MFST.CONST: Manifest kept immutable between check and use {#req-sec-mfst-const}
 
@@ -818,6 +829,8 @@ Both the manifest and any data extracted from it MUST be held immutable between 
 If an application requires that the manifest is verified before storing it, then this means the manifest MUST fit in RAM.
 
 Mitigates: [THREAT.MFST.TOCTOU](#threat-mfst-toctou)
+
+Implemented by: Proper system design with sufficient resources and implementation avoiding TOCTOU attacks.
 
 ## User Stories {#user-stories}
 
@@ -1103,7 +1116,8 @@ This document does not require any actions by IANA.
 We would like to thank our working group chairs, Dave Thaler, Russ Housley and David Waltermire, for their review comments and their support.
 
 We would like to thank the participants of the 2018 Berlin SUIT Hackathon and the June 2018 virtual design team meetings for their discussion input.
-In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten Bormann, David Brown, Markus Gueller, Frank Audun Kvamtro, Oyvind Ronningstad, Michael Richardson, Jan-Frederik Rieckers, Francisco Acosta, Anton Gerasimov, Matthias Waehlisch, Max Groening, Daniel Petry, Gaetan Harter, Ralph Hamm, Steve Patrick, Fabio Utzig, Paul Lambert, Benjamin Kaduk, Said Gharout, and Milen Stoychev.  
+
+In particular, we would like to thank Koen Zandberg, Emmanuel Baccelli, Carsten Bormann, David Brown, Markus Gueller, Frank Audun Kvamtro, Oyvind Ronningstad, Michael Richardson, Jan-Frederik Rieckers, Francisco Acosta, Anton Gerasimov, Matthias Waehlisch, Max Groening, Daniel Petry, Gaetan Harter, Ralph Hamm, Steve Patrick, Fabio Utzig, Paul Lambert, Said Gharout, and Milen Stoychev.  
 
 We would like to thank those who contributed to the development of this information model. In particular, we would like to thank Milosch Meriac, Jean-Luc Giraud, Dan Ros, Amyas Philips, and Gary Thomson.
 
